@@ -7,8 +7,7 @@ function validateObjectId(...paramNames) {
   const names = paramNames.length > 0 ? paramNames : ["id"];
 
   return (req, res, next) => {
-    // isObjectIdOrHexString only accepts real 24-character IDs.
-    // (isValidObjectId would also accept any 12-character string.)
+    // isObjectIdOrHexString only accepts a real 24-character ID.
     const allValid = names.every((name) => mongoose.isObjectIdOrHexString(req.params[name]));
     if (!allValid) return next(new AppError("Invalid ID", 400));
     next();
