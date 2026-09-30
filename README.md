@@ -141,7 +141,7 @@ Adesua/
 ## API docs
 
 - API contract: [docs/API_CONTRACT.md](docs/API_CONTRACT.md)
-- Postman collection: _link to be added_
+- Postman: in Postman choose **Import** and pick the files in [docs/postman/](docs/postman/), select the **Adesua local** environment, then run **Auth > Log in** first.
 
 ## Team
 
