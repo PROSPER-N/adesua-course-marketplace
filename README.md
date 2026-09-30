@@ -44,8 +44,8 @@ We also use Git and GitHub, Postman and Prettier.
 - A MongoDB Atlas connection string (ask the project lead)
 
 ```
-git clone https://github.com/PROSPER-N/Adesua.git
-cd Adesua
+git clone https://github.com/PROSPER-N/adesua-course-marketplace.git
+cd adesua-course-marketplace
 ```
 
 ### Backend
