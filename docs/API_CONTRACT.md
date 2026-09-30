@@ -75,7 +75,7 @@ Base URL: `/api` (locally `http://localhost:5000/api`). Private routes need the 
 - `GET /api/admin/users`: `search` (name or email), `role`, `page`, `limit` (default 10)
 - `GET /api/admin/courses`: `search` (title), `status`, `page`, `limit` (default 10)
 
-## What key endpoints return in "data"
+## What endpoints return in "data"
 
 - register, login: `{ token, user }`. The user never includes the password.
 - `GET /api/auth/me`: `{ user }`

@@ -2,7 +2,7 @@
 
 Adesua is a video course marketplace, built as our TS Academy full-stack capstone project (topic 56). Instructors publish video courses. Students enroll in free courses or buy paid ones through a demo checkout, then watch the lessons and track their progress. Admins manage users and categories.
 
-> **Status:** in progress. The backend foundation and login API are done; the other features are being built.
+> Status: the backend foundation and the login, categories and admin APIs are done. The other features are in progress.
 
 ## Features by role
 
@@ -27,12 +27,13 @@ Adesua is a video course marketplace, built as our TS Academy full-stack capston
 
 ## Tech stack
 
-- **Frontend:** React with Vite (in `frontend/`)
-- **Backend:** Node.js, Express 5, MongoDB Atlas with Mongoose 9
-- **Login:** JSON Web Tokens (jsonwebtoken) and bcryptjs for password hashing
-- **Security and validation:** helmet, cors, express-rate-limit, express-validator
-- **Testing:** Jest and Supertest
-- **Tools:** Git and GitHub, Postman, Prettier
+- React with Vite for the frontend (in `frontend/`)
+- Node.js, Express 5 and MongoDB Atlas with Mongoose 9 for the backend
+- JSON Web Tokens (jsonwebtoken) for login, and bcryptjs for password hashing
+- helmet, cors, express-rate-limit and express-validator for security and validation
+- Jest and Supertest for testing
+
+We also use Git and GitHub, Postman and Prettier.
 
 ## Getting started
 

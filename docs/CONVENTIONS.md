@@ -24,9 +24,9 @@ Route files live in `backend/src/routes/` and are named `<name>.routes.js`. The 
 
 ### Shared files: ask the lead before changing them
 
-- **Backend:** `src/models/`, `src/utils/`, `src/middleware/`, `src/routes/index.js`, `src/app.js`
-- **Frontend:** `src/api`, `src/utils`, `components/ui`, `components/layout`, `CourseCover`, `App.jsx`, `AuthContext`, the route guards
-- **Docs:** changing `API_CONTRACT.md` needs all three of us to agree.
+- Backend: `src/models/`, `src/utils/`, `src/middleware/`, `src/routes/index.js`, `src/app.js`
+- Frontend: `src/api`, `src/utils`, `components/ui`, `components/layout`, `CourseCover`, `App.jsx`, `AuthContext`, the route guards
+- Docs: changing `API_CONTRACT.md` needs all three of us to agree.
 
 Never edit a file you don't own. Ask its owner instead.
 
@@ -41,6 +41,7 @@ Never edit a file you don't own. Ask its owner instead.
   ```
 - Keep pull requests small, so they're quick to review.
 - Review rotation: A reviews B, B reviews C, C reviews A.
+- Understand every line before you commit it. You must be able to explain your own code.
 - Write commit messages in the present tense, like "Add course search and pagination".
 - Make sure your commits are credited to your GitHub account (the school checks commit history). Set your identity for this repo once, using your noreply email from github.com/settings/emails:
   ```
