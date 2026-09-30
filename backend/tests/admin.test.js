@@ -7,7 +7,7 @@ const { createUser, tokenFor, TEST_PASSWORD } = require("./helpers");
 const newId = () => new mongoose.Types.ObjectId();
 
 // C's models don't exist yet, so tests put plain documents straight into the test database.
-// Fields that C will probably make unique (the order reference, one enrollment per student and
+// Fields that C will probably make unique (the order reference, one enrollment per user and
 // course) get different values, so these still insert once C adds indexes.
 function insert(collectionName, ...docs) {
   return mongoose.connection.collection(collectionName).insertMany(docs);
@@ -87,13 +87,13 @@ describe("GET /api/admin/stats", () => {
     );
     await insert(
       "enrollments",
-      { student: newId(), course: newId() },
-      { student: newId(), course: newId() }
+      { user: newId(), course: newId() },
+      { user: newId(), course: newId() }
     );
     await insert(
       "orders",
-      { reference: "ADS-TEST01", student: newId(), course: newId(), amount: 180, status: "paid" },
-      { reference: "ADS-TEST02", student: newId(), course: newId(), amount: 50, status: "pending" }
+      { reference: "ADS-TEST01", user: newId(), course: newId(), amount: 180, status: "paid" },
+      { reference: "ADS-TEST02", user: newId(), course: newId(), amount: 50, status: "pending" }
     );
 
     const res = await request(app).get("/api/admin/stats").set("Authorization", auth);
