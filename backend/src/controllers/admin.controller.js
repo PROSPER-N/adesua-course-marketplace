@@ -1,0 +1,79 @@
+const User = require("../models/User");
+const AppError = require("../utils/AppError");
+const asyncHandler = require("../utils/asyncHandler");
+const { sendSuccess } = require("../utils/apiResponse");
+const { getPagination, buildPagination } = require("../utils/pagination");
+const { getPlatformTotals } = require("../services/stats.service");
+
+// Makes search text safe to use in a regular expression: characters like "(" or "*"
+// are matched as plain text, so they can't break the query or slow it down.
+function escapeRegex(text) {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+// GET /api/admin/stats
+const getStats = asyncHandler(async (req, res) => {
+  const [users, totals] = await Promise.all([User.countDocuments(), getPlatformTotals()]);
+
+  sendSuccess(res, { message: "Stats fetched successfully", data: { users, ...totals } });
+});
+
+// GET /api/admin/users?search=&role=&page=&limit=
+const listUsers = asyncHandler(async (req, res) => {
+  const { page, limit, skip } = getPagination(req.query, 10);
+
+  const filter = {};
+
+  // A repeated ?search= arrives as an array, so only use it when it's text.
+  const search = typeof req.query.search === "string" ? req.query.search.trim() : "";
+  if (search) {
+    const pattern = new RegExp(escapeRegex(search), "i");
+    filter.$or = [{ name: pattern }, { email: pattern }];
+  }
+
+  // listUsersRules has already checked that role is one of the three roles.
+  if (req.query.role) {
+    filter.role = req.query.role;
+  }
+
+  const [items, total] = await Promise.all([
+    User.find(filter)
+      .select("name email role isActive createdAt")
+      // _id breaks ties between users created in the same millisecond, so pages never overlap
+      .sort({ createdAt: -1, _id: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean(),
+    User.countDocuments(filter),
+  ]);
+
+  sendSuccess(res, {
+    message: "Users fetched successfully",
+    data: { items, pagination: buildPagination(page, limit, total) },
+  });
+});
+
+// PATCH /api/admin/users/:id/status
+const updateUserStatus = asyncHandler(async (req, res) => {
+  const { isActive } = req.body;
+
+  // Stops an admin from locking themselves out.
+  if (!isActive && String(req.params.id) === String(req.user._id)) {
+    throw new AppError("You can't deactivate your own account.", 400);
+  }
+
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    throw new AppError("User not found", 404);
+  }
+
+  user.isActive = isActive;
+  await user.save();
+
+  sendSuccess(res, {
+    message: isActive ? "User reactivated" : "User deactivated",
+    data: user,
+  });
+});
+
+module.exports = { getStats, listUsers, updateUserStatus };

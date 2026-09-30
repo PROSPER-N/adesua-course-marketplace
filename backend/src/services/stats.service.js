@@ -39,4 +39,23 @@ async function countCoursesInCategory(categoryId) {
   return collection("courses").countDocuments({ category });
 }
 
-module.exports = { publishedCountsByCategory, countCoursesInCategory };
+// Totals for the admin dashboard: published courses, enrollments, and money from paid orders.
+async function getPlatformTotals() {
+  const [publishedCourses, enrollments, paidRows] = await Promise.all([
+    collection("courses").countDocuments({ status: "published" }),
+    collection("enrollments").countDocuments(),
+    collection("orders")
+      .aggregate([
+        { $match: { status: "paid" } },
+        { $group: { _id: null, total: { $sum: "$amount" } } },
+      ])
+      .toArray(),
+  ]);
+
+  // With no paid orders the aggregation returns no rows, so the total is 0.
+  const totalPayments = paidRows.length > 0 ? paidRows[0].total : 0;
+
+  return { publishedCourses, enrollments, totalPayments };
+}
+
+module.exports = { publishedCountsByCategory, countCoursesInCategory, getPlatformTotals };
