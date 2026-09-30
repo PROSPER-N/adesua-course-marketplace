@@ -1,15 +1,10 @@
 const User = require("../models/User");
 const AppError = require("../utils/AppError");
 const asyncHandler = require("../utils/asyncHandler");
+const escapeRegex = require("../utils/escapeRegex");
 const { sendSuccess } = require("../utils/apiResponse");
 const { getPagination, buildPagination } = require("../utils/pagination");
 const { getPlatformTotals } = require("../services/stats.service");
-
-// Makes search text safe to use in a regular expression: characters like "(" or "*"
-// are matched as plain text, so they can't break the query or slow it down.
-function escapeRegex(text) {
-  return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
 
 // GET /api/admin/stats
 const getStats = asyncHandler(async (req, res) => {
