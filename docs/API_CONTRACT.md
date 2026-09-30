@@ -107,6 +107,7 @@ Base URL: `/api` (locally `http://localhost:5000/api`). Private routes need the 
 | login password (empty) | Enter your password. |
 | role | Choose to learn or to teach. |
 | category name | Category name must be between 2 and 40 characters. |
+| category name with no letter or number | Category name must include a letter or a number. |
 | course title | Title must be between 5 and 120 characters. |
 | shortDescription | Keep the short description under 160 characters. |
 | description | Description must be at least 20 characters. |
@@ -122,7 +123,7 @@ Base URL: `/api` (locally `http://localhost:5000/api`). Private routes need the 
 | paymentMethod | Choose a payment method. |
 | status | Status must be draft or published. |
 | isActive | isActive must be true or false. |
-| any `:id` | Invalid ID. |
+| any `:id` | Invalid ID |
 | page and limit | Page and limit must be positive numbers. |
 | request body that isn't valid JSON (400) | The request body isn't valid JSON. |
 
@@ -147,6 +148,8 @@ Base URL: `/api` (locally `http://localhost:5000/api`). Private routes need the 
 - A course with students can't be deleted: 400 "This course has students. Unpublish it instead." Deleting a course also deletes its lessons.
 - Creating, editing or deleting a lesson updates the course's `lessonCount` and `totalMinutes`.
 - Instructors can change only their own courses and lessons (403).
+- Category names are unique, ignoring capital letters ("design" clashes with "Design"): 409 "A category with this name already exists."
+- An unknown category returns 404 "Category not found".
 - A category used by any course can't be deleted: 400 "This category has courses. Move them to another category first."
 - Admins can't deactivate themselves: 400 "You can't deactivate your own account."
 - Deactivated users get 403 at login and on every request.
