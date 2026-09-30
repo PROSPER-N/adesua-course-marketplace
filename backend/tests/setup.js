@@ -21,14 +21,30 @@ if (!JWT_SECRET) {
 // Stays false unless the database name check below passes, so we never empty the wrong database.
 let isSafeToClear = false;
 
+// Atlas can be slow to reach on some networks (for example when DNS lookups stall),
+// so the connection gets up to 60 seconds before the tests stop with a clear message.
+const CONNECT_TIMEOUT_MS = 60000;
+// Jest's limit for this setup step is longer, because the DNS lookup for "mongodb+srv://"
+// happens before those 60 seconds start. That way you see the clear message below,
+// not Jest's generic "Exceeded timeout".
+const SETUP_TIMEOUT_MS = CONNECT_TIMEOUT_MS + 30000;
+
 beforeAll(async () => {
   // autoIndex/autoCreate off: otherwise Mongoose starts creating collections the moment it
   // connects, before we've checked that this is really a test database.
-  await mongoose.connect(MONGO_URI_TEST, {
-    serverSelectionTimeoutMS: 10000,
-    autoIndex: false,
-    autoCreate: false,
-  });
+  try {
+    await mongoose.connect(MONGO_URI_TEST, {
+      serverSelectionTimeoutMS: CONNECT_TIMEOUT_MS,
+      autoIndex: false,
+      autoCreate: false,
+    });
+  } catch (error) {
+    throw new Error(
+      "Couldn't connect to the test database within 60 seconds. Check your internet connection, " +
+        "MONGO_URI_TEST in backend/.env, and that your IP address is allowed in Atlas " +
+        `(Network Access). Details: ${error.message}`
+    );
+  }
 
   // "test" on its own is MongoDB's default when the URI has no database name,
   // and the whole team could be sharing it.
@@ -44,7 +60,7 @@ beforeAll(async () => {
 
   // Now that it's safe, build the unique indexes (like email), so duplicates really get a 409.
   await Promise.all(Object.values(mongoose.models).map((model) => model.createIndexes()));
-});
+}, SETUP_TIMEOUT_MS);
 
 afterEach(async () => {
   if (!isSafeToClear) return;
