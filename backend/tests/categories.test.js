@@ -211,3 +211,24 @@ describe("DELETE /api/categories/:id", () => {
     expect(res.body.message).toBe("Category not found");
   });
 });
+
+describe("JSON responses", () => {
+  it("don't include Mongoose's __v field", async () => {
+    const auth = await authHeader("admin");
+
+    const created = await request(app)
+      .post("/api/categories")
+      .set("Authorization", auth)
+      .send({ name: "Design" });
+    const renamed = await request(app)
+      .patch(`/api/categories/${created.body.data._id}`)
+      .set("Authorization", auth)
+      .send({ name: "Graphic design" });
+
+    expect(created.status).toBe(201);
+    expect(created.body.data).not.toHaveProperty("__v");
+    expect(renamed.status).toBe(200);
+    expect(renamed.body.data).not.toHaveProperty("__v");
+    expect(renamed.body.data).toMatchObject({ name: "Graphic design", slug: "graphic-design" });
+  });
+});
