@@ -1,10 +1,9 @@
 // Owner: Member A
-// Mounted at /api/categories. Endpoints (see docs/API_CONTRACT.md):
+// Endpoints:
 //   GET    /api/categories       Public   Categories with published-course counts
 //   POST   /api/categories       Admin    Create a category
 //   PATCH  /api/categories/:id   Admin    Rename a category
 //   DELETE /api/categories/:id   Admin    Delete an unused category
-// Route pattern: see "Backend pattern" in docs/CONVENTIONS.md.
 
 const express = require("express");
 const protect = require("../middleware/protect");

@@ -1,5 +1,5 @@
 // Owner: Member A
-// Mounted at /api/health. Endpoints (see docs/API_CONTRACT.md):
+// Endpoints:
 //   GET /api/health   Public   API is running
 
 const express = require("express");
