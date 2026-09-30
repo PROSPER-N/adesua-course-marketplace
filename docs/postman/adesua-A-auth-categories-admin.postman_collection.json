@@ -48,7 +48,7 @@
             "auth": {
               "type": "noauth"
             },
-            "description": "**Purpose:** Check that the API is running.\n\n**Access:** Public.\n\n**Body:** none.\n\n**Parameters:** none."
+            "description": "Purpose: Check that the API is running.\n\nAccess: Public.\n\nBody: none.\n\nParameters: none."
           },
           "response": [
             {
@@ -165,7 +165,7 @@
                 }
               }
             },
-            "description": "**Purpose:** Create a student or instructor account. Returns a login token.\n\n**Access:** Public. Limited to 20 sign-up or login attempts per 15 minutes per IP address.\n\n**Body (JSON):**\n- `name` (required): 2 to 50 characters\n- `email` (required): a valid email address\n- `password` (required): at least 8 characters, with a letter and a number\n- `role` (optional): `student` (the default) or `instructor`. Sign-up can never create an admin.\n\n**Parameters:** none.\n\n**Saves:** the returned token as `{{token}}`."
+            "description": "Purpose: Create a student or instructor account. Returns a login token.\n\nAccess: Public. Limited to 20 sign-up or login attempts per 15 minutes per IP address.\n\nBody (JSON):\n- `name` (required): 2 to 50 characters\n- `email` (required): a valid email address\n- `password` (required): at least 8 characters, with a letter and a number\n- `role` (optional): `student` (the default) or `instructor`. Sign-up can never create an admin.\n\nParameters: none.\n\nThis request saves the returned token as `{{token}}`."
           },
           "response": [
             {
@@ -352,7 +352,7 @@
                 }
               }
             },
-            "description": "**Purpose:** Log in. Returns a token that the other requests send automatically.\n\n**Access:** Public. Limited to 20 sign-up or login attempts per 15 minutes per IP address.\n\n**Body (JSON):**\n- `email` (required)\n- `password` (required)\n\nEvery seeded test account uses the password `Demo1234`: admin@example.com (admin), kwame@example.com and ama@example.com (instructors), akosua@example.com, kojo@example.com and esi@example.com (students).\n\n**Parameters:** none.\n\n**Saves:** the returned token as `{{token}}`. Log in as admin@example.com before using the Categories and Admin requests."
+            "description": "Purpose: Log in. Returns a token that the other requests send automatically.\n\nAccess: Public. Limited to 20 sign-up or login attempts per 15 minutes per IP address.\n\nBody (JSON):\n- `email` (required)\n- `password` (required)\n\nEvery seeded test account uses the password `Demo1234`: admin@example.com (admin), kwame@example.com and ama@example.com (instructors), akosua@example.com, kojo@example.com and esi@example.com (students).\n\nParameters: none.\n\nThis request saves the returned token as `{{token}}`. Log in as admin@example.com before using the Categories and Admin requests."
           },
           "response": [
             {
@@ -552,7 +552,7 @@
                 "me"
               ]
             },
-            "description": "**Purpose:** Get the logged-in user.\n\n**Access:** Logged in (sends `{{token}}`).\n\n**Body:** none.\n\n**Parameters:** none."
+            "description": "Purpose: Get the logged-in user.\n\nAccess: Logged in (sends `{{token}}`).\n\nBody: none.\n\nParameters: none."
           },
           "response": [
             {
@@ -638,7 +638,7 @@
             "auth": {
               "type": "noauth"
             },
-            "description": "**Purpose:** List every category, sorted by name. `courseCount` is the number of published courses in the category.\n\n**Access:** Public.\n\n**Body:** none.\n\n**Parameters:** none."
+            "description": "Purpose: List every category, sorted by name. `courseCount` is the number of published courses in the category.\n\nAccess: Public.\n\nBody: none.\n\nParameters: none."
           },
           "response": [
             {
@@ -746,7 +746,7 @@
                 }
               }
             },
-            "description": "**Purpose:** Create a category. The slug is made from the name.\n\n**Access:** Admin.\n\n**Body (JSON):**\n- `name` (required): 2 to 40 characters, including at least one letter or number. It can't match an existing category's name, ignoring capital letters.\n\n**Parameters:** none.\n\n**Saves:** the new category's `_id` as `{{categoryId}}`, which Rename and Delete use."
+            "description": "Purpose: Create a category. The slug is made from the name.\n\nAccess: Admin.\n\nBody (JSON):\n- `name` (required): 2 to 40 characters, including at least one letter or number. It can't match an existing category's name, ignoring capital letters.\n\nParameters: none.\n\nThis request saves the new category's `_id` as `{{categoryId}}`, which Rename and Delete use."
           },
           "response": [
             {
@@ -944,7 +944,7 @@
                 }
               }
             },
-            "description": "**Purpose:** Rename a category. Its slug changes to match.\n\n**Access:** Admin.\n\n**Body (JSON):**\n- `name` (required): same rules as Create a category.\n\n**Parameters:**\n- `:id` in the path: the category's `_id`. Uses `{{categoryId}}` from Create a category."
+            "description": "Purpose: Rename a category. Its slug changes to match.\n\nAccess: Admin.\n\nBody (JSON):\n- `name` (required): same rules as Create a category.\n\nParameters:\n- `:id` in the path: the category's `_id`. Uses `{{categoryId}}` from Create a category."
           },
           "response": [
             {
@@ -1090,7 +1090,7 @@
                 "{{categoryId}}"
               ]
             },
-            "description": "**Purpose:** Delete a category that no course uses (in any status).\n\n**Access:** Admin.\n\n**Body:** none.\n\n**Parameters:**\n- `:id` in the path: the category's `_id`. Uses `{{categoryId}}` from Create a category."
+            "description": "Purpose: Delete a category that no course uses (in any status).\n\nAccess: Admin.\n\nBody: none.\n\nParameters:\n- `:id` in the path: the category's `_id`. Uses `{{categoryId}}` from Create a category."
           },
           "response": [
             {
@@ -1199,7 +1199,7 @@
                 "stats"
               ]
             },
-            "description": "**Purpose:** Platform totals: all users, published courses, enrollments, and money from paid orders.\n\n**Access:** Admin.\n\n**Body:** none.\n\n**Parameters:** none.\n\nPublished courses, enrollments and payments stay at 0 until Member C's courses, enrollments and orders exist."
+            "description": "Purpose: Get the platform totals (all users, published courses, enrollments, and money from paid orders).\n\nAccess: Admin.\n\nBody: none.\n\nParameters: none.\n\nPublished courses, enrollments and payments stay at 0 until Member C's courses, enrollments and orders exist."
           },
           "response": [
             {
@@ -1315,7 +1315,7 @@
                 }
               ]
             },
-            "description": "**Purpose:** List users, newest first, with search, a role filter and pages.\n\n**Access:** Admin.\n\n**Body:** none.\n\n**Parameters (query):**\n- `search`: part of a name or email, ignoring capital letters\n- `role`: `student`, `instructor` or `admin`\n- `page`: default 1\n- `limit`: default 10, max 50\n\nTick a parameter in the Params tab to use it.\n\n**Saves:** the first user's `_id` as `{{userId}}`, which Deactivate or reactivate a user uses."
+            "description": "Purpose: List users, newest first, with search, a role filter and pages.\n\nAccess: Admin.\n\nBody: none.\n\nParameters (query):\n- `search`: part of a name or email, ignoring capital letters\n- `role`: `student`, `instructor` or `admin`\n- `page`: default 1\n- `limit`: default 10, max 50\n\nTick a parameter in the Params tab to use it.\n\nThis request saves the first user's `_id` as `{{userId}}`, which Deactivate or reactivate a user uses."
           },
           "response": [
             {
@@ -1469,7 +1469,7 @@
                 }
               }
             },
-            "description": "**Purpose:** Deactivate or reactivate an account. A deactivated user gets 403 at login and on every request.\n\n**Access:** Admin. Admins can't deactivate their own account.\n\n**Body (JSON):**\n- `isActive` (required): `true` or `false`. It must be a real true or false, not text like `\"yes\"`.\n\n**Parameters:**\n- `:id` in the path: the user's `_id`. Uses `{{userId}}` from List users.\n\nThis request sends `false`. Change it to `true` to reactivate the account."
+            "description": "Purpose: Deactivate or reactivate an account. A deactivated user gets 403 at login and on every request.\n\nAccess: Admin. Admins can't deactivate their own account.\n\nBody (JSON):\n- `isActive` (required): `true` or `false`. It must be a real true or false, not text like `\"yes\"`.\n\nParameters:\n- `:id` in the path: the user's `_id`. Uses `{{userId}}` from List users.\n\nThis request sends `false`. Change it to `true` to reactivate the account."
           },
           "response": [
             {
