@@ -106,6 +106,7 @@ Base URL: `/api` (locally `http://localhost:5000/api`). Private routes need the 
 | password | Password must be at least 8 characters and include a letter and a number. |
 | login password (empty) | Enter your password. |
 | role | Choose to learn or to teach. |
+| role filter (admin users list) | Choose a valid role. |
 | category name | Category name must be between 2 and 40 characters. |
 | category name with no letter or number | Category name must include a letter or a number. |
 | course title | Title must be between 5 and 120 characters. |
@@ -152,5 +153,6 @@ Base URL: `/api` (locally `http://localhost:5000/api`). Private routes need the 
 - An unknown category returns 404 "Category not found".
 - A category used by any course can't be deleted: 400 "This category has courses. Move them to another category first."
 - Admins can't deactivate themselves: 400 "You can't deactivate your own account."
+- An unknown user returns 404 "User not found".
 - Deactivated users get 403 at login and on every request.
 - Sign-up can never create an admin.
