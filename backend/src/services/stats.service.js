@@ -1,12 +1,12 @@
 // Reads numbers from Member C's collections (courses, orders, enrollments).
 //
-// Why read the collections directly? C's Course, Order and Enrollment models aren't merged yet,
-// so we can't require them. Mongoose names a model's collection by making it lowercase and
-// plural (Course -> "courses"), so we read those collections by name instead.
+// C's Course, Order and Enrollment models aren't merged yet, so we can't require them.
+// Instead we read the collections by name. Mongoose names a model's collection by making it
+// lowercase and plural, so the Course model's collection is "courses".
 // - Until C's data exists, the collections are missing and every function returns 0.
 // - Once C's models are merged, this keeps working with no changes.
 //
-// This file must ONLY read. Never insert, update or delete anything from here.
+// This file must only read. Never insert, update or delete anything from here.
 
 const mongoose = require("mongoose");
 

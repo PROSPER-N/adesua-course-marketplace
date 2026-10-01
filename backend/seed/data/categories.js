@@ -11,7 +11,7 @@ const names = [
   "Personal growth",
 ];
 
-// Category.create runs the hook that builds each slug ("Web development" -> "web-development").
+// Category.create runs the hook that builds each slug, so "Web development" gets "web-development".
 async function seedCategories() {
   return Category.create(names.map((name) => ({ name })));
 }

@@ -22,7 +22,7 @@ const users = [
   { name: "Esi Nyarko", email: "esi@example.com", role: "student" },
 ];
 
-// User.create, NOT insertMany: insertMany skips the pre-save hook, so passwords wouldn't be hashed.
+// User.create, not insertMany: insertMany skips the pre-save hook, so passwords wouldn't be hashed.
 async function seedUsers() {
   return User.create(users.map((user) => ({ ...user, password: PASSWORD })));
 }

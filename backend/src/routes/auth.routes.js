@@ -1,5 +1,5 @@
 // Owner: Member A
-// Mounted at /api/auth. Endpoints (see docs/API_CONTRACT.md):
+// Endpoints:
 //   POST /api/auth/register   Public      Create a student or instructor account
 //   POST /api/auth/login      Public      Log in
 //   GET  /api/auth/me         Logged in   Current user

@@ -1,4 +1,4 @@
-// Runs before every test file: connects to YOUR test database and empties it after each test.
+// Runs before every test file: connects to your test database and empties it after each test.
 require("dotenv").config({ quiet: true });
 const mongoose = require("mongoose");
 
@@ -24,9 +24,8 @@ let isSafeToClear = false;
 // Atlas can be slow to reach on some networks (for example when DNS lookups stall),
 // so the connection gets up to 60 seconds before the tests stop with a clear message.
 const CONNECT_TIMEOUT_MS = 60000;
-// Jest's limit for this setup step is longer, because the DNS lookup for "mongodb+srv://"
-// happens before those 60 seconds start. That way you see the clear message below,
-// not Jest's generic "Exceeded timeout".
+// The "mongodb+srv://" DNS lookup runs before those 60 seconds start, so Jest's limit for
+// this step is longer. That way you see the clear message below, not Jest's "Exceeded timeout".
 const SETUP_TIMEOUT_MS = CONNECT_TIMEOUT_MS + 30000;
 
 beforeAll(async () => {

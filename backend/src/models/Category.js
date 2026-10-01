@@ -23,7 +23,7 @@ const categorySchema = new mongoose.Schema(
 );
 
 // Build the slug from the name, so "Web development" gets "web-development".
-// This runs on create() and save(), but NOT on findByIdAndUpdate(),
+// This runs on create() and save(), but not on findByIdAndUpdate(),
 // so to rename a category, load it, change the name, then call save().
 categorySchema.pre("validate", async function () {
   if (this.name && this.isModified("name")) {

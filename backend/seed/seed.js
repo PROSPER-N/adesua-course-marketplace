@@ -1,4 +1,4 @@
-// Wipes YOUR dev database (the one in MONGO_URI) and fills it with demo data.
+// Wipes your dev database (the one in MONGO_URI) and fills it with demo data.
 // Run it with: npm run seed -- --yes
 
 require("dotenv").config({ quiet: true });

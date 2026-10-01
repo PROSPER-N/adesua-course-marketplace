@@ -1,4 +1,4 @@
-// "Web development" -> "web-development"
+// Turns "Web development" into "web-development".
 function slugify(text) {
   return String(text)
     .toLowerCase()
