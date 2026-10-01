@@ -2,7 +2,7 @@
 
 The API runs on Render as a web service built from `backend/`. Its data lives in the `adesua_prod` database on our shared MongoDB Atlas cluster. The frontend goes on Vercel later.
 
-Live API: https://YOUR-SERVICE.onrender.com/api/health
+Live API: https://adesua-api.onrender.com/api/health
 
 The project lead sets this up and keeps the production secrets. Never put a real password, connection string or `JWT_SECRET` in this file, in git or in a group chat.
 
@@ -95,7 +95,7 @@ Why this reaches the production database: `node --env-file=.env.production` load
 
 ## 6. Check it
 
-- Open https://YOUR-SERVICE.onrender.com/api/health.
+- Open https://adesua-api.onrender.com/api/health.
 - In Postman, import `docs/postman/adesua-production.postman_environment.json`, choose **Adesua production** and run **Auth > Log in**. Requests that create, rename or delete a category, or deactivate a user, change the live data. Run step 5 again to reset it.
 
 ## 7. When the frontend is live
@@ -104,7 +104,7 @@ Why this reaches the production database: `node --env-file=.env.production` load
 2. Save and deploy. A changed variable only reaches the service on the next deploy. You can also use **Manual Deploy > Deploy latest commit**.
 3. Check what the API now sends:
    ```
-   curl -i -H "Origin: https://adesua.vercel.app" https://YOUR-SERVICE.onrender.com/api/health
+   curl -i -H "Origin: https://adesua.vercel.app" https://adesua-api.onrender.com/api/health
    ```
    `Access-Control-Allow-Origin` should be exactly the Vercel address.
 
