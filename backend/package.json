@@ -8,6 +8,7 @@
     "dev": "nodemon server.js",
     "start": "node server.js",
     "seed": "node seed/seed.js",
+    "seed:production": "node --env-file=.env.production seed/seed.js",
     "test": "cross-env NODE_ENV=test jest --runInBand"
   },
   "engines": {

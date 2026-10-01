@@ -36,6 +36,9 @@ beforeAll(async () => {
       serverSelectionTimeoutMS: CONNECT_TIMEOUT_MS,
       autoIndex: false,
       autoCreate: false,
+      // The driver loads "os" with import(), which Jest blocks, so it would send an empty
+      // handshake that a plain mongod (like CI's) refuses. Remove once NODE-7832 is fixed.
+      runtimeAdapters: { os: require("os") },
     });
   } catch (error) {
     throw new Error(
