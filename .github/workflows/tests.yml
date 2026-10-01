@@ -15,7 +15,7 @@ jobs:
     timeout-minutes: 10
     services:
       mongo:
-        image: mongo:9
+        image: mongo:8
         ports:
           - 27017:27017
         # Wait until MongoDB accepts connections, so the tests don't start too early.
