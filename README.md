@@ -108,6 +108,7 @@ Run these inside `backend/`:
 | `npm run dev` | Starts the API and restarts it when you save a file (nodemon) |
 | `npm start` | Starts the API without restarting |
 | `npm run seed -- --yes` | Deletes everything in your dev database and adds the demo data |
+| `npm run seed:production -- --yes` | Resets the production database to the demo data. Read [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) first |
 | `npm test` | Runs the Jest tests against your test database |
 
 Frontend scripts are in `frontend/package.json` (`npm run dev` starts the app).
@@ -134,8 +135,11 @@ Adesua/
 ├── frontend/                React app
 ├── docs/
 │   ├── API_CONTRACT.md      every endpoint, response and message
-│   └── CONVENTIONS.md       how we work together
+│   ├── CONVENTIONS.md       how we work together
+│   └── DEPLOYMENT.md        how the backend goes live on Render
 └── .github/
+    ├── workflows/
+    │   └── tests.yml        runs the tests on every pull request
     └── pull_request_template.md
 ```
 
