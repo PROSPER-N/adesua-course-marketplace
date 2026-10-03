@@ -1199,7 +1199,7 @@
                 "stats"
               ]
             },
-            "description": "Purpose: Get the platform totals (all users, published courses, enrollments, and money from paid orders).\n\nAccess: Admin.\n\nBody: none.\n\nParameters: none.\n\nPublished courses, enrollments and payments stay at 0 until Member C's courses, enrollments and orders exist."
+            "description": "Purpose: Get the platform totals (all users, published courses, enrollments, and money from paid orders).\n\nAccess: Admin.\n\nBody: none.\n\nParameters: none.\n\nPublished courses, enrollments and payments stay at 0 until Member B's courses and Member C's enrollments and orders exist."
           },
           "response": [
             {

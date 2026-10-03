@@ -154,8 +154,8 @@ Adesua/
 | Member | Name | GitHub | Responsible for |
 |---|---|---|---|
 | Member A (project lead) | PROSPER NGWOKE | [PROSPER-N](https://github.com/PROSPER-N) | Repo setup, backend foundation, login API, categories, admin, team docs |
-| Member B | FOLAKEMI ELIZABETH OKEOWO | [CoderLizzy](https://github.com/CoderLizzy) | Frontend foundation, courses, lessons, instructor dashboard |
-| Member C | VICTOR C.U BENNETH | [Arch-host](https://github.com/Arch-host) | Course, lesson, order and enrollment models, connecting the frontend to the backend, checkout, learning and progress, instructor stats |
+| Member B | FOLAKEMI ELIZABETH OKEOWO | [CoderLizzy](https://github.com/CoderLizzy) | Frontend foundation, course and lesson models, courses, lessons, instructor dashboard |
+| Member C | VICTOR C.U BENNETH | [Arch-host](https://github.com/Arch-host) | Order and enrollment models, connecting the frontend to the backend, checkout, learning and progress, instructor stats |
 
 ## Known limitations
 

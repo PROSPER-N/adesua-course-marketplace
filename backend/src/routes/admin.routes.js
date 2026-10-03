@@ -27,6 +27,6 @@ router.patch(
   updateUserStatus
 );
 
-// TODO (Member A): GET /courses comes in a later task, once Member C's Course model is merged.
+// TODO (Member A): GET /courses comes in a later task, once Member B's Course model is merged.
 
 module.exports = router;

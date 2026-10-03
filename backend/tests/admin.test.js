@@ -6,9 +6,9 @@ const { createUser, tokenFor, TEST_PASSWORD } = require("./helpers");
 
 const newId = () => new mongoose.Types.ObjectId();
 
-// C's models don't exist yet, so tests put plain documents straight into the test database.
-// Fields that C will probably make unique (the order reference, one enrollment per user and
-// course) get different values, so these still insert once C adds indexes.
+// Member B's Course model doesn't exist yet, so tests put plain documents straight into the
+// test database. Fields that C's models make unique (the order reference, one enrollment per
+// user and course) get different values, so these still insert with C's indexes in place.
 function insert(collectionName, ...docs) {
   return mongoose.connection.collection(collectionName).insertMany(docs);
 }
