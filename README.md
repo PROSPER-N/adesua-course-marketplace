@@ -2,7 +2,7 @@
 
 Adesua is a video course marketplace, built as our TS Academy full-stack capstone project (topic 56). Instructors publish video courses. Students enroll in free courses or buy paid ones through a demo checkout, then watch the lessons and track their progress. Admins manage users and categories.
 
-> Status: the backend foundation and the login, categories and admin APIs are done. The other features are in progress.
+> Status: the backend foundation, the login, categories and admin APIs, CI and the live API are done. The frontend foundation, the Order and Enrollment models, and the Log in and Sign up pages are merged. The other features are in progress.
 
 ## Features by role
 
