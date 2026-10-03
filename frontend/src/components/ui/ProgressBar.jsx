@@ -10,7 +10,10 @@ function ProgressBar({ value = 0, label = 'Progress', className = '' }) {
       className={`h-2 overflow-hidden rounded-full bg-brand-soft ${className}`}
       role="progressbar"
     >
-      <div className="h-full rounded-full bg-brand transition-[width]" style={{ width: `${progress}%` }} />
+      <div
+        className="h-full rounded-full bg-brand transition-[width]"
+        style={{ width: `${progress}%` }}
+      />
     </div>
   )
 }

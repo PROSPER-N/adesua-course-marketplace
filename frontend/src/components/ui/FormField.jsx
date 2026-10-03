@@ -1,7 +1,16 @@
 import { useId } from 'react'
 import CircleAlert from 'lucide-react/dist/esm/icons/circle-alert.mjs'
 
-function FormField({ as: Element = 'input', label, error, hint, id, className = '', children, ...props }) {
+function FormField({
+  as: Element = 'input',
+  label,
+  error,
+  hint,
+  id,
+  className = '',
+  children,
+  ...props
+}) {
   const generatedId = useId()
   const fieldId = id ?? generatedId
   const hintId = hint ? `${fieldId}-hint` : undefined
@@ -11,7 +20,11 @@ function FormField({ as: Element = 'input', label, error, hint, id, className = 
 
   return (
     <div className="grid gap-1.5">
-      {label && <label className="text-sm font-semibold text-ink" htmlFor={fieldId}>{label}</label>}
+      {label && (
+        <label className="text-sm font-semibold text-ink" htmlFor={fieldId}>
+          {label}
+        </label>
+      )}
       <Element
         aria-describedby={describedBy}
         aria-invalid={Boolean(error)}
@@ -21,7 +34,11 @@ function FormField({ as: Element = 'input', label, error, hint, id, className = 
       >
         {children}
       </Element>
-      {hint && <p className="text-sm text-muted" id={hintId}>{hint}</p>}
+      {hint && (
+        <p className="text-sm text-muted" id={hintId}>
+          {hint}
+        </p>
+      )}
       {error && (
         <p className="flex items-center gap-1.5 text-sm text-danger" id={errorId}>
           <CircleAlert aria-hidden="true" className="size-4 shrink-0" />

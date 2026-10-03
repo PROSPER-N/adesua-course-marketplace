@@ -34,7 +34,10 @@ function Footer() {
             <ul className="mt-3 grid gap-2">
               {links.map(({ label, to }) => (
                 <li key={to}>
-                  <Link className="rounded-sm text-sm text-white/75 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold" to={to}>
+                  <Link
+                    className="rounded-sm text-sm text-white/75 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+                    to={to}
+                  >
                     {label}
                   </Link>
                 </li>

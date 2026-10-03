@@ -38,7 +38,10 @@ function CourseCover({ title = '', category, thumbnailUrl, className = '' }) {
         backgroundColor: 'var(--cover-background)',
       }}
     >
-      <div aria-hidden="true" className={`course-cover-pattern course-cover-pattern--${style.pattern}`} />
+      <div
+        aria-hidden="true"
+        className={`course-cover-pattern course-cover-pattern--${style.pattern}`}
+      />
       <span className="course-cover-category relative z-10 max-w-[45%] truncate text-xs font-semibold text-white">
         {category?.name ?? 'Course'}
       </span>
