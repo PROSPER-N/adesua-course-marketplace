@@ -66,7 +66,9 @@ function RegisterPage() {
           <p className="font-display text-4xl font-extrabold leading-tight text-white xl:text-5xl">
             Learn it, or teach it.
           </p>
-          <p className="mt-4 text-lg text-white/80">One account lets you take courses or share what you know.</p>
+          <p className="mt-4 text-lg text-white/80">
+            One account lets you take courses or share what you know.
+          </p>
         </div>
       </aside>
 
@@ -76,7 +78,9 @@ function RegisterPage() {
           <p className="mt-2 text-muted">It takes less than a minute.</p>
 
           <form className="mt-8 grid gap-5" noValidate onSubmit={handleSubmit}>
-            {bannerError && <ErrorMessage message={bannerError} title="Couldn't create your account" />}
+            {bannerError && (
+              <ErrorMessage message={bannerError} title="Couldn't create your account" />
+            )}
 
             <fieldset className="grid gap-1.5">
               <legend className="mb-1.5 text-sm font-semibold text-ink">I want to</legend>

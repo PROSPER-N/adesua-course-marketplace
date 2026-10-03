@@ -3,5 +3,11 @@
   "semi": true,
   "singleQuote": false,
   "trailingComma": "es5",
-  "printWidth": 100
+  "printWidth": 100,
+  "overrides": [
+    {
+      "files": "frontend/**",
+      "options": { "singleQuote": true, "semi": false, "trailingComma": "all" }
+    }
+  ]
 }

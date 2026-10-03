@@ -38,7 +38,9 @@ function LoginPage() {
     try {
       const user = await login(form.email.trim(), form.password)
       const from = location.state?.from
-      navigate(from ? `${from.pathname}${from.search ?? ''}` : homePathForRole(user.role), { replace: true })
+      navigate(from ? `${from.pathname}${from.search ?? ''}` : homePathForRole(user.role), {
+        replace: true,
+      })
     } catch (error) {
       setBannerError(getErrorMessage(error))
       setFieldErrors(getFieldErrors(error))
@@ -61,7 +63,9 @@ function LoginPage() {
           <p className="font-display text-4xl font-extrabold leading-tight text-white xl:text-5xl">
             Pick up where you left off.
           </p>
-          <p className="mt-4 text-lg text-white/80">Your courses and your progress are waiting for you.</p>
+          <p className="mt-4 text-lg text-white/80">
+            Your courses and your progress are waiting for you.
+          </p>
         </div>
       </aside>
 

@@ -1,4 +1,5 @@
-const NO_CONNECTION = 'Unable to connect to the server. Check your internet connection and try again.'
+const NO_CONNECTION =
+  'Unable to connect to the server. Check your internet connection and try again.'
 
 const MESSAGES_BY_STATUS = {
   401: 'Please log in to continue.',
