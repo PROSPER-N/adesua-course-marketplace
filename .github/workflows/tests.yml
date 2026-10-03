@@ -54,7 +54,7 @@ jobs:
         working-directory: frontend
     steps:
       - uses: actions/checkout@v7
-      # frontend/ isn't on main yet. Until it is, these steps are skipped and the job passes.
+      # These steps run when frontend/ exists. Without it, they're skipped and the job passes.
       - uses: actions/setup-node@v7
         if: hashFiles('frontend/package.json') != ''
         with:

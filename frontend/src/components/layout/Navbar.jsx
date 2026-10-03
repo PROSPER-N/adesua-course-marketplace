@@ -63,8 +63,12 @@ function AccountActions({ user, logout, mobile = false, onNavigate }) {
   if (!user) {
     return (
       <div className={`flex gap-2 ${mobile ? 'w-full flex-col' : 'items-center'}`}>
-        <Button fullWidth={mobile} onClick={onNavigate} size="sm" to="/login" variant="ghost">Log in</Button>
-        <Button fullWidth={mobile} onClick={onNavigate} size="sm" to="/register">Sign up</Button>
+        <Button fullWidth={mobile} onClick={onNavigate} size="sm" to="/login" variant="ghost">
+          Log in
+        </Button>
+        <Button fullWidth={mobile} onClick={onNavigate} size="sm" to="/register">
+          Sign up
+        </Button>
       </div>
     )
   }
@@ -74,7 +78,10 @@ function AccountActions({ user, logout, mobile = false, onNavigate }) {
   return (
     <div className={`flex ${mobile ? 'w-full flex-col items-start' : 'items-center'} gap-3`}>
       <div className="flex items-center gap-2">
-        <span aria-hidden="true" className="flex size-9 items-center justify-center rounded-full bg-gold text-sm font-bold text-ink">
+        <span
+          aria-hidden="true"
+          className="flex size-9 items-center justify-center rounded-full bg-gold text-sm font-bold text-ink"
+        >
           {getInitials(user.name) || 'A'}
         </span>
         <span className="text-sm font-semibold text-ink">{firstName}</span>
@@ -103,10 +110,13 @@ function Navbar() {
   const drawerRef = useRef(null)
   const links = getLinks(user)
 
-  const closeMenu = useCallback((restoreFocus = true) => {
-    setMenuState({ open: false, pathname })
-    if (restoreFocus) menuButtonRef.current?.focus()
-  }, [pathname])
+  const closeMenu = useCallback(
+    (restoreFocus = true) => {
+      setMenuState({ open: false, pathname })
+      if (restoreFocus) menuButtonRef.current?.focus()
+    },
+    [pathname],
+  )
 
   useEffect(() => {
     if (menuState.pathname !== pathname) {
@@ -160,9 +170,15 @@ function Navbar() {
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-white">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-        <Link aria-label="Adesua home" className="flex shrink-0 items-center gap-2 rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand" to="/">
+        <Link
+          aria-label="Adesua home"
+          className="flex shrink-0 items-center gap-2 rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand"
+          to="/"
+        >
           <span aria-hidden="true" className="brand-mark size-9 rounded-lg" />
-          <span className="font-display text-2xl font-extrabold tracking-tight text-brand-dark">adesua</span>
+          <span className="font-display text-2xl font-extrabold tracking-tight text-brand-dark">
+            adesua
+          </span>
         </Link>
 
         <nav aria-label="Main navigation" className="hidden items-center gap-5 md:flex">
@@ -182,7 +198,11 @@ function Navbar() {
           ref={menuButtonRef}
           type="button"
         >
-          {menuOpen ? <X aria-hidden="true" className="size-5" /> : <Menu aria-hidden="true" className="size-5" />}
+          {menuOpen ? (
+            <X aria-hidden="true" className="size-5" />
+          ) : (
+            <Menu aria-hidden="true" className="size-5" />
+          )}
         </button>
       </div>
 
@@ -216,7 +236,12 @@ function Navbar() {
             </div>
 
             <nav aria-label="Mobile navigation" className="grid gap-1 py-4">
-              <NavigationLinks links={links} mobile onNavigate={handleNavigate} pathname={pathname} />
+              <NavigationLinks
+                links={links}
+                mobile
+                onNavigate={handleNavigate}
+                pathname={pathname}
+              />
             </nav>
 
             <div className="mt-auto border-t border-line pt-5">

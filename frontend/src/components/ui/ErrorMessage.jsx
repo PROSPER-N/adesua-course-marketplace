@@ -9,7 +9,11 @@ function ErrorMessage({ title = 'Something went wrong', message, onRetry }) {
         <div>
           <h2 className="font-semibold text-ink">{title}</h2>
           {message && <p className="mt-1 text-sm text-muted">{message}</p>}
-          {onRetry && <Button className="mt-4" onClick={onRetry} size="sm" variant="outline">Try again</Button>}
+          {onRetry && (
+            <Button className="mt-4" onClick={onRetry} size="sm" variant="outline">
+              Try again
+            </Button>
+          )}
         </div>
       </div>
     </section>

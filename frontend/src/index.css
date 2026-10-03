@@ -1,19 +1,19 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-brand: #1E6B4A;
-  --color-brand-hover: #185A3E;
-  --color-brand-dark: #123F2C;
-  --color-brand-soft: #E4F1E9;
-  --color-gold: #F4B63F;
-  --color-gold-soft: #FDF3DC;
-  --color-ink: #16211C;
-  --color-muted: #5B6760;
-  --color-line: #DCE3DD;
-  --color-surface: #F4F7F3;
-  --color-danger: #B42318;
-  --color-danger-soft: #FCEDEB;
-  --color-footer: #10231A;
+  --color-brand: #1e6b4a;
+  --color-brand-hover: #185a3e;
+  --color-brand-dark: #123f2c;
+  --color-brand-soft: #e4f1e9;
+  --color-gold: #f4b63f;
+  --color-gold-soft: #fdf3dc;
+  --color-ink: #16211c;
+  --color-muted: #5b6760;
+  --color-line: #dce3dd;
+  --color-surface: #f4f7f3;
+  --color-danger: #b42318;
+  --color-danger-soft: #fcedeb;
+  --color-footer: #10231a;
   --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
   --font-sans: 'Instrument Sans', system-ui, sans-serif;
 }
@@ -37,7 +37,11 @@ body {
 }
 
 .course-cover-pattern--stripes {
-  background-image: repeating-linear-gradient(135deg, var(--cover-pattern-color) 0 3px, transparent 3px 12px);
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--cover-pattern-color) 0 3px,
+    transparent 3px 12px
+  );
 }
 
 .course-cover-pattern--dots {
@@ -53,20 +57,48 @@ body {
 }
 
 .course-cover-pattern--rings {
-  background-image: repeating-radial-gradient(circle at top right, var(--cover-pattern-color) 0 1px, transparent 2px 12px);
+  background-image: repeating-radial-gradient(
+    circle at top right,
+    var(--cover-pattern-color) 0 1px,
+    transparent 2px 12px
+  );
 }
 
 .course-cover-pattern--zigzag {
   background-image:
-    repeating-linear-gradient(135deg, transparent 0 7px, var(--cover-pattern-color) 7px 9px, transparent 9px 14px),
-    repeating-linear-gradient(45deg, transparent 0 7px, var(--cover-pattern-color) 7px 9px, transparent 9px 14px);
+    repeating-linear-gradient(
+      135deg,
+      transparent 0 7px,
+      var(--cover-pattern-color) 7px 9px,
+      transparent 9px 14px
+    ),
+    repeating-linear-gradient(
+      45deg,
+      transparent 0 7px,
+      var(--cover-pattern-color) 7px 9px,
+      transparent 9px 14px
+    );
 }
 
 .course-cover-pattern--checks {
   background-image:
-    linear-gradient(45deg, var(--cover-pattern-color) 25%, transparent 25%, transparent 75%, var(--cover-pattern-color) 75%),
-    linear-gradient(45deg, var(--cover-pattern-color) 25%, transparent 25%, transparent 75%, var(--cover-pattern-color) 75%);
-  background-position: 0 0, 12px 12px;
+    linear-gradient(
+      45deg,
+      var(--cover-pattern-color) 25%,
+      transparent 25%,
+      transparent 75%,
+      var(--cover-pattern-color) 75%
+    ),
+    linear-gradient(
+      45deg,
+      var(--cover-pattern-color) 25%,
+      transparent 25%,
+      transparent 75%,
+      var(--cover-pattern-color) 75%
+    );
+  background-position:
+    0 0,
+    12px 12px;
   background-size: 24px 24px;
 }
 
@@ -77,7 +109,12 @@ body {
 }
 
 .skeleton-shimmer {
-  background: linear-gradient(100deg, var(--color-surface) 20%, var(--color-line) 38%, var(--color-surface) 56%);
+  background: linear-gradient(
+    100deg,
+    var(--color-surface) 20%,
+    var(--color-line) 38%,
+    var(--color-surface) 56%
+  );
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.6s ease-in-out infinite;
 }
@@ -85,7 +122,12 @@ body {
 .brand-mark {
   display: inline-block;
   background-color: var(--color-brand);
-  background-image: repeating-linear-gradient(135deg, transparent 0 5px, var(--color-gold) 5px 6px, transparent 6px 10px);
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0 5px,
+    var(--color-gold) 5px 6px,
+    transparent 6px 10px
+  );
 }
 
 .drawer-enter {
@@ -93,21 +135,33 @@ body {
 }
 
 @keyframes drawer-enter {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 
 @keyframes skeleton-shimmer {
-  to { background-position-x: -200%; }
+  to {
+    background-position-x: -200%;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .skeleton-shimmer { animation: none; }
-  .drawer-enter { animation: none; }
+  .skeleton-shimmer {
+    animation: none;
+  }
+  .drawer-enter {
+    animation: none;
+  }
 }
 
 @container (max-width: 159px) {
-  .course-cover-category { display: none; }
+  .course-cover-category {
+    display: none;
+  }
 }
 
 *,

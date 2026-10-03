@@ -9,7 +9,13 @@ function Pagination({ page, totalPages, onPageChange }) {
 
   return (
     <nav aria-label="Pagination" className="flex items-center justify-between gap-3">
-      <Button aria-label="Previous page" disabled={page <= 1} onClick={() => goToPage(page - 1)} size="sm" variant="outline">
+      <Button
+        aria-label="Previous page"
+        disabled={page <= 1}
+        onClick={() => goToPage(page - 1)}
+        size="sm"
+        variant="outline"
+      >
         <ChevronLeft aria-hidden="true" className="size-4" />
         <span>Previous</span>
       </Button>
@@ -28,8 +34,16 @@ function Pagination({ page, totalPages, onPageChange }) {
           </Button>
         ))}
       </div>
-      <span aria-live="polite" className="text-sm text-muted sm:hidden">Page {page} of {totalPages}</span>
-      <Button aria-label="Next page" disabled={page >= totalPages} onClick={() => goToPage(page + 1)} size="sm" variant="outline">
+      <span aria-live="polite" className="text-sm text-muted sm:hidden">
+        Page {page} of {totalPages}
+      </span>
+      <Button
+        aria-label="Next page"
+        disabled={page >= totalPages}
+        onClick={() => goToPage(page + 1)}
+        size="sm"
+        variant="outline"
+      >
         <span>Next</span>
         <ChevronRight aria-hidden="true" className="size-4" />
       </Button>

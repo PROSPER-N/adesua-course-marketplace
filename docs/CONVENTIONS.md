@@ -9,8 +9,8 @@ These are the rules the three of us follow. Read this together with [API_CONTRAC
 | Member | Endpoints | Route files | Other files |
 |---|---|---|---|
 | A (lead) | health, auth, categories, admin | `health`, `auth`, `categories`, `admin` | `User` and `Category` models, `seed/data/users.js`, `seed/data/categories.js` |
-| B | courses, lessons, instructor courses | `courses`, `lessons`, `instructorCourses` | `seed/data/courses.js` |
-| C | lesson player, enrollments, orders, instructor stats | `learning`, `enrollments`, `orders`, `instructorStats` | `Course`, `Lesson`, `Order` and `Enrollment` models, `seed/data/enrollments.js` |
+| B | courses, lessons, instructor courses | `courses`, `lessons`, `instructorCourses` | `Course` and `Lesson` models, `seed/data/courses.js` |
+| C | lesson player, enrollments, orders, instructor stats | `learning`, `enrollments`, `orders`, `instructorStats` | `Order` and `Enrollment` models, `seed/data/enrollments.js` |
 
 Route files live in `backend/src/routes/` and are named `<name>.routes.js`. The top of each one lists its owner and endpoints.
 
