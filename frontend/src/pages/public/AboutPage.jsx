@@ -1,4 +1,5 @@
 import BookOpen from 'lucide-react/dist/esm/icons/book-open.mjs'
+import ChevronDown from 'lucide-react/dist/esm/icons/chevron-down.mjs'
 import Lightbulb from 'lucide-react/dist/esm/icons/lightbulb.mjs'
 import ListChecks from 'lucide-react/dist/esm/icons/list-checks.mjs'
 import Users from 'lucide-react/dist/esm/icons/users.mjs'
@@ -30,25 +31,65 @@ const QUESTIONS = [
   },
 ]
 
-// Names and roles follow the team table in the README.
 const TEAM = [
   {
     name: 'Prosper Ngwoke',
     initials: 'PN',
-    role: 'Member A, project lead',
-    work: 'Repo setup, backend foundation, login API, categories, admin, team docs.',
+    title: 'Full-stack developer, project lead',
+    summary:
+      'Designed the backend and API, built sign-in, categories and the admin tools, and set up automated testing and deployment.',
   },
   {
     name: 'Folakemi Elizabeth Okeowo',
     initials: 'FO',
-    role: 'Member B',
-    work: 'Frontend foundation, course and lesson models, courses, lessons, instructor dashboard.',
+    title: 'Full-stack developer',
+    summary:
+      "Built the design system and the app's foundation, and leads the course catalogue: courses, lessons, search and the instructor dashboard.",
   },
   {
     name: 'Victor C.U Benneth',
     initials: 'VB',
-    role: 'Member C',
-    work: 'Order and enrollment models, connecting the frontend to the backend, checkout, learning and progress, instructor stats.',
+    title: 'Full-stack developer',
+    summary:
+      'Built sign-in and sign-up, and the learning experience: checkout, enrollment, lesson progress and instructor earnings.',
+  },
+]
+
+const FAQS = [
+  {
+    question: 'Do I need an account to browse courses?',
+    answer:
+      'No. You can browse every course and watch free preview lessons without an account. You only need to sign up to enroll.',
+  },
+  {
+    question: 'Are there free courses?',
+    answer:
+      'Yes. Some courses are free and open straight away. Paid courses show their price in cedis.',
+  },
+  {
+    question: 'How does payment work?',
+    answer:
+      'Paid courses go through a short checkout where you choose mobile money or card. Checkout currently runs in demo mode, so no real money is charged.',
+  },
+  {
+    question: 'Can I learn on my phone?',
+    answer:
+      'Yes. Adesua works on phones, tablets and laptops, and your progress is saved on every lesson, so you can switch devices and carry on.',
+  },
+  {
+    question: 'How long can I access a course?',
+    answer:
+      "For as long as you like. Once you're enrolled, the course stays in My learning, and you can go at your own pace.",
+  },
+  {
+    question: 'How do I become an instructor?',
+    answer:
+      "Sign up and choose “Teach”. Create your course, add your lessons, and publish it when you're ready.",
+  },
+  {
+    question: 'How do instructors see how their courses are doing?',
+    answer:
+      'Your instructor dashboard shows how many students each course has and what it has earned.',
   },
 ]
 
@@ -77,7 +118,7 @@ function AboutPage() {
           The team
         </h2>
         <ul className="mt-5 grid gap-4 md:grid-cols-3">
-          {TEAM.map(({ name, initials, role, work }) => (
+          {TEAM.map(({ name, initials, title, summary }) => (
             <li className="rounded-xl border border-line bg-surface p-5" key={name}>
               <span
                 aria-hidden="true"
@@ -86,14 +127,32 @@ function AboutPage() {
                 {initials}
               </span>
               <p className="mt-3 font-semibold text-ink">{name}</p>
-              <p className="text-sm font-semibold text-brand">{role}</p>
-              <p className="mt-2 text-sm text-muted">{work}</p>
+              <p className="text-sm font-semibold text-brand">{title}</p>
+              <p className="mt-2 text-sm text-muted">{summary}</p>
             </li>
           ))}
         </ul>
-        <p className="mt-6 rounded-xl bg-gold-soft px-5 py-4 text-ink">
-          Built for the TS Academy full-stack capstone, topic 56.
-        </p>
+      </section>
+
+      <section aria-labelledby="faq-heading" className="mt-14 max-w-3xl">
+        <h2 className="font-display text-2xl font-extrabold text-ink" id="faq-heading">
+          Frequently asked questions
+        </h2>
+        <div className="mt-5 divide-y divide-line overflow-hidden rounded-xl border border-line bg-white">
+          {FAQS.map(({ question, answer }) => (
+            <details className="group" key={question}>
+              {/* Hide the browser's own triangle, since the chevron replaces it. */}
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 font-semibold text-ink hover:bg-surface focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand [&::-webkit-details-marker]:hidden">
+                {question}
+                <ChevronDown
+                  aria-hidden="true"
+                  className="size-5 shrink-0 text-muted transition-transform group-open:rotate-180 motion-reduce:transition-none"
+                />
+              </summary>
+              <p className="px-5 pb-5 text-muted">{answer}</p>
+            </details>
+          ))}
+        </div>
       </section>
     </div>
   )

@@ -47,7 +47,7 @@ function Footer() {
         ))}
       </div>
       <div className="border-t border-white/15 px-4 py-4 text-center text-sm text-white/75">
-        © 2026 Adesua. A TS Academy capstone project.
+        © 2026 Adesua. All rights reserved.
       </div>
     </footer>
   )
