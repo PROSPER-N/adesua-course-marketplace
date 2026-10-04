@@ -1,8 +1,10 @@
-# Deploying the backend
+# Deploying Adesua
 
-The API runs on Render as a web service built from `backend/`. Its data lives in the `adesua_prod` database on our shared MongoDB Atlas cluster. The frontend goes on Vercel later.
+The API runs on Render as a web service built from `backend/`. Its data lives in the `adesua_prod` database on our shared MongoDB Atlas cluster. The frontend runs on Vercel, built from `frontend/` (step 7).
 
 Live API: https://adesua-api.onrender.com/api/health
+
+Live site: https://adesua-course-marketplace.vercel.app
 
 The project lead sets this up and keeps the production secrets. Never put a real password, connection string or `JWT_SECRET` in this file, in git or in a group chat.
 
@@ -59,7 +61,7 @@ Add these under **Environment**. Don't add `PORT`: Render sets it, and `server.j
 | `MONGO_URI` | The production connection string from step 1 |
 | `JWT_SECRET` | A new random secret, made with the command below. Never reuse a dev secret: anyone who has it could make login tokens that production accepts. |
 | `JWT_EXPIRES_IN` | How long a login lasts: `7d` |
-| `CLIENT_URL` | The frontend's address, exactly as the browser shows it. For now `http://localhost:5173`, so we can run the frontend on our computers against the live API. Always set it: without it, any website can call the API from the browser. |
+| `CLIENT_URL` | The frontend's address, exactly as the browser shows it: `https://adesua-course-marketplace.vercel.app` (step 7). Always set it: without it, any website can call the API from the browser. |
 | `NODE_ENV` | `production`. Express then trusts Render's proxy, so the login rate limit counts each user's real IP. `npm ci` also skips the dev-only packages. |
 | `NODE_VERSION` | `24`, the Node version Render installs |
 
@@ -98,21 +100,36 @@ Why this reaches the production database: `node --env-file=.env.production` load
 - Open https://adesua-api.onrender.com/api/health.
 - In Postman, import `docs/postman/adesua-production.postman_environment.json`, choose **Adesua production** and run **Auth > Log in**. Requests that create, rename or delete a category, or deactivate a user, change the live data. Run step 5 again to reset it.
 
-## 7. When the frontend is live
+## 7. Frontend on Vercel
 
-1. In Render, open the service's **Environment** page and set `CLIENT_URL` to the Vercel address, for example `https://adesua.vercel.app`, with no slash at the end.
-2. Save and deploy. A changed variable only reaches the service on the next deploy. You can also use **Manual Deploy > Deploy latest commit**.
-3. Check what the API now sends:
+Vercel builds the frontend and serves it as static files. `frontend/vercel.json` sends every path to `index.html`, so refreshing a page like `/courses/123` or `/admin` opens the app instead of a 404.
+
+1. In Vercel, choose **Add New > Project** and import the GitHub repo.
+2. Use these settings:
+
+   | Setting | Value |
+   |---|---|
+   | Root directory | `frontend` |
+   | Framework preset | Vite |
+   | Build command | `npm run build` |
+   | Output directory | `dist` |
+
+3. Under **Environment Variables**, add `VITE_API_URL` with the value `https://adesua-api.onrender.com/api`, for **Production**. Vite writes this value into the built files, so after changing it, redeploy.
+4. Click **Deploy**. When it finishes, Vercel shows the site's address. Ours is `https://adesua-course-marketplace.vercel.app`.
+5. In Render, open the API's **Environment** page and set `CLIENT_URL` to that address, exactly as the browser shows it, with no slash at the end.
+6. Save and deploy the API. A changed variable only reaches the service on the next deploy. You can also use **Manual Deploy > Deploy latest commit**.
+7. Check what the API now sends:
    ```
-   curl -i -H "Origin: https://adesua.vercel.app" https://adesua-api.onrender.com/api/health
+   curl -i -H "Origin: https://adesua-course-marketplace.vercel.app" https://adesua-api.onrender.com/api/health
    ```
    `Access-Control-Allow-Origin` should be exactly the Vercel address.
+
+Vercel also makes a preview link, with a random name, for every branch and pull request. Those links get CORS errors, because the API allows only one address (`CLIENT_URL`), and `VITE_API_URL` is set for Production only. Use the main address.
 
 ## Known behaviour
 
 - **The free instance sleeps.** After 15 minutes with no requests, Render stops it. The next request wakes it up, which can take up to a minute. After that it's fast again.
 - Free instances get 750 hours a month per Render workspace. That's enough for one service running all month.
-- The API allows one frontend address (`CLIENT_URL`). Vercel's preview links, the ones with random names, get CORS errors. Use the main address.
 - The demo accounts, including the admin, use the password from the README. Anyone who reads it can log in and change the live data, so re-seed (step 5) before a demo.
 
 ## Troubleshooting

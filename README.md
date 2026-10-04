@@ -136,7 +136,7 @@ Adesua/
 ├── docs/
 │   ├── API_CONTRACT.md      every endpoint, response and message
 │   ├── CONVENTIONS.md       how we work together
-│   └── DEPLOYMENT.md        how the backend goes live on Render
+│   └── DEPLOYMENT.md        how the API goes live on Render and the site on Vercel
 └── .github/
     ├── workflows/
     │   └── tests.yml        runs the tests on every pull request
@@ -148,6 +148,7 @@ Adesua/
 - API contract: [docs/API_CONTRACT.md](docs/API_CONTRACT.md)
 - Postman: in Postman choose **Import** and pick the files in [docs/postman/](docs/postman/), select the **Adesua local** environment, then run **Auth > Log in** first.
 - Live API: https://adesua-api.onrender.com/api/health
+- Live site: https://adesua-course-marketplace.vercel.app
 
 ## Team
 
