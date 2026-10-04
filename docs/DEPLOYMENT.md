@@ -4,7 +4,7 @@ The API runs on Render as a web service built from `backend/`. Its data lives in
 
 Live API: https://adesua-api.onrender.com/api/health
 
-Live site: added after the first Vercel deploy
+Live site: https://adesua-course-marketplace.vercel.app
 
 The project lead sets this up and keeps the production secrets. Never put a real password, connection string or `JWT_SECRET` in this file, in git or in a group chat.
 
@@ -61,7 +61,7 @@ Add these under **Environment**. Don't add `PORT`: Render sets it, and `server.j
 | `MONGO_URI` | The production connection string from step 1 |
 | `JWT_SECRET` | A new random secret, made with the command below. Never reuse a dev secret: anyone who has it could make login tokens that production accepts. |
 | `JWT_EXPIRES_IN` | How long a login lasts: `7d` |
-| `CLIENT_URL` | The frontend's address, exactly as the browser shows it. For now `http://localhost:5173`, so we can run the frontend on our computers against the live API. Always set it: without it, any website can call the API from the browser. |
+| `CLIENT_URL` | The frontend's address, exactly as the browser shows it: `https://adesua-course-marketplace.vercel.app` (step 7). Always set it: without it, any website can call the API from the browser. |
 | `NODE_ENV` | `production`. Express then trusts Render's proxy, so the login rate limit counts each user's real IP. `npm ci` also skips the dev-only packages. |
 | `NODE_VERSION` | `24`, the Node version Render installs |
 
@@ -115,12 +115,12 @@ Vercel builds the frontend and serves it as static files. `frontend/vercel.json`
    | Output directory | `dist` |
 
 3. Under **Environment Variables**, add `VITE_API_URL` with the value `https://adesua-api.onrender.com/api`, for **Production**. Vite writes this value into the built files, so after changing it, redeploy.
-4. Click **Deploy**. When it finishes, Vercel shows the site's address, for example `https://adesua.vercel.app`.
+4. Click **Deploy**. When it finishes, Vercel shows the site's address. Ours is `https://adesua-course-marketplace.vercel.app`.
 5. In Render, open the API's **Environment** page and set `CLIENT_URL` to that address, exactly as the browser shows it, with no slash at the end.
 6. Save and deploy the API. A changed variable only reaches the service on the next deploy. You can also use **Manual Deploy > Deploy latest commit**.
 7. Check what the API now sends:
    ```
-   curl -i -H "Origin: https://adesua.vercel.app" https://adesua-api.onrender.com/api/health
+   curl -i -H "Origin: https://adesua-course-marketplace.vercel.app" https://adesua-api.onrender.com/api/health
    ```
    `Access-Control-Allow-Origin` should be exactly the Vercel address.
 

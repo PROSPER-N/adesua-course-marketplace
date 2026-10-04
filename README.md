@@ -148,7 +148,7 @@ Adesua/
 - API contract: [docs/API_CONTRACT.md](docs/API_CONTRACT.md)
 - Postman: in Postman choose **Import** and pick the files in [docs/postman/](docs/postman/), select the **Adesua local** environment, then run **Auth > Log in** first.
 - Live API: https://adesua-api.onrender.com/api/health
-- Live site: added after the first Vercel deploy
+- Live site: https://adesua-course-marketplace.vercel.app
 
 ## Team
 
