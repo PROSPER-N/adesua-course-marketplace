@@ -35,9 +35,11 @@ function CategoryChips({ categories, loading, error, onRetry }) {
               to={`/courses?category=${category.slug}`}
             >
               {category.name}
-              <span className="text-sm font-normal text-muted">
-                {category.courseCount} {category.courseCount === 1 ? 'course' : 'courses'}
-              </span>
+              {category.courseCount > 0 && (
+                <span className="text-sm font-normal text-muted">
+                  {category.courseCount} {category.courseCount === 1 ? 'course' : 'courses'}
+                </span>
+              )}
             </Link>
           </li>
         ))}
