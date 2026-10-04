@@ -9,7 +9,7 @@ const users = [
     name: "Kwame Asante",
     email: "kwame@example.com",
     role: "instructor",
-    bio: "Full-stack developer who has spent ten years building websites for Ghanaian businesses.",
+    bio: "Full-stack developer who has spent ten years building websites for small businesses.",
   },
   {
     name: "Ama Owusu",

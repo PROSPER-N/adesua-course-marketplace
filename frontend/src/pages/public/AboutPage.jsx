@@ -9,7 +9,7 @@ const QUESTIONS = [
     icon: BookOpen,
     question: 'What is Adesua?',
     answer:
-      'Adesua is a course marketplace. Instructors in Ghana publish practical video courses. Learners enroll in free courses or buy paid ones, then track their progress.',
+      'A course marketplace where instructors anywhere publish practical video courses, and learners everywhere buy or enroll in them and track their progress.',
   },
   {
     icon: Users,
@@ -21,7 +21,7 @@ const QUESTIONS = [
     icon: Lightbulb,
     question: 'What problem does it solve?',
     answer:
-      'Good local teachers have no simple place to sell their courses. Learners struggle to find courses priced and taught for their context. Adesua puts both in one place.',
+      'Good teachers have no simple place to sell their courses, and learners struggle to find practical courses taught by people who understand their language and context. On Adesua, anyone can teach, and learners can find instructors from their own country or from anywhere in the world.',
   },
   {
     icon: ListChecks,
@@ -64,7 +64,7 @@ const FAQS = [
   {
     question: 'Are there free courses?',
     answer:
-      'Yes. Some courses are free and open straight away. Paid courses show their price in cedis.',
+      'Yes. Some courses are free and open straight away. Paid courses show their price before you buy.',
   },
   {
     question: 'How does payment work?',

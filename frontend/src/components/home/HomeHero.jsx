@@ -45,8 +45,8 @@ function HomeHero({ categories, loading }) {
             Learn practical skills from people who use them every day.
           </h1>
           <p className="mt-4 max-w-xl text-lg text-muted">
-            Short video courses from Ghanaian instructors in tech, business and creative work. Learn
-            on your phone, at your own pace.
+            Short video courses from instructors around the world, in tech, business and creative
+            work. Learn on your phone, at your own pace.
           </p>
 
           <form
