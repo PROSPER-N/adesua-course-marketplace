@@ -90,7 +90,7 @@ Base URL: `/api` (locally `http://localhost:5000/api`). Private routes need the 
 - `GET /api/courses/:id/lessons`: `{ course: { _id, title, lessonCount }, lessons: [ full lessons ], enrollment: { completedLessons, progress } }`. `enrollment` is `null` for the owner or an admin.
 - `PATCH /api/enrollments/:courseId/lessons/:lessonId/complete`: `{ completedLessons, progress, completedAt }`
 - `POST /api/enrollments`: the new enrollment (201)
-- `GET /api/enrollments/my`: `[ { _id, progress, completedAt, createdAt, course: { _id, title, thumbnailUrl, lessonCount, category, instructor: { name } } } ]`
+- `GET /api/enrollments/my`: newest first, `[ { _id, completedLessons, progress, completedAt, createdAt, course: { _id, title, thumbnailUrl, lessonCount, category: { _id, name, slug }, instructor: { name } } } ]`
 - `POST /api/orders`: the order with status `"pending"` (201)
 - `POST /api/orders/:id/pay`: `{ order, enrollment }`
 - `GET /api/orders/my`: orders, newest first, each with `course { _id, title }`
@@ -150,10 +150,10 @@ The `message` of each successful response. The frontend shows some of them word 
 | videoUrl | Use a YouTube link. |
 | lesson with no video and no notes | Add a YouTube link, lesson notes, or both. |
 | durationMinutes | Enter the length in minutes (1 to 300). |
-| paymentMethod | Choose a payment method. |
+| paymentMethod (`momo` or `card`) | Choose a payment method. |
 | status | Status must be draft or published. |
 | isActive | isActive must be true or false. |
-| any `:id` | Invalid ID |
+| any `:id`, and `courseId` in a request body | Invalid ID |
 | page and limit | Page and limit must be positive numbers. |
 | request body that isn't valid JSON (400) | The request body isn't valid JSON. |
 
@@ -165,14 +165,16 @@ The `message` of each successful response. The frontend shows some of them word 
 - Free courses use `POST /api/enrollments`; paid courses use orders. Using the wrong one returns 400 "This course is paid. Go to checkout." or "This course is free. Enroll directly."
 - The order amount always comes from the course price, never from the request.
 - Paying an order:
-  - The order must belong to the user and still be pending. Otherwise 400 "This order has already been paid."
+  - An unknown order, or another user's, returns 404 "Order not found".
+  - The order must still be pending. Otherwise 400 "This order has already been paid."
   - Set it to paid with `paidAt`, create the enrollment linked to the order, and add 1 to the course's `studentCount`.
 - Free enrollment also adds 1 to `studentCount`.
 - Full lesson content goes only to enrolled students, the course owner and admins. Anyone else gets 403 "Enroll in this course to watch its lessons."
 - Marking a lesson complete:
-  - The lesson must belong to the course.
+  - A student who isn't enrolled in the course gets 403 "Enroll in this course to watch its lessons."
+  - The lesson must belong to the course. Otherwise 404 "Lesson not found".
   - Add it with `$addToSet`.
-  - Set `progress = round(completed / lessonCount × 100)`.
+  - Set `progress = round(completed / lessonCount × 100)`, capped at 100.
   - Set `completedAt` when progress reaches 100.
 - Publishing needs at least one lesson: 400 "Add at least one lesson before publishing."
 - A course with students can't be deleted: 400 "This course has students. Unpublish it instead." Deleting a course also deletes its lessons.
