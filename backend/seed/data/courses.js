@@ -227,7 +227,7 @@ async function seedCourses({ users, categories }) {
       ],
       instructor: instructors.ama._id,
       category: categoryMap.get("Photography")._id,
-      price: 225,
+      price: 190,
       level: "advanced",
     },
     {
@@ -249,6 +249,7 @@ async function seedCourses({ users, categories }) {
       status: "draft",
     },
   ];
+
   const courses = [];
 
   for (const courseInfo of courseData) {
@@ -260,6 +261,7 @@ async function seedCourses({ users, categories }) {
       totalMinutes: 0,
       studentCount: 0,
     });
+
     const lessonCount = 5 + (courses.length % 4);
     const lessons = [];
 
