@@ -98,6 +98,33 @@ Base URL: `/api` (locally `http://localhost:5000/api`). Private routes need the 
 - `GET /api/admin/stats`: `{ users, publishedCourses, enrollments, totalPayments }`
 - `GET /api/admin/courses` (any status, newest first), each item: `{ _id, title, status, price, level, lessonCount, studentCount, createdAt, thumbnailUrl, category: { _id, name, slug }, instructor: { _id, name } }`
 
+## Success messages
+
+The `message` of each successful response. The frontend shows some of them word for word, for example in toasts. Add a row here when you add an endpoint.
+
+| Method | Path | Message |
+|---|---|---|
+| GET | `/api/health` | API is running |
+| POST | `/api/auth/register` | Account created successfully |
+| POST | `/api/auth/login` | Logged in successfully |
+| GET | `/api/auth/me` | Current user |
+| GET | `/api/categories` | Categories fetched successfully |
+| POST | `/api/categories` | Category created successfully |
+| PATCH | `/api/categories/:id` | Category updated successfully |
+| DELETE | `/api/categories/:id` | Category deleted successfully |
+| GET | `/api/admin/stats` | Stats fetched successfully |
+| GET | `/api/admin/users` | Users fetched successfully |
+| PATCH | `/api/admin/users/:id/status` | User deactivated, or User reactivated |
+| GET | `/api/admin/courses` | Courses fetched successfully |
+| GET | `/api/courses/:id/lessons` | Lessons fetched successfully |
+| POST | `/api/enrollments` | Enrolled successfully |
+| GET | `/api/enrollments/my` | Enrollments fetched successfully |
+| PATCH | `/api/enrollments/:courseId/lessons/:lessonId/complete` | Lesson marked as complete |
+| POST | `/api/orders` | Order created successfully |
+| POST | `/api/orders/:id/pay` | Payment successful |
+| GET | `/api/orders/my` | Orders fetched successfully |
+| GET | `/api/instructor/stats` | Stats fetched successfully |
+
 ## Validation messages
 
 | Field or case | Message |
