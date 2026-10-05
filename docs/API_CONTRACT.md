@@ -96,6 +96,7 @@ Base URL: `/api` (locally `http://localhost:5000/api`). Private routes need the 
 - `GET /api/orders/my`: orders, newest first, each with `course { _id, title }`
 - `GET /api/instructor/stats`: `{ totalStudents, totalEarnings, publishedCount, draftCount, courses: [ { courseId, title, studentCount, earnings } ] }`
 - `GET /api/admin/stats`: `{ users, publishedCourses, enrollments, totalPayments }`
+- `GET /api/admin/courses` (any status, newest first), each item: `{ _id, title, status, price, level, lessonCount, studentCount, createdAt, thumbnailUrl, category: { _id, name, slug }, instructor: { _id, name } }`
 
 ## Validation messages
 
@@ -112,6 +113,7 @@ Base URL: `/api` (locally `http://localhost:5000/api`). Private routes need the 
 | course title | Title must be between 5 and 120 characters. |
 | shortDescription | Keep the short description under 160 characters. |
 | description | Description must be at least 20 characters. |
+| whatYouWillLearn | List up to 6 things students will learn. |
 | price below 0 | Price can't be negative. Enter 0 for a free course. |
 | price above 5000 | Price can't be more than 5,000. |
 | level | Choose a level. |
