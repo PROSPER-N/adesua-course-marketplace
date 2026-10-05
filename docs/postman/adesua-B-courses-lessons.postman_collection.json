@@ -1,0 +1,184 @@
+{
+  "info": {
+    "name": "Adesua - Member B Courses and Lessons",
+    "description": "Requests for the existing Adesua course, instructor-course, and lesson APIs. Set baseUrl to the API root (for example http://localhost:5000/api). Set authToken to a token returned by POST /auth/login for private requests. Set categoryId to an existing category _id and courseId/lessonId to IDs returned by requests. No credentials are included.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      { "key": "token", "value": "{{authToken}}", "type": "string" }
+    ]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000/api", "type": "string" },
+    { "key": "authToken", "value": "", "type": "string", "description": "Paste a token returned by the existing login endpoint. Keep it local; do not commit a real token." },
+    { "key": "categorySlug", "value": "", "type": "string", "description": "Optional category slug used by the public course-list query." },
+    { "key": "categoryId", "value": "", "type": "string", "description": "An existing Category _id, required for course creation." },
+    { "key": "courseId", "value": "", "type": "string", "description": "A Course _id returned by create/list/detail requests." },
+    { "key": "lessonId", "value": "", "type": "string", "description": "A Lesson _id returned by lesson creation or instructor course detail." }
+  ],
+  "item": [
+    {
+      "name": "Public course browsing",
+      "item": [
+        {
+          "name": "List published courses (search, filters, sort, pagination)",
+          "request": {
+            "method": "GET",
+            "auth": { "type": "noauth" },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/courses?search=design&category={{categorySlug}}&level=beginner&price=paid&sort=popular&page=1&limit=9",
+              "host": ["{{baseUrl}}"],
+              "path": ["courses"],
+              "query": [
+                { "key": "search", "value": "design", "description": "Title search; case-insensitive." },
+                { "key": "category", "value": "{{categorySlug}}", "description": "Optional category slug." },
+                { "key": "level", "value": "beginner", "description": "beginner, intermediate, or advanced." },
+                { "key": "price", "value": "paid", "description": "free or paid." },
+                { "key": "sort", "value": "popular", "description": "newest, popular, price_asc, or price_desc." },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "9", "description": "Maximum 50." }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get published course detail and lesson outline",
+          "request": {
+            "method": "GET",
+            "auth": { "type": "noauth" },
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/courses/{{courseId}}", "host": ["{{baseUrl}}"], "path": ["courses", "{{courseId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Instructor course management",
+      "item": [
+        {
+          "name": "List my courses (all statuses)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/instructor/courses", "host": ["{{baseUrl}}"], "path": ["instructor", "courses"] }
+          }
+        },
+        {
+          "name": "Get my course with full lessons (edit view)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/instructor/courses/{{courseId}}", "host": ["{{baseUrl}}"], "path": ["instructor", "courses", "{{courseId}}"] }
+          }
+        },
+        {
+          "name": "Create course (starts as draft)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Introduction to Product Design\",\n  \"shortDescription\": \"Learn practical product design fundamentals.\",\n  \"description\": \"Build a practical foundation in product design, from understanding user needs through creating and evaluating clear interface solutions.\",\n  \"whatYouWillLearn\": [\n    \"Describe the main stages of a product design process\",\n    \"Create a basic user flow and wireframe\"\n  ],\n  \"category\": \"{{categoryId}}\",\n  \"price\": 2500,\n  \"level\": \"beginner\",\n  \"thumbnailUrl\": \"https://example.com/product-design-course.jpg\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{baseUrl}}/courses", "host": ["{{baseUrl}}"], "path": ["courses"] }
+          }
+        },
+        {
+          "name": "Update course details",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Introduction to Product Design\",\n  \"shortDescription\": \"Updated practical product design course summary.\",\n  \"description\": \"Build a practical foundation in product design, from understanding user needs through creating and evaluating clear interface solutions.\",\n  \"whatYouWillLearn\": [\n    \"Describe the main stages of a product design process\",\n    \"Create a basic user flow and wireframe\"\n  ],\n  \"category\": \"{{categoryId}}\",\n  \"price\": 2500,\n  \"level\": \"beginner\",\n  \"thumbnailUrl\": \"https://example.com/product-design-course.jpg\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{baseUrl}}/courses/{{courseId}}", "host": ["{{baseUrl}}"], "path": ["courses", "{{courseId}}"] }
+          }
+        },
+        {
+          "name": "Publish course",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"published\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": { "raw": "{{baseUrl}}/courses/{{courseId}}/status", "host": ["{{baseUrl}}"], "path": ["courses", "{{courseId}}", "status"] }
+          }
+        },
+        {
+          "name": "Unpublish course (return to draft)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"draft\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": { "raw": "{{baseUrl}}/courses/{{courseId}}/status", "host": ["{{baseUrl}}"], "path": ["courses", "{{courseId}}", "status"] }
+          }
+        },
+        {
+          "name": "Delete course (only when it has no students)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/courses/{{courseId}}", "host": ["{{baseUrl}}"], "path": ["courses", "{{courseId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Lesson management (instructor/owner)",
+      "item": [
+        {
+          "name": "Create lesson (order assigned by backend)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Understanding user needs\",\n  \"content\": \"Start by identifying the people who use the product and the problem they need to solve.\",\n  \"durationMinutes\": 12,\n  \"isPreview\": true\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{baseUrl}}/courses/{{courseId}}/lessons", "host": ["{{baseUrl}}"], "path": ["courses", "{{courseId}}", "lessons"] }
+          }
+        },
+        {
+          "name": "Update lesson",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Understanding user needs and goals\",\n  \"durationMinutes\": 15,\n  \"isPreview\": true\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{baseUrl}}/lessons/{{lessonId}}", "host": ["{{baseUrl}}"], "path": ["lessons", "{{lessonId}}"] }
+          }
+        },
+        {
+          "name": "Delete lesson",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/lessons/{{lessonId}}", "host": ["{{baseUrl}}"], "path": ["lessons", "{{lessonId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Learning lesson access (contract endpoint; Member C route)",
+      "item": [
+        {
+          "name": "Get full lessons and enrollment progress",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/courses/{{courseId}}/lessons", "host": ["{{baseUrl}}"], "path": ["courses", "{{courseId}}", "lessons"] }
+          }
+        }
+      ]
+    }
+  ]
+}
