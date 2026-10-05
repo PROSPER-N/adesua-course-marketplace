@@ -28,10 +28,7 @@ async function getCourse(req, res) {
 }
 
 async function createCourse(req, res) {
-  const data = await courseService.createCourse(
-    req.body,
-    req.user._id,
-  );
+  const data = await courseService.createCourse(req.body, req.user._id);
 
   sendSuccess(res, {
     statusCode: 201,
@@ -41,11 +38,7 @@ async function createCourse(req, res) {
 }
 
 async function updateCourse(req, res) {
-  const data = await courseService.updateCourse(
-    req.params.id,
-    req.body,
-    req.user,
-  );
+  const data = await courseService.updateCourse(req.params.id, req.body, req.user);
 
   sendSuccess(res, {
     message: "Course updated successfully",
@@ -54,11 +47,7 @@ async function updateCourse(req, res) {
 }
 
 async function updateCourseStatus(req, res) {
-  const data = await courseService.updateCourseStatus(
-    req.params.id,
-    req.body.status,
-    req.user,
-  );
+  const data = await courseService.updateCourseStatus(req.params.id, req.body.status, req.user);
 
   sendSuccess(res, {
     message: "Course status updated successfully",

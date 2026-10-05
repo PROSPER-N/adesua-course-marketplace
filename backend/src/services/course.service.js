@@ -27,7 +27,7 @@ const SORTS = {
 
 function pickAllowedFields(data = {}) {
   return Object.fromEntries(
-    Object.entries(data).filter(([key]) => ALLOWED_UPDATE_FIELDS.includes(key)),
+    Object.entries(data).filter(([key]) => ALLOWED_UPDATE_FIELDS.includes(key))
   );
 }
 
@@ -38,13 +38,7 @@ async function findCategoryBySlug(slug) {
 }
 
 async function getPublishedCourses(query) {
-  const {
-    search,
-    category,
-    level,
-    price,
-    sort = "newest",
-  } = query;
+  const { search, category, level, price, sort = "newest" } = query;
 
   const { page, limit, skip } = getPagination(query);
 
@@ -79,17 +73,17 @@ async function getPublishedCourses(query) {
     filter.price = { $gt: 0 };
   }
 
- const [courses, total] = await Promise.all([
-  Course.find(filter)
-    .select(
-      "_id title shortDescription price level thumbnailUrl lessonCount totalMinutes studentCount createdAt category instructor",
-    )
-    .populate("category", "_id name slug")
-    .populate("instructor", "_id name")
-    .sort(SORTS[sort] || SORTS.newest)
-    .skip(skip)
-    .limit(limit)
-    .lean(),
+  const [courses, total] = await Promise.all([
+    Course.find(filter)
+      .select(
+        "_id title shortDescription price level thumbnailUrl lessonCount totalMinutes studentCount createdAt category instructor"
+      )
+      .populate("category", "_id name slug")
+      .populate("instructor", "_id name")
+      .sort(SORTS[sort] || SORTS.newest)
+      .skip(skip)
+      .limit(limit)
+      .lean(),
 
     Course.countDocuments(filter),
   ]);
@@ -113,9 +107,7 @@ async function getPublishedCourseById(courseId) {
     throw new AppError("Course not found", 404);
   }
 
-  const lessons = await Lesson.find({ course: course._id })
-    .sort({ order: 1 })
-    .lean();
+  const lessons = await Lesson.find({ course: course._id }).sort({ order: 1 }).lean();
 
   const safeLessons = lessons.map((lesson) => {
     if (lesson.isPreview) return lesson;
@@ -156,9 +148,7 @@ async function getCourseForOwner(courseId, user) {
     throw new AppError("Course not found", 404);
   }
 
-  const isOwner =
-    course.instructor &&
-    course.instructor._id.toString() === user._id.toString();
+  const isOwner = course.instructor && course.instructor._id.toString() === user._id.toString();
 
   const isAdmin = user.role === "admin";
 
@@ -205,10 +195,7 @@ async function deleteCourse(courseId, user) {
   const course = await getCourseForOwner(courseId, user);
 
   if (course.studentCount > 0) {
-    throw new AppError(
-      "This course has students. Unpublish it instead.",
-      400,
-    );
+    throw new AppError("This course has students. Unpublish it instead.", 400);
   }
 
   await Lesson.deleteMany({ course: course._id });
@@ -249,7 +236,7 @@ async function createLesson(courseId, data, user) {
         lessonCount: 1,
         totalMinutes: lesson.durationMinutes,
       },
-    },
+    }
   );
 
   return lesson;
@@ -277,20 +264,11 @@ async function updateLesson(lessonId, data, user) {
 
   const oldDuration = lesson.durationMinutes;
 
-  const allowedFields = [
-    "title",
-    "videoUrl",
-    "content",
-    "durationMinutes",
-    "order",
-    "isPreview",
-  ];
+  const allowedFields = ["title", "videoUrl", "content", "durationMinutes", "order", "isPreview"];
 
   Object.assign(
     lesson,
-    Object.fromEntries(
-      Object.entries(data).filter(([key]) => allowedFields.includes(key)),
-    ),
+    Object.fromEntries(Object.entries(data).filter(([key]) => allowedFields.includes(key)))
   );
 
   if (!lesson.videoUrl && !lesson.content) {
@@ -299,14 +277,10 @@ async function updateLesson(lessonId, data, user) {
 
   await lesson.save();
 
-  const durationDifference =
-    lesson.durationMinutes - oldDuration;
+  const durationDifference = lesson.durationMinutes - oldDuration;
 
   if (durationDifference !== 0) {
-    await Course.updateOne(
-      { _id: course._id },
-      { $inc: { totalMinutes: durationDifference } },
-    );
+    await Course.updateOne({ _id: course._id }, { $inc: { totalMinutes: durationDifference } });
   }
 
   return lesson;
@@ -333,10 +307,7 @@ async function deleteLesson(lessonId, user) {
   }
 
   if (course.status === "published" && course.lessonCount <= 1) {
-    throw new AppError(
-      "A published course needs at least one lesson. Unpublish it first.",
-      400,
-    );
+    throw new AppError("A published course needs at least one lesson. Unpublish it first.", 400);
   }
 
   await Lesson.deleteOne({ _id: lesson._id });
@@ -348,13 +319,10 @@ async function deleteLesson(lessonId, user) {
         lessonCount: -1,
         totalMinutes: -lesson.durationMinutes,
       },
-    },
+    }
   );
 
-  await Enrollment.updateMany(
-    { course: course._id },
-    { $pull: { completedLessons: lesson._id } },
-  );
+  await Enrollment.updateMany({ course: course._id }, { $pull: { completedLessons: lesson._id } });
 }
 
 async function getInstructorCourses(userId) {
@@ -367,9 +335,7 @@ async function getInstructorCourses(userId) {
 async function getInstructorCourse(courseId, user) {
   const course = await getCourseForOwner(courseId, user);
 
-  const lessons = await Lesson.find({ course: course._id })
-    .sort({ order: 1 })
-    .lean();
+  const lessons = await Lesson.find({ course: course._id }).sort({ order: 1 }).lean();
 
   return {
     ...course.toObject(),

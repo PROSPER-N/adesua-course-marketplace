@@ -1,12 +1,7 @@
 const request = require("supertest");
 
 const app = require("../src/app");
-const {
-  createUser,
-  tokenFor,
-  createCourse,
-  createLessons,
-} = require("./helpers");
+const { createUser, tokenFor, createCourse, createLessons } = require("./helpers");
 
 const Category = require("../src/models/Category");
 const Course = require("../src/models/Course");
@@ -29,13 +24,9 @@ describe("Courses API", () => {
       await createCourse({ status: "published", price: 0 });
       await createCourse({ status: "published", price: 100 });
 
-      const freeRes = await request(app)
-        .get("/api/courses")
-        .query({ price: "free" });
+      const freeRes = await request(app).get("/api/courses").query({ price: "free" });
 
-      const paidRes = await request(app)
-        .get("/api/courses")
-        .query({ price: "paid" });
+      const paidRes = await request(app).get("/api/courses").query({ price: "paid" });
 
       expect(freeRes.status).toBe(200);
       expect(freeRes.body.data.items).toHaveLength(1);
@@ -47,9 +38,7 @@ describe("Courses API", () => {
     });
 
     test("returns 400 for an invalid filter", async () => {
-      const res = await request(app)
-        .get("/api/courses")
-        .query({ level: "expert" });
+      const res = await request(app).get("/api/courses").query({ level: "expert" });
 
       expect(res.status).toBe(400);
       expect(res.body.success).toBe(false);
@@ -102,8 +91,7 @@ describe("Courses API", () => {
         .send({
           title: "Digital Marketing Basics",
           shortDescription: "Learn practical digital marketing skills.",
-          description:
-            "A practical introduction to digital marketing for beginners.",
+          description: "A practical introduction to digital marketing for beginners.",
           category: category._id,
           price: 50,
           level: "beginner",
@@ -112,9 +100,7 @@ describe("Courses API", () => {
       expect(res.status).toBe(201);
       expect(res.body.message).toBe("Course created successfully");
       expect(res.body.data.status).toBe("draft");
-      expect(res.body.data.instructor.toString()).toBe(
-        instructor._id.toString(),
-      );
+      expect(res.body.data.instructor.toString()).toBe(instructor._id.toString());
     });
   });
 
@@ -174,9 +160,7 @@ describe("Courses API", () => {
         .send({ status: "published" });
 
       expect(res.status).toBe(400);
-      expect(res.body.message).toBe(
-        "Add at least one lesson before publishing.",
-      );
+      expect(res.body.message).toBe("Add at least one lesson before publishing.");
     });
 
     test("can publish a course with lessons", async () => {
@@ -234,9 +218,7 @@ describe("Courses API", () => {
         .set("Authorization", `Bearer ${token}`);
 
       expect(res.status).toBe(400);
-      expect(res.body.message).toBe(
-        "This course has students. Unpublish it instead.",
-      );
+      expect(res.body.message).toBe("This course has students. Unpublish it instead.");
     });
   });
 });

@@ -1,9 +1,6 @@
 const express = require("express");
 
-const {
-  updateLesson,
-  deleteLesson,
-} = require("../controllers/lesson.controller");
+const { updateLesson, deleteLesson } = require("../controllers/lesson.controller");
 
 const protect = require("../middleware/protect");
 const authorize = require("../middleware/authorize");
@@ -21,15 +18,9 @@ router.patch(
   validateObjectId(),
   lessonUpdateRules,
   validate,
-  updateLesson,
+  updateLesson
 );
 
-router.delete(
-  "/:id",
-  protect,
-  authorize("instructor", "admin"),
-  validateObjectId(),
-  deleteLesson,
-);
+router.delete("/:id", protect, authorize("instructor", "admin"), validateObjectId(), deleteLesson);
 
 module.exports = router;

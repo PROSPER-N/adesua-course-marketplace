@@ -20,9 +20,7 @@ async function seedCourses({ users, categories }) {
     ama: users.find((user) => user.email === "ama@example.com"),
   };
 
-  const categoryMap = new Map(
-    categories.map((category) => [category.name, category]),
-  );
+  const categoryMap = new Map(categories.map((category) => [category.name, category]));
 
   const courseData = [
     {
@@ -248,17 +246,17 @@ async function seedCourses({ users, categories }) {
       status: "draft",
     },
   ];
-const courses = [];
+  const courses = [];
 
-for (const courseInfo of courseData) {
-  const course = await Course.create({
-    ...courseInfo,
-    status: courseInfo.status || "published",
-    thumbnailUrl: "",
-    lessonCount: 0,
-    totalMinutes: 0,
-    studentCount: 0,
-  });
+  for (const courseInfo of courseData) {
+    const course = await Course.create({
+      ...courseInfo,
+      status: courseInfo.status || "published",
+      thumbnailUrl: "",
+      lessonCount: 0,
+      totalMinutes: 0,
+      studentCount: 0,
+    });
     const lessonCount = 5 + (courses.length % 4);
     const lessons = [];
 
@@ -277,10 +275,7 @@ for (const courseInfo of courseData) {
     }
 
     course.lessonCount = lessons.length;
-    course.totalMinutes = lessons.reduce(
-      (total, lesson) => total + lesson.durationMinutes,
-      0,
-    );
+    course.totalMinutes = lessons.reduce((total, lesson) => total + lesson.durationMinutes, 0);
 
     await course.save();
 

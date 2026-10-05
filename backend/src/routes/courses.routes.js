@@ -30,11 +30,7 @@ const router = express.Router();
 // Public
 router.get("/", courseQueryRules, validate, getCourses);
 
-router.get(
-  "/:id",
-  validateObjectId(),
-  getCourse,
-);
+router.get("/:id", validateObjectId(), getCourse);
 
 // Instructor/admin
 router.post(
@@ -43,7 +39,7 @@ router.post(
   authorize("instructor", "admin"),
   courseCreateRules,
   validate,
-  createCourse,
+  createCourse
 );
 
 router.patch(
@@ -53,7 +49,7 @@ router.patch(
   validateObjectId(),
   courseUpdateRules,
   validate,
-  updateCourse,
+  updateCourse
 );
 
 router.patch(
@@ -63,16 +59,10 @@ router.patch(
   validateObjectId(),
   courseStatusRules,
   validate,
-  updateCourseStatus,
+  updateCourseStatus
 );
 
-router.delete(
-  "/:id",
-  protect,
-  authorize("instructor", "admin"),
-  validateObjectId(),
-  deleteCourse,
-);
+router.delete("/:id", protect, authorize("instructor", "admin"), validateObjectId(), deleteCourse);
 
 // Instructor course lessons
 router.post(
@@ -82,7 +72,7 @@ router.post(
   validateObjectId(),
   lessonCreateRules,
   validate,
-  createLesson,
+  createLesson
 );
 
 module.exports = router;

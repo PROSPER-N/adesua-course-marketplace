@@ -2,11 +2,7 @@ const courseService = require("../services/course.service");
 const { sendSuccess } = require("../utils/apiResponse");
 
 async function createLesson(req, res) {
-  const lesson = await courseService.createLesson(
-    req.params.id,
-    req.body,
-    req.user,
-  );
+  const lesson = await courseService.createLesson(req.params.id, req.body, req.user);
 
   sendSuccess(res, {
     statusCode: 201,
@@ -16,11 +12,7 @@ async function createLesson(req, res) {
 }
 
 async function updateLesson(req, res) {
-  const lesson = await courseService.updateLesson(
-    req.params.id,
-    req.body,
-    req.user,
-  );
+  const lesson = await courseService.updateLesson(req.params.id, req.body, req.user);
 
   sendSuccess(res, {
     message: "Lesson updated successfully",

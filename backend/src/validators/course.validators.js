@@ -21,10 +21,7 @@ const courseCreateRules = [
     .isArray({ max: 6 })
     .withMessage("List up to 6 things students will learn."),
 
-  body("whatYouWillLearn.*")
-    .optional()
-    .isString()
-    .trim(),
+  body("whatYouWillLearn.*").optional().isString().trim(),
 
   body("category", "Choose a valid category.").isString().isMongoId(),
 
@@ -33,9 +30,7 @@ const courseCreateRules = [
     .toFloat()
     .isFloat({ min: 0, max: 5000 }),
 
-  body("level", "Choose a level.")
-    .isString()
-    .isIn(["beginner", "intermediate", "advanced"]),
+  body("level", "Choose a level.").isString().isIn(["beginner", "intermediate", "advanced"]),
 
   body("thumbnailUrl").optional().isString().trim(),
 ];
@@ -67,16 +62,9 @@ const courseUpdateRules = [
     .isArray({ max: 6 })
     .withMessage("List up to 6 things students will learn."),
 
-  body("whatYouWillLearn.*")
-    .optional()
-    .isString()
-    .trim(),
+  body("whatYouWillLearn.*").optional().isString().trim(),
 
-  body("category")
-    .optional()
-    .isString()
-    .isMongoId()
-    .withMessage("Choose a valid category."),
+  body("category").optional().isString().isMongoId().withMessage("Choose a valid category."),
 
   body("price")
     .optional()
@@ -95,29 +83,18 @@ const courseUpdateRules = [
 ];
 
 const courseStatusRules = [
-  body("status", "Choose a valid course status.")
-    .isString()
-    .isIn(["draft", "published"]),
+  body("status", "Choose a valid course status.").isString().isIn(["draft", "published"]),
 ];
 
 const courseQueryRules = [
   query("search").optional().isString().trim(),
   query("category").optional().isString().trim(),
 
-  query("level")
-    .optional()
-    .isString()
-    .isIn(["beginner", "intermediate", "advanced"]),
+  query("level").optional().isString().isIn(["beginner", "intermediate", "advanced"]),
 
-  query("price")
-    .optional()
-    .isString()
-    .isIn(["free", "paid"]),
+  query("price").optional().isString().isIn(["free", "paid"]),
 
-  query("sort")
-    .optional()
-    .isString()
-    .isIn(["newest", "popular", "price_asc", "price_desc"]),
+  query("sort").optional().isString().isIn(["newest", "popular", "price_asc", "price_desc"]),
 
   query("page").optional().isInt({ min: 1 }),
   query("limit").optional().isInt({ min: 1, max: 50 }),

@@ -31,24 +31,15 @@ const lessonCreateRules = [
       }
     }),
 
-  body("content")
-    .optional()
-    .isString()
-    .trim(),
+  body("content").optional().isString().trim(),
 
   body("durationMinutes", "Duration must be between 1 and 300 minutes.")
     .isInt({ min: 1, max: 300 })
     .toInt(),
 
-  body("order")
-    .optional()
-    .isInt({ min: 1 })
-    .toInt(),
+  body("order").optional().isInt({ min: 1 }).toInt(),
 
-  body("isPreview")
-    .optional()
-    .isBoolean()
-    .toBoolean(),
+  body("isPreview").optional().isBoolean().toBoolean(),
 ];
 
 const lessonUpdateRules = [
@@ -84,10 +75,7 @@ const lessonUpdateRules = [
       }
     }),
 
-  body("content")
-    .optional()
-    .isString()
-    .trim(),
+  body("content").optional().isString().trim(),
 
   body("durationMinutes")
     .optional()

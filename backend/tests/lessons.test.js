@@ -1,12 +1,7 @@
 const request = require("supertest");
 
 const app = require("../src/app");
-const {
-  createUser,
-  tokenFor,
-  createCourse,
-  createLessons,
-} = require("./helpers");
+const { createUser, tokenFor, createCourse, createLessons } = require("./helpers");
 
 const Course = require("../src/models/Course");
 const Lesson = require("../src/models/Lesson");
@@ -193,9 +188,7 @@ describe("Lessons API", () => {
         course: course._id,
       });
 
-      expect(enrollment.completedLessons.map(String)).toEqual([
-        lessons[1]._id.toString(),
-      ]);
+      expect(enrollment.completedLessons.map(String)).toEqual([lessons[1]._id.toString()]);
     });
 
     test("cannot delete the last lesson from a published course", async () => {
@@ -216,7 +209,7 @@ describe("Lessons API", () => {
 
       expect(res.status).toBe(400);
       expect(res.body.message).toBe(
-        "A published course needs at least one lesson. Unpublish it first.",
+        "A published course needs at least one lesson. Unpublish it first."
       );
     });
   });
