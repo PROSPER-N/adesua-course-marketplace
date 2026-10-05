@@ -1,0 +1,1207 @@
+{
+  "info": {
+    "_postman_id": "4e56f716-0b20-44a7-b716-b8bd60decb89",
+    "name": "Adesua - Member C (learning, enrollments, orders, instructor stats)",
+    "description": "Requests for every endpoint Member C owns, matching docs/API_CONTRACT.md. Each request has saved example responses (success and errors) under it.\n\nEnvironments\nUse the environment files in docs/postman/:\n- Adesua local (`adesua-local.postman_environment.json`): the backend on your computer.\n- Adesua production (`adesua-production.postman_environment.json`): the live API on Render (see docs/DEPLOYMENT.md). The first request after a quiet period can take up to a minute. Requests that enroll, buy or complete lessons change the live data.\n\nHow to use\n1. Import this file and the environment you need, then choose that environment (top right).\n2. Run Auth > Log in as student first. It saves the token as `{{token}}`, and the other requests send it automatically.\n3. Open this collection's Variables tab and set `freeCourseId` and `paidCourseId` to the `_id` of a free and a paid published course (GET /api/courses lists them).\n4. Run Enroll in a free course, then Course lessons. It saves the first lesson's `_id` as `{{lessonId}}` for Mark a lesson complete.\n5. Run Start checkout. It saves the order's `_id` as `{{orderId}}` for Pay an order.\n6. Run Auth > Log in as instructor before Instructor stats, and Log in as student again before the student requests.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "freeCourseId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "paidCourseId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "lessonId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "orderId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Log in as student",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Save the token so the other requests can send it as {{token}}.",
+                  "const body = pm.response.json();",
+                  "if (body.success) {",
+                  "  pm.environment.set(\"token\", body.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"akosua@example.com\",\n  \"password\": \"Demo1234\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Purpose: Log in as a student. Returns a token that the other requests send automatically.\n\nAccess: Public. Limited to 20 sign-up or login attempts per 15 minutes per IP address.\n\nBody (JSON):\n- `email` (required)\n- `password` (required)\n\nThe seeded students are akosua@example.com, kojo@example.com and esi@example.com. Every seeded account uses the password `Demo1234`.\n\nParameters: none.\n\nThis request saves the returned token as `{{token}}`."
+          },
+          "response": [
+            {
+              "name": "Logged in (200)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"akosua@example.com\",\n  \"password\": \"Demo1234\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Logged in successfully\",\n  \"data\": {\n    \"token\": \"<token>\",\n    \"user\": {\n      \"_id\": \"6abc2807a7c8e645386593bf\",\n      \"name\": \"Akosua Mensah\",\n      \"email\": \"akosua@example.com\",\n      \"role\": \"student\",\n      \"bio\": \"\",\n      \"isActive\": true,\n      \"createdAt\": \"2026-09-29T21:05:11.073Z\",\n      \"updatedAt\": \"2026-09-29T21:05:11.073Z\"\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Log in as instructor",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Save the token so the other requests can send it as {{token}}.",
+                  "const body = pm.response.json();",
+                  "if (body.success) {",
+                  "  pm.environment.set(\"token\", body.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"kwame@example.com\",\n  \"password\": \"Demo1234\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Purpose: Log in as an instructor, for Instructor stats. Returns a token that the other requests send automatically.\n\nAccess: Public. Limited to 20 sign-up or login attempts per 15 minutes per IP address.\n\nBody (JSON):\n- `email` (required)\n- `password` (required)\n\nThe seeded instructors are kwame@example.com and ama@example.com. Every seeded account uses the password `Demo1234`.\n\nParameters: none.\n\nThis request saves the returned token as `{{token}}`."
+          },
+          "response": [
+            {
+              "name": "Logged in (200)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"kwame@example.com\",\n  \"password\": \"Demo1234\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Logged in successfully\",\n  \"data\": {\n    \"token\": \"<token>\",\n    \"user\": {\n      \"_id\": \"6abc2807a7c8e645386593bd\",\n      \"name\": \"Kwame Asante\",\n      \"email\": \"kwame@example.com\",\n      \"role\": \"instructor\",\n      \"bio\": \"Full-stack developer who has spent ten years building websites for Ghanaian businesses.\",\n      \"isActive\": true,\n      \"createdAt\": \"2026-09-29T21:05:11.073Z\",\n      \"updatedAt\": \"2026-09-29T21:05:11.073Z\"\n    }\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Learning",
+      "item": [
+        {
+          "name": "Course lessons",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Save the first lesson's ID so \"Mark a lesson complete\" can use {{lessonId}}.",
+                  "const body = pm.response.json();",
+                  "if (body.success && body.data.lessons.length > 0) {",
+                  "  pm.collectionVariables.set(\"lessonId\", body.data.lessons[0]._id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/courses/{{freeCourseId}}/lessons",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses",
+                "{{freeCourseId}}",
+                "lessons"
+              ]
+            },
+            "description": "Purpose: Get a course's full lessons (videos and notes) in order, with my progress.\n\nAccess: A student enrolled in the course, the course's instructor, or an admin. Anyone else gets 403.\n\nBody: none.\n\nParameters (path):\n- `id`: the course's `_id`. This request uses `{{freeCourseId}}`.\n\n`enrollment` is `{ completedLessons, progress }` for a student, and `null` for the course's instructor or an admin.\n\nThis request saves the first lesson's `_id` as `{{lessonId}}`, which Mark a lesson complete uses."
+          },
+          "response": [
+            {
+              "name": "Lessons (200)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/courses/{{freeCourseId}}/lessons",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "{{freeCourseId}}",
+                    "lessons"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Lessons fetched successfully\",\n  \"data\": {\n    \"course\": {\n      \"_id\": \"6ac30abafee1b33c0a5c0b96\",\n      \"title\": \"HTML and CSS for beginners\",\n      \"lessonCount\": 3\n    },\n    \"lessons\": [\n      {\n        \"_id\": \"6ac30abafee1b33c0a5c0b97\",\n        \"course\": \"6ac30abafee1b33c0a5c0b96\",\n        \"title\": \"Welcome to HTML and CSS for beginners\",\n        \"videoUrl\": \"https://www.youtube.com/watch?v=jNQXAC9IVRw\",\n        \"content\": \"Notes for lesson 1. Try the example yourself before moving on.\",\n        \"durationMinutes\": 6,\n        \"order\": 1,\n        \"isPreview\": true,\n        \"createdAt\": \"2026-10-05T02:26:02.348Z\",\n        \"updatedAt\": \"2026-10-05T02:26:02.348Z\"\n      },\n      {\n        \"_id\": \"6ac30abafee1b33c0a5c0b98\",\n        \"course\": \"6ac30abafee1b33c0a5c0b96\",\n        \"title\": \"Your first steps\",\n        \"videoUrl\": \"https://youtu.be/jNQXAC9IVRw\",\n        \"content\": \"Notes for lesson 2. Try the example yourself before moving on.\",\n        \"durationMinutes\": 9,\n        \"order\": 2,\n        \"isPreview\": false,\n        \"createdAt\": \"2026-10-05T02:26:02.348Z\",\n        \"updatedAt\": \"2026-10-05T02:26:02.348Z\"\n      },\n      {\n        \"_id\": \"6ac30abafee1b33c0a5c0b99\",\n        \"course\": \"6ac30abafee1b33c0a5c0b96\",\n        \"title\": \"Putting it together\",\n        \"videoUrl\": \"https://www.youtube.com/embed/jNQXAC9IVRw\",\n        \"content\": \"Notes for lesson 3. Try the example yourself before moving on.\",\n        \"durationMinutes\": 12,\n        \"order\": 3,\n        \"isPreview\": false,\n        \"createdAt\": \"2026-10-05T02:26:02.348Z\",\n        \"updatedAt\": \"2026-10-05T02:26:02.348Z\"\n      }\n    ],\n    \"enrollment\": {\n      \"completedLessons\": [],\n      \"progress\": 0\n    }\n  }\n}"
+            },
+            {
+              "name": "Not enrolled (403)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/courses/{{freeCourseId}}/lessons",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "{{freeCourseId}}",
+                    "lessons"
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Enroll in this course to watch its lessons.\",\n  \"data\": null\n}"
+            },
+            {
+              "name": "Unknown course (404)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/courses/6a0000000000000000000000/lessons",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "6a0000000000000000000000",
+                    "lessons"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Course not found\",\n  \"data\": null\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Enrollments",
+      "item": [
+        {
+          "name": "Enroll in a free course",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/enrollments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "enrollments"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"courseId\": \"{{freeCourseId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Purpose: Enroll in a free, published course.\n\nAccess: Student.\n\nBody (JSON):\n- `courseId` (required): the `_id` of a free, published course\n\nParameters: none.\n\nAdds 1 to the course's `studentCount`. A paid course returns 400 (use Start checkout instead), and enrolling twice returns 409."
+          },
+          "response": [
+            {
+              "name": "Enrolled (201)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/enrollments",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "enrollments"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"courseId\": \"{{freeCourseId}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Enrolled successfully\",\n  \"data\": {\n    \"user\": \"6abc2807a7c8e645386593bf\",\n    \"course\": \"6ac30abafee1b33c0a5c0b96\",\n    \"order\": null,\n    \"completedLessons\": [],\n    \"progress\": 0,\n    \"completedAt\": null,\n    \"_id\": \"6ac30aca74c59217e6837edf\",\n    \"createdAt\": \"2026-10-05T02:26:18.450Z\",\n    \"updatedAt\": \"2026-10-05T02:26:18.450Z\"\n  }\n}"
+            },
+            {
+              "name": "Paid course (400)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/enrollments",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "enrollments"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"courseId\": \"{{paidCourseId}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"This course is paid. Go to checkout.\",\n  \"data\": null\n}"
+            },
+            {
+              "name": "Already enrolled (409)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/enrollments",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "enrollments"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"courseId\": \"{{freeCourseId}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"You're already enrolled in this course.\",\n  \"data\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "My enrollments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/enrollments/my",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "enrollments",
+                "my"
+              ]
+            },
+            "description": "Purpose: List my courses with my progress, newest first.\n\nAccess: Student.\n\nBody: none.\n\nParameters: none."
+          },
+          "response": [
+            {
+              "name": "Enrollments (200)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/enrollments/my",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "enrollments",
+                    "my"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Enrollments fetched successfully\",\n  \"data\": [\n    {\n      \"_id\": \"6ac30ad174c59217e6837ee1\",\n      \"course\": {\n        \"_id\": \"6ac30abafee1b33c0a5c0b9a\",\n        \"title\": \"JavaScript for the web\",\n        \"instructor\": {\n          \"name\": \"Kwame Asante\"\n        },\n        \"category\": {\n          \"_id\": \"6abc2808a7c8e645386593c2\",\n          \"name\": \"Web development\",\n          \"slug\": \"web-development\"\n        },\n        \"thumbnailUrl\": \"\",\n        \"lessonCount\": 3\n      },\n      \"completedLessons\": [],\n      \"progress\": 0,\n      \"completedAt\": null,\n      \"createdAt\": \"2026-10-05T02:26:25.894Z\"\n    },\n    {\n      \"_id\": \"6ac30aca74c59217e6837edf\",\n      \"course\": {\n        \"_id\": \"6ac30abafee1b33c0a5c0b96\",\n        \"title\": \"HTML and CSS for beginners\",\n        \"instructor\": {\n          \"name\": \"Kwame Asante\"\n        },\n        \"category\": {\n          \"_id\": \"6abc2808a7c8e645386593c2\",\n          \"name\": \"Web development\",\n          \"slug\": \"web-development\"\n        },\n        \"thumbnailUrl\": \"\",\n        \"lessonCount\": 3\n      },\n      \"completedLessons\": [\n        \"6ac30abafee1b33c0a5c0b97\",\n        \"6ac30abafee1b33c0a5c0b98\",\n        \"6ac30abafee1b33c0a5c0b99\"\n      ],\n      \"progress\": 100,\n      \"completedAt\": \"2026-10-05T02:26:22.202Z\",\n      \"createdAt\": \"2026-10-05T02:26:18.450Z\"\n    }\n  ]\n}"
+            },
+            {
+              "name": "Not a student (403)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/enrollments/my",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "enrollments",
+                    "my"
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"You don't have permission to do that\",\n  \"data\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "Mark a lesson complete",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/enrollments/{{freeCourseId}}/lessons/{{lessonId}}/complete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "enrollments",
+                "{{freeCourseId}}",
+                "lessons",
+                "{{lessonId}}",
+                "complete"
+              ]
+            },
+            "description": "Purpose: Mark a lesson complete and update my progress.\n\nAccess: A student enrolled in the course.\n\nBody: none.\n\nParameters (path):\n- `courseId`: the course's `_id` (`{{freeCourseId}}`)\n- `lessonId`: a lesson in that course (`{{lessonId}}`, saved by Course lessons)\n\n`progress` is round(completed / lessonCount × 100), and `completedAt` is set when it reaches 100. Completing the same lesson again changes nothing."
+          },
+          "response": [
+            {
+              "name": "Lesson completed (200)",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/enrollments/{{freeCourseId}}/lessons/{{lessonId}}/complete",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "enrollments",
+                    "{{freeCourseId}}",
+                    "lessons",
+                    "{{lessonId}}",
+                    "complete"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Lesson marked as complete\",\n  \"data\": {\n    \"completedLessons\": [\n      \"6ac30abafee1b33c0a5c0b97\"\n    ],\n    \"progress\": 33,\n    \"completedAt\": null\n  }\n}"
+            },
+            {
+              "name": "Not enrolled (403)",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/enrollments/{{freeCourseId}}/lessons/{{lessonId}}/complete",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "enrollments",
+                    "{{freeCourseId}}",
+                    "lessons",
+                    "{{lessonId}}",
+                    "complete"
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Enroll in this course to watch its lessons.\",\n  \"data\": null\n}"
+            },
+            {
+              "name": "Lesson from another course (404)",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/enrollments/{{freeCourseId}}/lessons/6ac30abafee1b33c0a5c0b9b/complete",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "enrollments",
+                    "{{freeCourseId}}",
+                    "lessons",
+                    "6ac30abafee1b33c0a5c0b9b",
+                    "complete"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Lesson not found\",\n  \"data\": null\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Start checkout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Save the order's ID so \"Pay an order\" can use {{orderId}}.",
+                  "const body = pm.response.json();",
+                  "if (body.success) {",
+                  "  pm.collectionVariables.set(\"orderId\", body.data._id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"courseId\": \"{{paidCourseId}}\",\n  \"paymentMethod\": \"momo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Purpose: Start checkout for a paid course. Creates a pending order.\n\nAccess: Student.\n\nBody (JSON):\n- `courseId` (required): the `_id` of a paid, published course\n- `paymentMethod` (required): `momo` or `card`\n\nParameters: none.\n\nThe amount always comes from the course's price, never from the request. This request saves the order's `_id` as `{{orderId}}`, which Pay an order uses."
+          },
+          "response": [
+            {
+              "name": "Order created (201)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"courseId\": \"{{paidCourseId}}\",\n  \"paymentMethod\": \"momo\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Order created successfully\",\n  \"data\": {\n    \"user\": \"6abc2807a7c8e645386593bf\",\n    \"course\": \"6ac30abafee1b33c0a5c0b9a\",\n    \"amount\": 49,\n    \"paymentMethod\": \"momo\",\n    \"status\": \"pending\",\n    \"reference\": \"ADS-MVJWC4\",\n    \"_id\": \"6ac30ad174c59217e6837ee0\",\n    \"createdAt\": \"2026-10-05T02:26:25.083Z\",\n    \"updatedAt\": \"2026-10-05T02:26:25.083Z\"\n  }\n}"
+            },
+            {
+              "name": "Free course (400)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"courseId\": \"{{freeCourseId}}\",\n  \"paymentMethod\": \"momo\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"This course is free. Enroll directly.\",\n  \"data\": null\n}"
+            },
+            {
+              "name": "Wrong payment method (400)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"courseId\": \"{{paidCourseId}}\",\n  \"paymentMethod\": \"cash\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Please fix the highlighted fields\",\n  \"data\": null,\n  \"errors\": [\n    {\n      \"field\": \"paymentMethod\",\n      \"message\": \"Choose a payment method.\"\n    }\n  ]\n}"
+            },
+            {
+              "name": "Already enrolled (409)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"courseId\": \"{{paidCourseId}}\",\n  \"paymentMethod\": \"momo\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"You're already enrolled in this course.\",\n  \"data\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "Pay an order",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orders/{{orderId}}/pay",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders",
+                "{{orderId}}",
+                "pay"
+              ]
+            },
+            "description": "Purpose: Pay an order in demo mode (no money is charged). Marks it paid and enrolls me.\n\nAccess: The student who owns the order. Another student's order returns 404.\n\nBody: none.\n\nParameters (path):\n- `id`: the order's `_id` (`{{orderId}}`, saved by Start checkout)\n\nAdds 1 to the course's `studentCount`."
+          },
+          "response": [
+            {
+              "name": "Paid (200)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}/pay",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}",
+                    "pay"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Payment successful\",\n  \"data\": {\n    \"order\": {\n      \"_id\": \"6ac30ad174c59217e6837ee0\",\n      \"user\": \"6abc2807a7c8e645386593bf\",\n      \"course\": \"6ac30abafee1b33c0a5c0b9a\",\n      \"amount\": 49,\n      \"paymentMethod\": \"momo\",\n      \"status\": \"paid\",\n      \"reference\": \"ADS-MVJWC4\",\n      \"createdAt\": \"2026-10-05T02:26:25.083Z\",\n      \"updatedAt\": \"2026-10-05T02:26:26.070Z\",\n      \"paidAt\": \"2026-10-05T02:26:26.069Z\"\n    },\n    \"enrollment\": {\n      \"user\": \"6abc2807a7c8e645386593bf\",\n      \"course\": \"6ac30abafee1b33c0a5c0b9a\",\n      \"order\": \"6ac30ad174c59217e6837ee0\",\n      \"completedLessons\": [],\n      \"progress\": 0,\n      \"completedAt\": null,\n      \"_id\": \"6ac30ad174c59217e6837ee1\",\n      \"createdAt\": \"2026-10-05T02:26:25.894Z\",\n      \"updatedAt\": \"2026-10-05T02:26:25.894Z\"\n    }\n  }\n}"
+            },
+            {
+              "name": "Already paid (400)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/{{orderId}}/pay",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "{{orderId}}",
+                    "pay"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"This order has already been paid.\",\n  \"data\": null\n}"
+            },
+            {
+              "name": "Unknown order (404)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/6a0000000000000000000000/pay",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "6a0000000000000000000000",
+                    "pay"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Order not found\",\n  \"data\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "My orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orders/my",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders",
+                "my"
+              ]
+            },
+            "description": "Purpose: My purchase history, newest first. Pending orders are included.\n\nAccess: Student.\n\nBody: none.\n\nParameters: none."
+          },
+          "response": [
+            {
+              "name": "Orders (200)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/my",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "my"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Orders fetched successfully\",\n  \"data\": [\n    {\n      \"_id\": \"6ac30ad174c59217e6837ee0\",\n      \"user\": \"6abc2807a7c8e645386593bf\",\n      \"course\": {\n        \"_id\": \"6ac30abafee1b33c0a5c0b9a\",\n        \"title\": \"JavaScript for the web\"\n      },\n      \"amount\": 49,\n      \"paymentMethod\": \"momo\",\n      \"status\": \"paid\",\n      \"reference\": \"ADS-MVJWC4\",\n      \"createdAt\": \"2026-10-05T02:26:25.083Z\",\n      \"updatedAt\": \"2026-10-05T02:26:26.070Z\",\n      \"paidAt\": \"2026-10-05T02:26:26.069Z\"\n    }\n  ]\n}"
+            },
+            {
+              "name": "No token (401)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/my",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "my"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Please log in to continue\",\n  \"data\": null\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Instructor",
+      "item": [
+        {
+          "name": "Instructor stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/instructor/stats",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "instructor",
+                "stats"
+              ]
+            },
+            "description": "Purpose: My students and earnings, in total and per course.\n\nAccess: Instructor. Run Auth > Log in as instructor first.\n\nBody: none.\n\nParameters: none.\n\nEarnings count paid orders only. `totalStudents` adds up each course's `studentCount`, so a student in two of my courses counts twice. `courses` includes drafts, newest first."
+          },
+          "response": [
+            {
+              "name": "Stats (200)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/instructor/stats",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "instructor",
+                    "stats"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Stats fetched successfully\",\n  \"data\": {\n    \"totalStudents\": 2,\n    \"totalEarnings\": 49,\n    \"publishedCount\": 2,\n    \"draftCount\": 0,\n    \"courses\": [\n      {\n        \"courseId\": \"6ac30abafee1b33c0a5c0b9a\",\n        \"title\": \"JavaScript for the web\",\n        \"studentCount\": 1,\n        \"earnings\": 49\n      },\n      {\n        \"courseId\": \"6ac30abafee1b33c0a5c0b96\",\n        \"title\": \"HTML and CSS for beginners\",\n        \"studentCount\": 1,\n        \"earnings\": 0\n      }\n    ]\n  }\n}"
+            },
+            {
+              "name": "Not an instructor (403)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/instructor/stats",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "instructor",
+                    "stats"
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"You don't have permission to do that\",\n  \"data\": null\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

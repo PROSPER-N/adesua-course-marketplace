@@ -90,13 +90,40 @@ Base URL: `/api` (locally `http://localhost:5000/api`). Private routes need the 
 - `GET /api/courses/:id/lessons`: `{ course: { _id, title, lessonCount }, lessons: [ full lessons ], enrollment: { completedLessons, progress } }`. `enrollment` is `null` for the owner or an admin.
 - `PATCH /api/enrollments/:courseId/lessons/:lessonId/complete`: `{ completedLessons, progress, completedAt }`
 - `POST /api/enrollments`: the new enrollment (201)
-- `GET /api/enrollments/my`: `[ { _id, progress, completedAt, createdAt, course: { _id, title, thumbnailUrl, lessonCount, category, instructor: { name } } } ]`
+- `GET /api/enrollments/my`: newest first, `[ { _id, completedLessons, progress, completedAt, createdAt, course: { _id, title, thumbnailUrl, lessonCount, category: { _id, name, slug }, instructor: { name } } } ]`
 - `POST /api/orders`: the order with status `"pending"` (201)
 - `POST /api/orders/:id/pay`: `{ order, enrollment }`
 - `GET /api/orders/my`: orders, newest first, each with `course { _id, title }`
 - `GET /api/instructor/stats`: `{ totalStudents, totalEarnings, publishedCount, draftCount, courses: [ { courseId, title, studentCount, earnings } ] }`
 - `GET /api/admin/stats`: `{ users, publishedCourses, enrollments, totalPayments }`
 - `GET /api/admin/courses` (any status, newest first), each item: `{ _id, title, status, price, level, lessonCount, studentCount, createdAt, thumbnailUrl, category: { _id, name, slug }, instructor: { _id, name } }`
+
+## Success messages
+
+The `message` of each successful response. The frontend shows some of them word for word, for example in toasts. Add a row here when you add an endpoint.
+
+| Method | Path | Message |
+|---|---|---|
+| GET | `/api/health` | API is running |
+| POST | `/api/auth/register` | Account created successfully |
+| POST | `/api/auth/login` | Logged in successfully |
+| GET | `/api/auth/me` | Current user |
+| GET | `/api/categories` | Categories fetched successfully |
+| POST | `/api/categories` | Category created successfully |
+| PATCH | `/api/categories/:id` | Category updated successfully |
+| DELETE | `/api/categories/:id` | Category deleted successfully |
+| GET | `/api/admin/stats` | Stats fetched successfully |
+| GET | `/api/admin/users` | Users fetched successfully |
+| PATCH | `/api/admin/users/:id/status` | User deactivated, or User reactivated |
+| GET | `/api/admin/courses` | Courses fetched successfully |
+| GET | `/api/courses/:id/lessons` | Lessons fetched successfully |
+| POST | `/api/enrollments` | Enrolled successfully |
+| GET | `/api/enrollments/my` | Enrollments fetched successfully |
+| PATCH | `/api/enrollments/:courseId/lessons/:lessonId/complete` | Lesson marked as complete |
+| POST | `/api/orders` | Order created successfully |
+| POST | `/api/orders/:id/pay` | Payment successful |
+| GET | `/api/orders/my` | Orders fetched successfully |
+| GET | `/api/instructor/stats` | Stats fetched successfully |
 
 ## Validation messages
 
@@ -123,10 +150,10 @@ Base URL: `/api` (locally `http://localhost:5000/api`). Private routes need the 
 | videoUrl | Use a YouTube link. |
 | lesson with no video and no notes | Add a YouTube link, lesson notes, or both. |
 | durationMinutes | Enter the length in minutes (1 to 300). |
-| paymentMethod | Choose a payment method. |
+| paymentMethod (`momo` or `card`) | Choose a payment method. |
 | status | Status must be draft or published. |
 | isActive | isActive must be true or false. |
-| any `:id` | Invalid ID |
+| any `:id`, and `courseId` in a request body | Invalid ID |
 | page and limit | Page and limit must be positive numbers. |
 | request body that isn't valid JSON (400) | The request body isn't valid JSON. |
 
@@ -138,14 +165,16 @@ Base URL: `/api` (locally `http://localhost:5000/api`). Private routes need the 
 - Free courses use `POST /api/enrollments`; paid courses use orders. Using the wrong one returns 400 "This course is paid. Go to checkout." or "This course is free. Enroll directly."
 - The order amount always comes from the course price, never from the request.
 - Paying an order:
-  - The order must belong to the user and still be pending. Otherwise 400 "This order has already been paid."
+  - An unknown order, or another user's, returns 404 "Order not found".
+  - The order must still be pending. Otherwise 400 "This order has already been paid."
   - Set it to paid with `paidAt`, create the enrollment linked to the order, and add 1 to the course's `studentCount`.
 - Free enrollment also adds 1 to `studentCount`.
 - Full lesson content goes only to enrolled students, the course owner and admins. Anyone else gets 403 "Enroll in this course to watch its lessons."
 - Marking a lesson complete:
-  - The lesson must belong to the course.
+  - A student who isn't enrolled in the course gets 403 "Enroll in this course to watch its lessons."
+  - The lesson must belong to the course. Otherwise 404 "Lesson not found".
   - Add it with `$addToSet`.
-  - Set `progress = round(completed / lessonCount × 100)`.
+  - Set `progress = round(completed / lessonCount × 100)`, capped at 100.
   - Set `completedAt` when progress reaches 100.
 - Publishing needs at least one lesson: 400 "Add at least one lesson before publishing."
 - A course with students can't be deleted: 400 "This course has students. Unpublish it instead." Deleting a course also deletes its lessons.
