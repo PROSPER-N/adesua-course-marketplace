@@ -8,8 +8,8 @@ const NAME_MSG = "Category name must be between 2 and 40 characters.";
 const LETTER_MSG = "Category name must include a letter or a number.";
 const DUPLICATE_MSG = "A category with this name already exists.";
 
-// Member B's Course model doesn't exist yet, so tests put plain course documents straight into
-// the test database's "courses" collection. The app itself only ever reads it.
+// These tests put plain course documents straight into the test database's "courses" collection,
+// because the category routes only read a course's category and status.
 let courseCount = 0;
 function insertCourses(...courses) {
   return mongoose.connection.collection("courses").insertMany(courses);
