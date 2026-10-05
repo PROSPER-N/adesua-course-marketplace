@@ -118,7 +118,11 @@ async function getPublishedCourseById(courseId) {
     throw new AppError("Course not found", 404);
   }
 
-  const lessons = await Lesson.find({ course: course._id }).sort({ order: 1 }).lean();
+  // The contract's outline fields only. The video and notes are kept just for preview lessons.
+  const lessons = await Lesson.find({ course: course._id })
+    .select("title durationMinutes order isPreview videoUrl content")
+    .sort({ order: 1 })
+    .lean();
 
   const safeLessons = lessons.map((lesson) => {
     if (lesson.isPreview) return lesson;

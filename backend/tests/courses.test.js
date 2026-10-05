@@ -5,6 +5,7 @@ const { createUser, tokenFor, createCourse, createLessons } = require("./helpers
 
 const Category = require("../src/models/Category");
 const Course = require("../src/models/Course");
+const Lesson = require("../src/models/Lesson");
 
 const PAGE_LIMIT_MSG = "Page and limit must be positive numbers.";
 
@@ -118,6 +119,33 @@ describe("Courses API", () => {
       expect(res.status).toBe(200);
       expect(res.body.data.lessons[1].videoUrl).toBeUndefined();
       expect(res.body.data.lessons[1].content).toBeUndefined();
+    });
+
+    test("returns only the outline fields, plus the video and notes of a preview", async () => {
+      const course = await createCourse({ status: "published" });
+      const [first] = await createLessons(course, 2);
+      await Lesson.updateOne({ _id: first._id }, { isPreview: true });
+
+      const res = await request(app).get(`/api/courses/${course._id}`);
+
+      expect(res.status).toBe(200);
+      const [preview, locked] = res.body.data.lessons;
+      expect(Object.keys(preview).sort()).toEqual([
+        "_id",
+        "content",
+        "durationMinutes",
+        "isPreview",
+        "order",
+        "title",
+        "videoUrl",
+      ]);
+      expect(Object.keys(locked).sort()).toEqual([
+        "_id",
+        "durationMinutes",
+        "isPreview",
+        "order",
+        "title",
+      ]);
     });
 
     test("returns 404 for a draft course", async () => {
