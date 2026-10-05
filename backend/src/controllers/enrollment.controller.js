@@ -45,7 +45,16 @@ const getMyEnrollments = asyncHandler(async (req, res) => {
     .sort({ createdAt: -1, _id: -1 })
     .lean();
 
-  sendSuccess(res, { message: "Enrollments fetched successfully", data: enrollments });
+  // Worked out from the course's current lessonCount, so it stays right after lessons are
+  // added or deleted. The saved progress is used only if the course no longer exists.
+  const withProgress = enrollments.map((enrollment) => ({
+    ...enrollment,
+    progress: enrollment.course
+      ? calculateProgress(enrollment.completedLessons.length, enrollment.course.lessonCount)
+      : enrollment.progress,
+  }));
+
+  sendSuccess(res, { message: "Enrollments fetched successfully", data: withProgress });
 });
 
 // PATCH /api/enrollments/:courseId/lessons/:lessonId/complete
