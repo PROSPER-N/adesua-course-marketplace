@@ -1693,6 +1693,140 @@
               "body": "{\n  \"success\": false,\n  \"message\": \"User not found\",\n  \"data\": null\n}"
             }
           ]
+        },
+        {
+          "name": "List courses",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/courses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "courses"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "website",
+                  "description": "Part of a title, ignoring capital letters",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "draft",
+                  "description": "draft or published",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Default 1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Default 10, max 50",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Purpose: List every course, drafts included, newest first, with search, a status filter and pages.\n\nAccess: Admin.\n\nBody: none.\n\nParameters (query):\n- `search`: part of a title, ignoring capital letters\n- `status`: `draft` or `published`\n- `page`: default 1\n- `limit`: default 10, max 50\n\nTick a parameter in the Params tab to use it."
+          },
+          "response": [
+            {
+              "name": "Courses (200)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/admin/courses",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "courses"
+                  ],
+                  "query": [
+                    {
+                      "key": "search",
+                      "value": "website",
+                      "description": "Part of a title, ignoring capital letters",
+                      "disabled": true
+                    },
+                    {
+                      "key": "status",
+                      "value": "draft",
+                      "description": "draft or published",
+                      "disabled": true
+                    },
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": "Default 1",
+                      "disabled": true
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10",
+                      "description": "Default 10, max 50",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Courses fetched successfully\",\n  \"data\": {\n    \"items\": [\n      {\n        \"_id\": \"6ac2efa7de217243f8e696e1\",\n        \"title\": \"Logo design for small brands\",\n        \"instructor\": {\n          \"_id\": \"6ac2efa6de217243f8e696dd\",\n          \"name\": \"Ama Owusu\"\n        },\n        \"category\": {\n          \"_id\": \"6ac2efa7de217243f8e696df\",\n          \"name\": \"Design\",\n          \"slug\": \"design\"\n        },\n        \"price\": 180,\n        \"level\": \"intermediate\",\n        \"thumbnailUrl\": \"\",\n        \"status\": \"draft\",\n        \"lessonCount\": 2,\n        \"studentCount\": 0,\n        \"createdAt\": \"2026-10-05T00:30:31.694Z\"\n      },\n      {\n        \"_id\": \"6ac2efa7de217243f8e696e0\",\n        \"title\": \"Build your first website with HTML and CSS\",\n        \"instructor\": {\n          \"_id\": \"6ac2efa6de217243f8e696dc\",\n          \"name\": \"Kwame Asante\"\n        },\n        \"category\": {\n          \"_id\": \"6ac2efa7de217243f8e696de\",\n          \"name\": \"Web development\",\n          \"slug\": \"web-development\"\n        },\n        \"price\": 0,\n        \"level\": \"beginner\",\n        \"thumbnailUrl\": \"\",\n        \"status\": \"published\",\n        \"lessonCount\": 6,\n        \"studentCount\": 3,\n        \"createdAt\": \"2026-10-05T00:30:31.594Z\"\n      }\n    ],\n    \"pagination\": {\n      \"page\": 1,\n      \"limit\": 10,\n      \"total\": 2,\n      \"totalPages\": 1\n    }\n  }\n}"
+            },
+            {
+              "name": "Invalid status (400)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/admin/courses?status=archived",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "courses"
+                  ],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "archived"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Please fix the highlighted fields\",\n  \"data\": null,\n  \"errors\": [\n    {\n      \"field\": \"status\",\n      \"message\": \"Status must be draft or published.\"\n    }\n  ]\n}"
+            }
+          ]
         }
       ]
     }
