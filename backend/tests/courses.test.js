@@ -103,6 +103,36 @@ describe("Courses API", () => {
       expect(res.body.data.instructor.toString()).toBe(instructor._id.toString());
     });
 
+    test("ignores fields the server sets, like _id, status and the counters", async () => {
+      const instructor = await createUser({ role: "instructor" });
+      const category = await Category.create({ name: "Business" });
+      const token = await tokenFor(instructor);
+      const chosenId = "507f1f77bcf86cd799439011";
+
+      const res = await request(app)
+        .post("/api/courses")
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+          title: "Digital Marketing Basics",
+          shortDescription: "Learn practical digital marketing skills.",
+          description: "A practical introduction to digital marketing for beginners.",
+          category: category._id,
+          price: 50,
+          level: "beginner",
+          _id: chosenId,
+          createdAt: "2030-01-01T00:00:00.000Z",
+          status: "published",
+          studentCount: 50,
+          lessonCount: 9,
+        });
+
+      expect(res.status).toBe(201);
+      expect(res.body.data._id).not.toBe(chosenId);
+      expect(res.body.data).toMatchObject({ status: "draft", studentCount: 0, lessonCount: 0 });
+      expect(new Date(res.body.data.createdAt).getTime()).toBeLessThanOrEqual(Date.now());
+      expect(await Course.findById(chosenId)).toBeNull();
+    });
+
     test("admin cannot create a course", async () => {
       const admin = await createUser({ role: "admin" });
       const category = await Category.create({ name: "Business" });

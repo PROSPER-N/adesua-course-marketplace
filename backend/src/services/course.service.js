@@ -7,7 +7,9 @@ const AppError = require("../utils/AppError");
 const escapeRegex = require("../utils/escapeRegex");
 const { getPagination, buildPagination } = require("../utils/pagination");
 
-const ALLOWED_UPDATE_FIELDS = [
+// The only fields a request can set. Everything else (_id, instructor, status, the counters,
+// the dates) is set by the server, so a client can't publish a course or fake its numbers.
+const COURSE_FIELDS = [
   "title",
   "shortDescription",
   "description",
@@ -18,6 +20,8 @@ const ALLOWED_UPDATE_FIELDS = [
   "thumbnailUrl",
 ];
 
+const LESSON_FIELDS = ["title", "videoUrl", "content", "durationMinutes", "isPreview", "order"];
+
 const SORTS = {
   newest: { createdAt: -1 },
   popular: { studentCount: -1, createdAt: -1 },
@@ -25,10 +29,8 @@ const SORTS = {
   price_desc: { price: -1, createdAt: -1 },
 };
 
-function pickAllowedFields(data = {}) {
-  return Object.fromEntries(
-    Object.entries(data).filter(([key]) => ALLOWED_UPDATE_FIELDS.includes(key))
-  );
+function pickFields(data = {}, fields) {
+  return Object.fromEntries(Object.entries(data).filter(([key]) => fields.includes(key)));
 }
 
 async function findCategoryBySlug(slug) {
@@ -130,7 +132,7 @@ async function createCourse(data, instructorId) {
   }
 
   return Course.create({
-    ...data,
+    ...pickFields(data, COURSE_FIELDS),
     instructor: instructorId,
     status: "draft",
     lessonCount: 0,
@@ -162,7 +164,7 @@ async function getCourseForOwner(courseId, user) {
 async function updateCourse(courseId, data, user) {
   const course = await getCourseForOwner(courseId, user);
 
-  const updates = pickAllowedFields(data);
+  const updates = pickFields(data, COURSE_FIELDS);
 
   if (updates.category) {
     const category = await Category.findById(updates.category);
@@ -224,7 +226,7 @@ async function createLesson(courseId, data, user) {
   }
 
   const lesson = await Lesson.create({
-    ...data,
+    ...pickFields(data, LESSON_FIELDS),
     course: course._id,
     order,
   });
@@ -268,12 +270,7 @@ async function updateLesson(lessonId, data, user) {
 
   const oldDuration = lesson.durationMinutes;
 
-  const allowedFields = ["title", "videoUrl", "content", "durationMinutes", "order", "isPreview"];
-
-  Object.assign(
-    lesson,
-    Object.fromEntries(Object.entries(data).filter(([key]) => allowedFields.includes(key)))
-  );
+  Object.assign(lesson, pickFields(data, LESSON_FIELDS));
 
   if (!lesson.videoUrl && !lesson.content) {
     throw new AppError("Add a video or lesson notes.", 400);

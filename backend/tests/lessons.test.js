@@ -59,6 +59,32 @@ describe("Lessons API", () => {
       expect(res.body.message).toBe("Add a video or lesson notes.");
     });
 
+    test("ignores fields the server sets, like _id and course", async () => {
+      const instructor = await createUser({ role: "instructor" });
+      const course = await createCourse({ instructor: instructor._id });
+      const otherCourse = await createCourse();
+      const token = await tokenFor(instructor);
+      const chosenId = "507f1f77bcf86cd799439011";
+
+      const res = await request(app)
+        .post(`/api/courses/${course._id}/lessons`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+          title: "Introduction to the Course",
+          content: "These are the lesson notes.",
+          durationMinutes: 10,
+          _id: chosenId,
+          createdAt: "2030-01-01T00:00:00.000Z",
+          course: otherCourse._id,
+        });
+
+      expect(res.status).toBe(201);
+      expect(res.body.data._id).not.toBe(chosenId);
+      expect(res.body.data.course).toBe(course._id.toString());
+      expect(new Date(res.body.data.createdAt).getTime()).toBeLessThanOrEqual(Date.now());
+      expect(await Lesson.findById(chosenId)).toBeNull();
+    });
+
     test("non-owner instructor cannot create a lesson", async () => {
       const owner = await createUser({ role: "instructor" });
       const otherInstructor = await createUser({ role: "instructor" });
