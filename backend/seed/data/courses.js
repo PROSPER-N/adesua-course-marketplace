@@ -1,3 +1,6 @@
+// Owner: Member B
+// "users" and "categories" are the documents created by the earlier seeders.
+// Return the created courses, because seedEnrollments needs them.
 const Course = require("../../src/models/Course");
 const Lesson = require("../../src/models/Lesson");
 
