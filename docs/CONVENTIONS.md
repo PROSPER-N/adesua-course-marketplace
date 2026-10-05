@@ -12,6 +12,8 @@ These are the rules the three of us follow. Read this together with [API_CONTRAC
 | B | courses, lessons, instructor courses | `courses`, `lessons`, `instructorCourses` | `Course` and `Lesson` models, `seed/data/courses.js` |
 | C | lesson player, enrollments, orders, instructor stats | `learning`, `enrollments`, `orders`, `instructorStats` | `Order` and `Enrollment` models, `seed/data/enrollments.js` |
 
+The `Course` and `Lesson` models were added by Member A. Member B owns them.
+
 Route files live in `backend/src/routes/` and are named `<name>.routes.js`. The top of each one lists its owner and endpoints.
 
 ### Frontend

@@ -10,8 +10,17 @@ const protect = require("../middleware/protect");
 const authorize = require("../middleware/authorize");
 const validate = require("../middleware/validate");
 const validateObjectId = require("../middleware/validateObjectId");
-const { listUsersRules, userStatusRules } = require("../validators/admin.validators");
-const { getStats, listUsers, updateUserStatus } = require("../controllers/admin.controller");
+const {
+  listUsersRules,
+  userStatusRules,
+  listCoursesRules,
+} = require("../validators/admin.validators");
+const {
+  getStats,
+  listUsers,
+  updateUserStatus,
+  listCourses,
+} = require("../controllers/admin.controller");
 
 const router = express.Router();
 
@@ -26,7 +35,6 @@ router.patch(
   validate,
   updateUserStatus
 );
-
-// TODO (Member A): GET /courses comes in a later task, once Member B's Course model is merged.
+router.get("/courses", protect, authorize("admin"), listCoursesRules, validate, listCourses);
 
 module.exports = router;

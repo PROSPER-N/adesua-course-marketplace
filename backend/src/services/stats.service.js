@@ -1,10 +1,8 @@
 // Reads numbers from the courses, orders and enrollments collections.
 //
-// Member C's Order and Enrollment models are merged, but Member B's Course model isn't yet,
-// so we read the collections by name instead of requiring the models. Mongoose names a model's
-// collection by making it lowercase and plural, so the Course model's collection is "courses".
-// - Until a collection has data, the numbers read from it are 0.
-// - Once the Course model is merged, this keeps working with no changes.
+// It reads the collections by name instead of requiring the models, because it was written before
+// the Course model existed. Mongoose names a model's collection by making it lowercase and plural,
+// so the Course model's collection is "courses". Until a collection has data, its numbers are 0.
 //
 // This file must only read. Never insert, update or delete anything from here.
 

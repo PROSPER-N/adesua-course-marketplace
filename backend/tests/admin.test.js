@@ -2,12 +2,13 @@ const mongoose = require("mongoose");
 const request = require("supertest");
 const app = require("../src/app");
 const User = require("../src/models/User");
-const { createUser, tokenFor, TEST_PASSWORD } = require("./helpers");
+const Category = require("../src/models/Category");
+const { createUser, tokenFor, createCourse, TEST_PASSWORD } = require("./helpers");
 
 const newId = () => new mongoose.Types.ObjectId();
 
-// Member B's Course model doesn't exist yet, so tests put plain documents straight into the
-// test database. Fields that C's models make unique (the order reference, one enrollment per
+// The stats tests put plain documents straight into the test database, because the stats only
+// read a few fields. Fields that C's models make unique (the order reference, one enrollment per
 // user and course) get different values, so these still insert with C's indexes in place.
 function insert(collectionName, ...docs) {
   return mongoose.connection.collection(collectionName).insertMany(docs);
@@ -29,12 +30,21 @@ function setStatus(userId, body, auth) {
     .send(body);
 }
 
+function getCourses(query, auth) {
+  return request(app).get(`/api/admin/courses${query}`).set("Authorization", auth);
+}
+
+function titlesOf(res) {
+  return res.body.data.items.map((course) => course.title);
+}
+
 describe("Admin routes are for admins only", () => {
   // [label for the test name, method, path]
   const routes = [
     ["GET /stats", "get", "/api/admin/stats"],
     ["GET /users", "get", "/api/admin/users"],
     ["PATCH /users/:id/status", "patch", `/api/admin/users/${newId()}/status`],
+    ["GET /courses", "get", "/api/admin/courses"],
   ];
 
   function call(method, path, auth) {
@@ -261,5 +271,135 @@ describe("PATCH /api/admin/users/:id/status", () => {
 
     expect(res.status).toBe(404);
     expect(res.body.message).toBe("User not found");
+  });
+});
+
+describe("GET /api/admin/courses", () => {
+  it("returns drafts and published courses, newest first, with only the listed fields", async () => {
+    const { auth } = await loginAs("admin");
+    const instructor = await createUser({ role: "instructor" });
+    const design = await Category.create({ name: "Design" });
+    const draft = await createCourse({
+      title: "Logo design basics",
+      instructor: instructor._id,
+      category: design._id,
+    });
+    const published = await createCourse({
+      title: "Brand identity for beginners",
+      instructor: instructor._id,
+      category: design._id,
+      status: "published",
+      price: 180,
+    });
+
+    const res = await getCourses("", auth);
+
+    expect(res.status).toBe(200);
+    expect(res.body.message).toBe("Courses fetched successfully");
+    expect(res.body.data.items.map((course) => course._id)).toEqual([
+      String(published._id),
+      String(draft._id),
+    ]);
+    expect(res.body.data.pagination).toEqual({ page: 1, limit: 10, total: 2, totalPages: 1 });
+
+    const [item] = res.body.data.items;
+    expect(Object.keys(item).sort()).toEqual([
+      "_id",
+      "category",
+      "createdAt",
+      "instructor",
+      "lessonCount",
+      "level",
+      "price",
+      "status",
+      "studentCount",
+      "thumbnailUrl",
+      "title",
+    ]);
+    expect(item).toMatchObject({
+      title: "Brand identity for beginners",
+      status: "published",
+      price: 180,
+      level: "beginner",
+      lessonCount: 0,
+      studentCount: 0,
+      thumbnailUrl: "",
+    });
+    expect(item.category).toEqual({ _id: String(design._id), name: "Design", slug: "design" });
+    expect(item.instructor).toEqual({ _id: String(instructor._id), name: instructor.name });
+  });
+
+  it("searches part of a title, ignoring capital letters", async () => {
+    const { auth } = await loginAs("admin");
+    await createCourse({ title: "Intro to React" });
+    await createCourse({ title: "Excel for small businesses" });
+
+    const res = await getCourses("?search=REACT", auth);
+
+    expect(res.status).toBe(200);
+    expect(titlesOf(res)).toEqual(["Intro to React"]);
+  });
+
+  it("treats special characters in the search as plain text", async () => {
+    const { auth } = await loginAs("admin");
+    await createCourse({ title: "Design (for beginners)" });
+    await createCourse({ title: "Photography basics" });
+
+    const bracket = await getCourses("?search=(", auth); // an unescaped "(" would crash the query
+    const anything = await getCourses(`?search=${encodeURIComponent(".*")}`, auth); // would match everything
+
+    expect(bracket.status).toBe(200);
+    expect(titlesOf(bracket)).toEqual(["Design (for beginners)"]);
+    expect(anything.status).toBe(200);
+    expect(anything.body.data.items).toEqual([]);
+  });
+
+  it("filters by status", async () => {
+    const { auth } = await loginAs("admin");
+    await createCourse({ title: "A draft course" });
+    await createCourse({ title: "A published course", status: "published" });
+
+    const drafts = await getCourses("?status=draft", auth);
+    const published = await getCourses("?status=published", auth);
+
+    expect(titlesOf(drafts)).toEqual(["A draft course"]);
+    expect(titlesOf(published)).toEqual(["A published course"]);
+  });
+
+  it("returns 400 for a status that isn't draft or published", async () => {
+    const { auth } = await loginAs("admin");
+
+    const res = await getCourses("?status=archived", auth);
+
+    expect(res.status).toBe(400);
+    expect(res.body.errors).toEqual([
+      { field: "status", message: "Status must be draft or published." },
+    ]);
+  });
+
+  it("returns 10 courses per page, and no more than 50 when asked for more", async () => {
+    const { auth } = await loginAs("admin");
+    const instructor = await createUser({ role: "instructor" });
+    const category = await Category.create({ name: "Business" });
+    await Promise.all(
+      Array.from({ length: 12 }, () =>
+        createCourse({ instructor: instructor._id, category: category._id })
+      )
+    );
+
+    const page1 = await getCourses("", auth);
+    const page2 = await getCourses("?page=2", auth);
+    const tooMany = await getCourses("?limit=100", auth);
+
+    expect(page1.body.data.items).toHaveLength(10);
+    expect(page1.body.data.pagination).toEqual({ page: 1, limit: 10, total: 12, totalPages: 2 });
+    expect(page2.body.data.items).toHaveLength(2);
+
+    // No course shows up on both pages.
+    const ids = [...page1.body.data.items, ...page2.body.data.items].map((course) => course._id);
+    expect(new Set(ids).size).toBe(12);
+
+    expect(tooMany.body.data.items).toHaveLength(12);
+    expect(tooMany.body.data.pagination).toEqual({ page: 1, limit: 50, total: 12, totalPages: 1 });
   });
 });
