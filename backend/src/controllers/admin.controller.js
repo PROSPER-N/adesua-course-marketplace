@@ -1,10 +1,15 @@
 const User = require("../models/User");
+const Course = require("../models/Course");
 const AppError = require("../utils/AppError");
 const asyncHandler = require("../utils/asyncHandler");
 const escapeRegex = require("../utils/escapeRegex");
 const { sendSuccess } = require("../utils/apiResponse");
 const { getPagination, buildPagination } = require("../utils/pagination");
 const { getPlatformTotals } = require("../services/stats.service");
+
+// The fields of each item in GET /api/admin/courses, as listed in docs/API_CONTRACT.md.
+const ADMIN_COURSE_FIELDS =
+  "title status price level lessonCount studentCount createdAt thumbnailUrl category instructor";
 
 // GET /api/admin/stats
 const getStats = asyncHandler(async (req, res) => {
@@ -71,4 +76,40 @@ const updateUserStatus = asyncHandler(async (req, res) => {
   });
 });
 
-module.exports = { getStats, listUsers, updateUserStatus };
+// GET /api/admin/courses?search=&status=&page=&limit=
+const listCourses = asyncHandler(async (req, res) => {
+  const { page, limit, skip } = getPagination(req.query, 10);
+
+  const filter = {};
+
+  // A repeated ?search= arrives as an array, so only use it when it's text.
+  const search = typeof req.query.search === "string" ? req.query.search.trim() : "";
+  if (search) {
+    filter.title = new RegExp(escapeRegex(search), "i");
+  }
+
+  // listCoursesRules has already checked that status is draft or published.
+  if (req.query.status) {
+    filter.status = req.query.status;
+  }
+
+  const [items, total] = await Promise.all([
+    Course.find(filter)
+      .select(ADMIN_COURSE_FIELDS)
+      .populate("category", "name slug")
+      .populate("instructor", "name")
+      // _id breaks ties between courses created in the same millisecond, so pages never overlap
+      .sort({ createdAt: -1, _id: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean(),
+    Course.countDocuments(filter),
+  ]);
+
+  sendSuccess(res, {
+    message: "Courses fetched successfully",
+    data: { items, pagination: buildPagination(page, limit, total) },
+  });
+});
+
+module.exports = { getStats, listUsers, updateUserStatus, listCourses };

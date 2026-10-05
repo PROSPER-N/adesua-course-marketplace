@@ -1,6 +1,14 @@
 const { body, query } = require("express-validator");
 
 const ROLES = ["student", "instructor", "admin"];
+const STATUSES = ["draft", "published"];
+
+// Returns a new chain each time, so a change to one list's rule can't change the other's.
+function pageAndLimitRule() {
+  return query(["page", "limit"], "Page and limit must be positive numbers.")
+    .optional({ values: "falsy" })
+    .isInt({ min: 1 });
+}
 
 // GET /api/admin/users
 const listUsersRules = [
@@ -9,9 +17,16 @@ const listUsersRules = [
   query("role", "Choose a valid role.")
     .optional({ values: "falsy" })
     .custom((value) => ROLES.includes(value)),
-  query(["page", "limit"], "Page and limit must be positive numbers.")
+  pageAndLimitRule(),
+];
+
+// GET /api/admin/courses
+const listCoursesRules = [
+  // Same as role above: an empty ?status= shows both, and a repeated one is rejected.
+  query("status", "Status must be draft or published.")
     .optional({ values: "falsy" })
-    .isInt({ min: 1 }),
+    .custom((value) => STATUSES.includes(value)),
+  pageAndLimitRule(),
 ];
 
 // PATCH /api/admin/users/:id/status
@@ -20,4 +35,4 @@ const userStatusRules = [
   body("isActive", "isActive must be true or false.").isBoolean({ strict: true }),
 ];
 
-module.exports = { listUsersRules, userStatusRules };
+module.exports = { listUsersRules, userStatusRules, listCoursesRules };
