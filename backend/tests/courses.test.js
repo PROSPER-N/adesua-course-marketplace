@@ -52,6 +52,32 @@ describe("Courses API", () => {
       expect(paidRes.body.data.items[0].price).toBe(100);
     });
 
+    test("searches part of a title, ignoring capital letters", async () => {
+      await createCourse({ status: "published", title: "Intro to React" });
+      await createCourse({ status: "published", title: "Excel for small businesses" });
+      await createCourse({ status: "draft", title: "React for teams" });
+
+      const res = await request(app).get("/api/courses").query({ search: "REACT" });
+
+      expect(res.status).toBe(200);
+      expect(res.body.data.items.map((course) => course.title)).toEqual(["Intro to React"]);
+    });
+
+    test("treats special characters in the search as plain text", async () => {
+      await createCourse({ status: "published", title: "Design (for beginners)" });
+      await createCourse({ status: "published", title: "Photography basics" });
+
+      const bracket = await request(app).get("/api/courses").query({ search: "(" }); // an unescaped "(" would crash the query
+      const anything = await request(app).get("/api/courses").query({ search: ".*" }); // would match everything
+
+      expect(bracket.status).toBe(200);
+      expect(bracket.body.data.items.map((course) => course.title)).toEqual([
+        "Design (for beginners)",
+      ]);
+      expect(anything.status).toBe(200);
+      expect(anything.body.data.items).toEqual([]);
+    });
+
     test("returns 400 for an invalid filter", async () => {
       const res = await request(app).get("/api/courses").query({ level: "expert" });
 
