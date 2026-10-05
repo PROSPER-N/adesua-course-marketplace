@@ -1,10 +1,15 @@
+import { SearchX } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router'
-import { getCourses } from '../../api/courses.js'
 import { getCategories } from '../../api/categories.js'
+import { getCourses } from '../../api/courses.js'
 import CourseCard from '../../components/course/CourseCard.jsx'
+import Button from '../../components/ui/Button.jsx'
+import EmptyState from '../../components/ui/EmptyState.jsx'
 import ErrorMessage from '../../components/ui/ErrorMessage.jsx'
+import Input from '../../components/ui/Input.jsx'
 import Pagination from '../../components/ui/Pagination.jsx'
+import Select from '../../components/ui/Select.jsx'
 import SkeletonCard from '../../components/ui/SkeletonCard.jsx'
 import { getErrorMessage } from '../../utils/getErrorMessage.js'
 
@@ -119,172 +124,150 @@ function CoursesPage() {
   }
 
   const hasFilters = Boolean(search || category || level || price)
-  const courses = result.data?.items ?? []
-  const pagination = result.data?.pagination
+
+  let content
+  if (loading) {
+    content = (
+      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+        {Array.from({ length: 6 }, (_, index) => (
+          <SkeletonCard key={index} />
+        ))}
+      </div>
+    )
+  } else if (result.error) {
+    content = (
+      <ErrorMessage
+        message={getErrorMessage(result.error)}
+        onRetry={() => setAttempt((current) => current + 1)}
+        title="Couldn't load the courses"
+      />
+    )
+  } else if (result.data.items.length === 0) {
+    let message = 'Published courses will appear here.'
+    if (hasFilters) message = 'Try another word or filter, or clear them to see every course.'
+    else if (page > 1) message = 'This page is past the end of the list.'
+
+    content = (
+      <EmptyState
+        action={
+          hasFilters || page > 1 ? (
+            <Button onClick={clearFilters} variant="outline">
+              Clear filters
+            </Button>
+          ) : null
+        }
+        icon={SearchX}
+        message={message}
+        title={search ? `No courses match "${search}"` : 'No courses found'}
+      />
+    )
+  } else {
+    const { items, pagination } = result.data
+    content = (
+      <div className="grid gap-6">
+        <p className="text-sm text-muted">
+          {pagination.total} {pagination.total === 1 ? 'course' : 'courses'}
+        </p>
+        <ul className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          {items.map((course) => (
+            <li key={course._id}>
+              <CourseCard course={course} />
+            </li>
+          ))}
+        </ul>
+        <Pagination
+          onPageChange={(nextPage) => updateParams({ page: nextPage > 1 ? String(nextPage) : '' })}
+          page={pagination.page}
+          totalPages={pagination.totalPages}
+        />
+      </div>
+    )
+  }
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <header className="mb-8">
-        <p className="text-sm font-semibold uppercase tracking-wide text-green-700">Learn</p>
-
-        <h1 className="mt-2 text-3xl font-bold text-gray-900">Browse courses</h1>
-
-        <p className="mt-2 max-w-2xl text-gray-600">
+    <div className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+      <header>
+        <p className="text-sm font-semibold uppercase tracking-wide text-brand">Learn</p>
+        <h1 className="mt-2 font-display text-3xl font-extrabold text-ink sm:text-4xl">
+          Browse courses
+        </h1>
+        <p className="mt-2 max-w-2xl text-muted">
           Find practical courses to build useful skills at your own pace.
         </p>
       </header>
 
-      <section className="mb-8 grid gap-3 md:grid-cols-[1fr_220px]">
-        <input
-          value={searchText}
+      <div className="mt-8 grid items-end gap-3 md:grid-cols-[minmax(0,1fr)_14rem]">
+        <Input
+          aria-label="Search courses"
           onChange={(event) => setSearchText(event.target.value)}
-          placeholder="Search courses..."
-          className="h-11 rounded-lg border border-gray-300 px-4 outline-none focus:border-green-700 focus:ring-1 focus:ring-green-700"
+          placeholder="Search courses"
+          type="search"
+          value={searchText}
         />
-
-        <select
-          value={sort}
+        <Select
+          label="Sort by"
           onChange={(event) => updateParams({ sort: event.target.value })}
-          className="h-11 rounded-lg border border-gray-300 px-3"
+          value={sort}
         >
           {SORTS.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>
           ))}
-        </select>
-      </section>
+        </Select>
+      </div>
 
-      <section className="grid gap-8 lg:grid-cols-[220px_1fr]">
-        <aside className="space-y-5">
-          <div>
-            <label className="mb-2 block text-sm font-semibold text-gray-900">Category</label>
+      <div className="mt-8 grid gap-8 lg:grid-cols-[14rem_minmax(0,1fr)]">
+        <aside aria-label="Filters" className="grid content-start gap-5">
+          <Select
+            label="Category"
+            onChange={(event) => updateParams({ category: event.target.value })}
+            value={category}
+          >
+            <option value="">All categories</option>
+            {categories.map((option) => (
+              <option key={option._id} value={option.slug}>
+                {option.name}
+              </option>
+            ))}
+          </Select>
 
-            <select
-              value={category}
-              onChange={(event) => updateParams({ category: event.target.value })}
-              className="h-10 w-full rounded-lg border border-gray-300 px-3"
-            >
-              <option value="">All categories</option>
+          <Select
+            label="Level"
+            onChange={(event) => updateParams({ level: event.target.value })}
+            value={level}
+          >
+            <option value="">All levels</option>
+            {LEVELS.map((option) => (
+              <option key={option} value={option}>
+                {option.charAt(0).toUpperCase() + option.slice(1)}
+              </option>
+            ))}
+          </Select>
 
-              {categories.map((option) => (
-                <option key={option._id} value={option.slug}>
-                  {option.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="mb-2 block text-sm font-semibold text-gray-900">Level</label>
-
-            <select
-              value={level}
-              onChange={(event) => updateParams({ level: event.target.value })}
-              className="h-10 w-full rounded-lg border border-gray-300 px-3"
-            >
-              <option value="">All levels</option>
-
-              {LEVELS.map((option) => (
-                <option key={option} value={option}>
-                  {option.charAt(0).toUpperCase() + option.slice(1)}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="mb-2 block text-sm font-semibold text-gray-900">Price</label>
-
-            <select
-              value={price}
-              onChange={(event) => updateParams({ price: event.target.value })}
-              className="h-10 w-full rounded-lg border border-gray-300 px-3"
-            >
-              <option value="">Any price</option>
-
-              {PRICES.map((option) => (
-                <option key={option} value={option}>
-                  {option === 'free' ? 'Free' : 'Paid'}
-                </option>
-              ))}
-            </select>
-          </div>
+          <Select
+            label="Price"
+            onChange={(event) => updateParams({ price: event.target.value })}
+            value={price}
+          >
+            <option value="">Any price</option>
+            {PRICES.map((option) => (
+              <option key={option} value={option}>
+                {option === 'free' ? 'Free' : 'Paid'}
+              </option>
+            ))}
+          </Select>
 
           {hasFilters && (
-            <button
-              type="button"
-              onClick={clearFilters}
-              className="text-sm font-semibold text-green-700 hover:underline"
-            >
+            <Button className="justify-self-start" onClick={clearFilters} size="sm" variant="ghost">
               Clear filters
-            </button>
+            </Button>
           )}
         </aside>
 
-        <div>
-          {!loading && !result.error && pagination && (
-            <p className="mb-4 text-sm text-gray-500">
-              {pagination.total} {pagination.total === 1 ? 'course' : 'courses'}
-            </p>
-          )}
-
-          {loading && (
-            <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-              {Array.from({ length: 6 }, (_, index) => (
-                <SkeletonCard key={index} />
-              ))}
-            </div>
-          )}
-
-          {!loading && result.error && (
-            <ErrorMessage
-              message={getErrorMessage(result.error)}
-              onRetry={() => setAttempt((current) => current + 1)}
-              title="Couldn't load the courses"
-            />
-          )}
-
-          {!loading && !result.error && courses.length === 0 && (
-            <div className="rounded-xl border border-gray-200 p-10 text-center">
-              <h2 className="font-semibold text-gray-900">
-                {search ? `No courses match "${search}"` : 'No courses found'}
-              </h2>
-
-              {hasFilters && (
-                <button
-                  type="button"
-                  onClick={clearFilters}
-                  className="mt-3 font-semibold text-green-700 underline"
-                >
-                  Clear filters
-                </button>
-              )}
-            </div>
-          )}
-
-          {!loading && !result.error && courses.length > 0 && (
-            <>
-              <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-                {courses.map((course) => (
-                  <CourseCard key={course._id} course={course} />
-                ))}
-              </div>
-
-              <div className="mt-8">
-                <Pagination
-                  page={pagination.page}
-                  totalPages={pagination.totalPages}
-                  onPageChange={(nextPage) =>
-                    updateParams({ page: nextPage > 1 ? String(nextPage) : '' })
-                  }
-                />
-              </div>
-            </>
-          )}
-        </div>
-      </section>
-    </main>
+        <section aria-label="Courses">{content}</section>
+      </div>
+    </div>
   )
 }
 
