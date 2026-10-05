@@ -29,8 +29,17 @@ const SORTS = {
   price_desc: { price: -1, createdAt: -1 },
 };
 
+const NO_VIDEO_OR_NOTES = "Add a YouTube link, lesson notes, or both.";
+
 function pickFields(data = {}, fields) {
   return Object.fromEntries(Object.entries(data).filter(([key]) => fields.includes(key)));
+}
+
+// The same 400 shape as the validators, so the course form can show it under the category field.
+function invalidCategoryError() {
+  return new AppError("Please fix the highlighted fields", 400, [
+    { field: "category", message: "Choose a valid category." },
+  ]);
 }
 
 async function findCategoryBySlug(slug) {
@@ -128,7 +137,7 @@ async function createCourse(data, instructorId) {
   const category = await Category.findById(data.category);
 
   if (!category) {
-    throw new AppError("Choose a valid category.", 400);
+    throw invalidCategoryError();
   }
 
   return Course.create({
@@ -170,7 +179,7 @@ async function updateCourse(courseId, data, user) {
     const category = await Category.findById(updates.category);
 
     if (!category) {
-      throw new AppError("Choose a valid category.", 400);
+      throw invalidCategoryError();
     }
   }
 
@@ -211,7 +220,7 @@ async function createLesson(courseId, data, user) {
   const hasContent = Boolean(data.content);
 
   if (!hasVideo && !hasContent) {
-    throw new AppError("Add a video or lesson notes.", 400);
+    throw new AppError(NO_VIDEO_OR_NOTES, 400);
   }
 
   let order = data.order;
@@ -273,7 +282,7 @@ async function updateLesson(lessonId, data, user) {
   Object.assign(lesson, pickFields(data, LESSON_FIELDS));
 
   if (!lesson.videoUrl && !lesson.content) {
-    throw new AppError("Add a video or lesson notes.", 400);
+    throw new AppError(NO_VIDEO_OR_NOTES, 400);
   }
 
   await lesson.save();

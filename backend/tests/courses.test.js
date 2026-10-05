@@ -6,6 +6,21 @@ const { createUser, tokenFor, createCourse, createLessons } = require("./helpers
 const Category = require("../src/models/Category");
 const Course = require("../src/models/Course");
 
+const PAGE_LIMIT_MSG = "Page and limit must be positive numbers.";
+
+// A valid body for POST /api/courses. A test changes only the field it checks.
+function newCourseBody(category, overrides = {}) {
+  return {
+    title: "Digital Marketing Basics",
+    shortDescription: "Learn practical digital marketing skills.",
+    description: "A practical introduction to digital marketing for beginners.",
+    category: category._id,
+    price: 50,
+    level: "beginner",
+    ...overrides,
+  };
+}
+
 describe("Courses API", () => {
   describe("GET /api/courses", () => {
     test("returns published courses only", async () => {
@@ -42,6 +57,16 @@ describe("Courses API", () => {
 
       expect(res.status).toBe(400);
       expect(res.body.success).toBe(false);
+    });
+
+    test("returns the contract message for a bad page or limit", async () => {
+      const badPage = await request(app).get("/api/courses").query({ page: 0 });
+      const badLimit = await request(app).get("/api/courses").query({ limit: "abc" });
+
+      expect(badPage.status).toBe(400);
+      expect(badPage.body.errors).toEqual([{ field: "page", message: PAGE_LIMIT_MSG }]);
+      expect(badLimit.status).toBe(400);
+      expect(badLimit.body.errors).toEqual([{ field: "limit", message: PAGE_LIMIT_MSG }]);
     });
   });
 
@@ -153,6 +178,67 @@ describe("Courses API", () => {
       expect(res.status).toBe(403);
       expect(await Course.countDocuments()).toBe(0);
     });
+
+    test("returns the contract messages for a price below 0 or above 5,000", async () => {
+      const instructor = await createUser({ role: "instructor" });
+      const category = await Category.create({ name: "Business" });
+      const token = await tokenFor(instructor);
+
+      const tooLow = await request(app)
+        .post("/api/courses")
+        .set("Authorization", `Bearer ${token}`)
+        .send(newCourseBody(category, { price: -1 }));
+      const tooHigh = await request(app)
+        .post("/api/courses")
+        .set("Authorization", `Bearer ${token}`)
+        .send(newCourseBody(category, { price: 6000 }));
+
+      expect(tooLow.status).toBe(400);
+      expect(tooLow.body.errors).toEqual([
+        { field: "price", message: "Price can't be negative. Enter 0 for a free course." },
+      ]);
+      expect(tooHigh.status).toBe(400);
+      expect(tooHigh.body.errors).toEqual([
+        { field: "price", message: "Price can't be more than 5,000." },
+      ]);
+    });
+
+    test("accepts only an https thumbnail link, or none", async () => {
+      const instructor = await createUser({ role: "instructor" });
+      const category = await Category.create({ name: "Business" });
+      const token = await tokenFor(instructor);
+      const post = (thumbnailUrl) =>
+        request(app)
+          .post("/api/courses")
+          .set("Authorization", `Bearer ${token}`)
+          .send(newCourseBody(category, { thumbnailUrl }));
+
+      const http = await post("http://example.com/cover.png");
+      const https = await post("https://example.com/cover.png");
+      const none = await post("");
+
+      expect(http.status).toBe(400);
+      expect(http.body.errors).toEqual([
+        { field: "thumbnailUrl", message: "Enter a full link starting with https://." },
+      ]);
+      expect(https.status).toBe(201);
+      expect(https.body.data.thumbnailUrl).toBe("https://example.com/cover.png");
+      expect(none.status).toBe(201);
+    });
+
+    test("returns a category field error for an unknown category", async () => {
+      const instructor = await createUser({ role: "instructor" });
+      const token = await tokenFor(instructor);
+
+      const res = await request(app)
+        .post("/api/courses")
+        .set("Authorization", `Bearer ${token}`)
+        .send(newCourseBody({ _id: "507f1f77bcf86cd799439011" }));
+
+      expect(res.status).toBe(400);
+      expect(res.body.message).toBe("Please fix the highlighted fields");
+      expect(res.body.errors).toEqual([{ field: "category", message: "Choose a valid category." }]);
+    });
   });
 
   describe("PATCH /api/courses/:id", () => {
@@ -194,6 +280,36 @@ describe("Courses API", () => {
 
       expect(res.status).toBe(403);
     });
+
+    test("returns the contract message for a price above 5,000", async () => {
+      const instructor = await createUser({ role: "instructor" });
+      const course = await createCourse({ instructor: instructor._id });
+      const token = await tokenFor(instructor);
+
+      const res = await request(app)
+        .patch(`/api/courses/${course._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({ price: 6000 });
+
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toEqual([
+        { field: "price", message: "Price can't be more than 5,000." },
+      ]);
+    });
+
+    test("returns a category field error for an unknown category", async () => {
+      const instructor = await createUser({ role: "instructor" });
+      const course = await createCourse({ instructor: instructor._id });
+      const token = await tokenFor(instructor);
+
+      const res = await request(app)
+        .patch(`/api/courses/${course._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({ category: "507f1f77bcf86cd799439011" });
+
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toEqual([{ field: "category", message: "Choose a valid category." }]);
+    });
   });
 
   describe("PATCH /api/courses/:id/status", () => {
@@ -232,6 +348,22 @@ describe("Courses API", () => {
 
       expect(res.status).toBe(200);
       expect(res.body.data.status).toBe("published");
+    });
+
+    test("returns the contract message for an unknown status", async () => {
+      const instructor = await createUser({ role: "instructor" });
+      const course = await createCourse({ instructor: instructor._id });
+      const token = await tokenFor(instructor);
+
+      const res = await request(app)
+        .patch(`/api/courses/${course._id}/status`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({ status: "archived" });
+
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toEqual([
+        { field: "status", message: "Status must be draft or published." },
+      ]);
     });
   });
 
