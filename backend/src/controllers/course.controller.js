@@ -1,5 +1,7 @@
 const { matchedData } = require("express-validator");
+
 const courseService = require("../services/course.service");
+
 const { sendSuccess } = require("../utils/apiResponse");
 
 async function getCourses(req, res) {

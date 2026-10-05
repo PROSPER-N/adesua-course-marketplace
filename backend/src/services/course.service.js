@@ -4,7 +4,7 @@ const Lesson = require("../models/Lesson");
 const Category = require("../models/Category");
 const Enrollment = require("../models/Enrollment");
 const AppError = require("../utils/AppError");
-const { escapeRegex } = require("../utils/escapeRegex");
+const escapeRegex = require("../utils/escapeRegex");
 const { getPagination, buildPagination } = require("../utils/pagination");
 
 const ALLOWED_UPDATE_FIELDS = [
