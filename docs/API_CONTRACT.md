@@ -188,6 +188,7 @@ The `message` of each successful response. The frontend shows some of them word 
   - Set `progress = round(completed / lessonCount × 100)`, capped at 100.
   - Set `completedAt` when progress reaches 100.
 - Publishing needs at least one lesson: 400 "Add at least one lesson before publishing."
+- The last lesson of a published course can't be deleted: 400 "A published course needs at least one lesson. Unpublish it first."
 - A course with students can't be deleted: 400 "This course has students. Unpublish it instead." Deleting a course also deletes its lessons.
 - Creating, editing or deleting a lesson updates the course's `lessonCount` and `totalMinutes`.
 - Instructors can change only their own courses and lessons (403).
