@@ -102,6 +102,27 @@ describe("Courses API", () => {
       expect(res.body.data.status).toBe("draft");
       expect(res.body.data.instructor.toString()).toBe(instructor._id.toString());
     });
+
+    test("admin cannot create a course", async () => {
+      const admin = await createUser({ role: "admin" });
+      const category = await Category.create({ name: "Business" });
+      const token = await tokenFor(admin);
+
+      const res = await request(app)
+        .post("/api/courses")
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+          title: "Digital Marketing Basics",
+          shortDescription: "Learn practical digital marketing skills.",
+          description: "A practical introduction to digital marketing for beginners.",
+          category: category._id,
+          price: 50,
+          level: "beginner",
+        });
+
+      expect(res.status).toBe(403);
+      expect(await Course.countDocuments()).toBe(0);
+    });
   });
 
   describe("PATCH /api/courses/:id", () => {

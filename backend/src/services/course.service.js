@@ -242,7 +242,8 @@ async function createLesson(courseId, data, user) {
   return lesson;
 }
 
-async function updateLesson(lessonId, data, user) {
+// Only the instructor who owns the course can edit or delete its lessons, as the contract says.
+async function getLessonForOwner(lessonId, user) {
   const lesson = await Lesson.findById(lessonId);
 
   if (!lesson) {
@@ -255,12 +256,15 @@ async function updateLesson(lessonId, data, user) {
     throw new AppError("Course not found", 404);
   }
 
-  const isOwner = course.instructor.toString() === user._id.toString();
-  const isAdmin = user.role === "admin";
-
-  if (!isOwner && !isAdmin) {
+  if (course.instructor.toString() !== user._id.toString()) {
     throw new AppError("You don't have permission to do that", 403);
   }
+
+  return { lesson, course };
+}
+
+async function updateLesson(lessonId, data, user) {
+  const { lesson, course } = await getLessonForOwner(lessonId, user);
 
   const oldDuration = lesson.durationMinutes;
 
@@ -287,24 +291,7 @@ async function updateLesson(lessonId, data, user) {
 }
 
 async function deleteLesson(lessonId, user) {
-  const lesson = await Lesson.findById(lessonId);
-
-  if (!lesson) {
-    throw new AppError("Lesson not found", 404);
-  }
-
-  const course = await Course.findById(lesson.course);
-
-  if (!course) {
-    throw new AppError("Course not found", 404);
-  }
-
-  const isOwner = course.instructor.toString() === user._id.toString();
-  const isAdmin = user.role === "admin";
-
-  if (!isOwner && !isAdmin) {
-    throw new AppError("You don't have permission to do that", 403);
-  }
+  const { lesson, course } = await getLessonForOwner(lessonId, user);
 
   if (course.status === "published" && course.lessonCount <= 1) {
     throw new AppError("A published course needs at least one lesson. Unpublish it first.", 400);

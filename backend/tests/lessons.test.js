@@ -130,6 +130,23 @@ describe("Lessons API", () => {
 
       expect(res.status).toBe(403);
     });
+
+    test("admin cannot update a lesson", async () => {
+      const course = await createCourse();
+      const [lesson] = await createLessons(course, 1);
+      const admin = await createUser({ role: "admin" });
+      const token = await tokenFor(admin);
+
+      const res = await request(app)
+        .patch(`/api/lessons/${lesson._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+          title: "Admin Update",
+        });
+
+      expect(res.status).toBe(403);
+      expect((await Lesson.findById(lesson._id)).title).toBe("Lesson 1");
+    });
   });
 
   describe("DELETE /api/lessons/:id", () => {
@@ -211,6 +228,20 @@ describe("Lessons API", () => {
       expect(res.body.message).toBe(
         "A published course needs at least one lesson. Unpublish it first."
       );
+    });
+
+    test("admin cannot delete a lesson", async () => {
+      const course = await createCourse();
+      const [lesson] = await createLessons(course, 1);
+      const admin = await createUser({ role: "admin" });
+      const token = await tokenFor(admin);
+
+      const res = await request(app)
+        .delete(`/api/lessons/${lesson._id}`)
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(res.status).toBe(403);
+      expect(await Lesson.findById(lesson._id)).not.toBeNull();
     });
   });
 });

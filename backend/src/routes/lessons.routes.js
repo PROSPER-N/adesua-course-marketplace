@@ -16,17 +16,18 @@ const { lessonUpdateRules } = require("../validators/lesson.validators");
 
 const router = express.Router();
 
+// Owner only: the service checks that this instructor owns the lesson's course.
 router.patch(
   "/:id",
   validateObjectId(),
   protect,
-  authorize("instructor", "admin"),
+  authorize("instructor"),
   lessonUpdateRules,
   validate,
   updateLesson
 );
 
 // DELETE has no body, so validateObjectId is its only check.
-router.delete("/:id", validateObjectId(), protect, authorize("instructor", "admin"), deleteLesson);
+router.delete("/:id", validateObjectId(), protect, authorize("instructor"), deleteLesson);
 
 module.exports = router;

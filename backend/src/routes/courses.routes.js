@@ -45,16 +45,10 @@ router.get("/", courseQueryRules, validate, getCourses);
 
 router.get("/:id", validateObjectId(), getCourse);
 
-// Instructor/admin
-router.post(
-  "/",
-  protect,
-  authorize("instructor", "admin"),
-  courseCreateRules,
-  validate,
-  createCourse
-);
+// Instructor
+router.post("/", protect, authorize("instructor"), courseCreateRules, validate, createCourse);
 
+// Owner or admin (the service checks that an instructor owns the course)
 router.patch(
   "/:id",
   validateObjectId(),
@@ -78,7 +72,7 @@ router.patch(
 // DELETE has no body, so validateObjectId is its only check.
 router.delete("/:id", validateObjectId(), protect, authorize("instructor", "admin"), deleteCourse);
 
-// Instructor course lessons
+// Owner
 router.post(
   "/:id/lessons",
   validateObjectId(),
