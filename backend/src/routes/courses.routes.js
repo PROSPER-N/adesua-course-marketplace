@@ -57,9 +57,9 @@ router.post(
 
 router.patch(
   "/:id",
+  validateObjectId(),
   protect,
   authorize("instructor", "admin"),
-  validateObjectId(),
   courseUpdateRules,
   validate,
   updateCourse
@@ -67,22 +67,23 @@ router.patch(
 
 router.patch(
   "/:id/status",
+  validateObjectId(),
   protect,
   authorize("instructor", "admin"),
-  validateObjectId(),
   courseStatusRules,
   validate,
   updateCourseStatus
 );
 
-router.delete("/:id", protect, authorize("instructor", "admin"), validateObjectId(), deleteCourse);
+// DELETE has no body, so validateObjectId is its only check.
+router.delete("/:id", validateObjectId(), protect, authorize("instructor", "admin"), deleteCourse);
 
 // Instructor course lessons
 router.post(
   "/:id/lessons",
+  validateObjectId(),
   protect,
   authorize("instructor"),
-  validateObjectId(),
   lessonCreateRules,
   validate,
   createLesson

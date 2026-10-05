@@ -18,6 +18,6 @@ const router = express.Router();
 
 router.get("/courses", protect, authorize("instructor"), getMyCourses);
 
-router.get("/courses/:id", protect, authorize("instructor"), validateObjectId(), getMyCourse);
+router.get("/courses/:id", validateObjectId(), protect, authorize("instructor"), getMyCourse);
 
 module.exports = router;

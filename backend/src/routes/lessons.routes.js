@@ -18,14 +18,15 @@ const router = express.Router();
 
 router.patch(
   "/:id",
+  validateObjectId(),
   protect,
   authorize("instructor", "admin"),
-  validateObjectId(),
   lessonUpdateRules,
   validate,
   updateLesson
 );
 
-router.delete("/:id", protect, authorize("instructor", "admin"), validateObjectId(), deleteLesson);
+// DELETE has no body, so validateObjectId is its only check.
+router.delete("/:id", validateObjectId(), protect, authorize("instructor", "admin"), deleteLesson);
 
 module.exports = router;
