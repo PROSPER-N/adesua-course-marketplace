@@ -2,6 +2,7 @@
 const User = require("../src/models/User");
 const Category = require("../src/models/Category");
 const Course = require("../src/models/Course");
+const Lesson = require("../src/models/Lesson");
 const generateToken = require("../src/utils/generateToken");
 
 const TEST_PASSWORD = "Demo1234";
@@ -48,4 +49,21 @@ async function createCourse(overrides = {}) {
   });
 }
 
-module.exports = { createUser, tokenFor, createCourse, TEST_PASSWORD };
+// Adds lessons to the course, in order from 1 and 10 minutes each, and updates the course's
+// lessonCount and totalMinutes to match. Returns the lessons in order.
+async function createLessons(course, count = 3) {
+  const lessons = await Lesson.create(
+    Array.from({ length: count }, (_, index) => ({
+      course: course._id,
+      title: `Lesson ${index + 1}`,
+      videoUrl: `https://youtu.be/lesson${index + 1}`,
+      content: `Notes for lesson ${index + 1}.`,
+      durationMinutes: 10,
+      order: index + 1,
+    }))
+  );
+  await Course.updateOne({ _id: course._id }, { lessonCount: count, totalMinutes: count * 10 });
+  return lessons;
+}
+
+module.exports = { createUser, tokenFor, createCourse, createLessons, TEST_PASSWORD };

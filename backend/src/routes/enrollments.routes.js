@@ -5,9 +5,15 @@
 //   PATCH /api/enrollments/:courseId/lessons/:lessonId/complete   Enrolled student   Mark a lesson complete
 
 const express = require("express");
+const protect = require("../middleware/protect");
+const authorize = require("../middleware/authorize");
+const validate = require("../middleware/validate");
+const { enrollRules } = require("../validators/enrollment.validators");
+const { enroll, getMyEnrollments } = require("../controllers/enrollment.controller");
 
 const router = express.Router();
 
-// TODO (Member C): add the enrollment routes.
+router.post("/", protect, authorize("student"), enrollRules, validate, enroll);
+router.get("/my", protect, authorize("student"), getMyEnrollments);
 
 module.exports = router;
