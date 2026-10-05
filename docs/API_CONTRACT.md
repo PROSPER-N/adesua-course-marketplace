@@ -116,6 +116,17 @@ The `message` of each successful response. The frontend shows some of them word 
 | GET | `/api/admin/users` | Users fetched successfully |
 | PATCH | `/api/admin/users/:id/status` | User deactivated, or User reactivated |
 | GET | `/api/admin/courses` | Courses fetched successfully |
+| GET | `/api/courses` | Courses fetched successfully |
+| GET | `/api/courses/:id` | Course fetched successfully |
+| POST | `/api/courses` | Course created successfully |
+| PATCH | `/api/courses/:id` | Course updated successfully |
+| PATCH | `/api/courses/:id/status` | Course status updated successfully |
+| DELETE | `/api/courses/:id` | Course deleted successfully |
+| POST | `/api/courses/:id/lessons` | Lesson created successfully |
+| PATCH | `/api/lessons/:id` | Lesson updated successfully |
+| DELETE | `/api/lessons/:id` | Lesson deleted successfully |
+| GET | `/api/instructor/courses` | Instructor courses fetched successfully |
+| GET | `/api/instructor/courses/:id` | Instructor course fetched successfully |
 | GET | `/api/courses/:id/lessons` | Lessons fetched successfully |
 | POST | `/api/enrollments` | Enrolled successfully |
 | GET | `/api/enrollments/my` | Enrollments fetched successfully |

@@ -248,18 +248,17 @@ async function seedCourses({ users, categories }) {
       status: "draft",
     },
   ];
+const courses = [];
 
-  const courses = [];
-
-  for (const courseInfo of courseData) {
-    const course = await Course.create({
-      ...courseInfo,
-      thumbnailUrl: "",
-      lessonCount: 0,
-      totalMinutes: 0,
-      studentCount: 0,
-    });
-
+for (const courseInfo of courseData) {
+  const course = await Course.create({
+    ...courseInfo,
+    status: courseInfo.status || "published",
+    thumbnailUrl: "",
+    lessonCount: 0,
+    totalMinutes: 0,
+    studentCount: 0,
+  });
     const lessonCount = 5 + (courses.length % 4);
     const lessons = [];
 
