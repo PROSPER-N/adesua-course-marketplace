@@ -42,7 +42,7 @@ function TeachBand() {
         {/* The Button's usual green focus ring would vanish on dark green, so this one is gold. */}
         <Button
           className="shrink-0 focus-visible:outline-gold!"
-          to={isInstructor ? '/instructor' : '/register'}
+          to={isInstructor ? '/instructor' : '/register?role=instructor'}
           variant="gold"
         >
           {isInstructor ? 'Go to your dashboard' : 'Start teaching'}

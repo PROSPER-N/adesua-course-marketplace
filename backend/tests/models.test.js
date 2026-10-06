@@ -17,15 +17,6 @@ function orderData(overrides = {}) {
   };
 }
 
-beforeAll(async () => {
-  await Enrollment.init();
-  await Order.init();
-  // tests/setup.js connects with autoIndex off, so init() alone doesn't build the indexes.
-  // createIndexes() does, and the duplicate tests below depend on them.
-  await Enrollment.createIndexes();
-  await Order.createIndexes();
-});
-
 describe("Order model", () => {
   it("saves a valid order with status pending", async () => {
     const user = await createUser();
@@ -73,6 +64,11 @@ describe("Enrollment model", () => {
 
     await expect(
       Enrollment.create({ user: user._id, course: newCourseId(), progress: 120 })
-    ).rejects.toMatchObject({ name: "ValidationError" });
+    ).rejects.toMatchObject({
+      name: "ValidationError",
+      errors: {
+        progress: expect.objectContaining({ message: "Progress must be between 0 and 100." }),
+      },
+    });
   });
 });

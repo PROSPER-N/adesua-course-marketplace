@@ -1,4 +1,5 @@
 import { formatDate } from '../../utils/formatDate.js'
+import { getInitials } from '../../utils/getInitials.js'
 import Badge from '../ui/Badge.jsx'
 import Button from '../ui/Button.jsx'
 
@@ -6,17 +7,6 @@ const ROLE_BADGES = {
   student: { label: 'Student', variant: 'neutral' },
   instructor: { label: 'Instructor', variant: 'green' },
   admin: { label: 'Admin', variant: 'gold' },
-}
-
-// Navbar has the same helper, but it isn't exported.
-function getInitials(name = '') {
-  return name
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0].toUpperCase())
-    .join('')
 }
 
 function Avatar({ name }) {

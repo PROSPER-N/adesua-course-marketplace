@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <pattern id="stripes" width="8" height="8" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+      <path d="M0 0v8" stroke="#F4B63F" stroke-width="1" />
+    </pattern>
+    <clipPath id="rounded-square">
+      <rect width="64" height="64" rx="14" />
+    </clipPath>
+  </defs>
+  <g clip-path="url(#rounded-square)">
+    <path fill="#1E6B4A" d="M0 0h64v64H0z" />
+    <path fill="url(#stripes)" d="M0 0h64v64H0z" />
+  </g>
+</svg>
