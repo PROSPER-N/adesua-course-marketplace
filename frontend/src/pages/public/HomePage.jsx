@@ -5,6 +5,7 @@ import HomeHero from '../../components/home/HomeHero.jsx'
 import HowItWorks from '../../components/home/HowItWorks.jsx'
 import PlatformStats from '../../components/home/PlatformStats.jsx'
 import PopularCourses from '../../components/home/PopularCourses.jsx'
+import SkillsStrip from '../../components/home/SkillsStrip.jsx'
 import TeachBand from '../../components/home/TeachBand.jsx'
 
 function HomePage() {
@@ -39,6 +40,7 @@ function HomePage() {
         loading={loading}
         onRetry={() => setAttempt((current) => current + 1)}
       />
+      <SkillsStrip />
       <PopularCourses />
       <HowItWorks />
       <TeachBand />
