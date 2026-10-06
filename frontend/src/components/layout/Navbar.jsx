@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router'
 import Menu from 'lucide-react/dist/esm/icons/menu.mjs'
 import X from 'lucide-react/dist/esm/icons/x.mjs'
 import { useAuth } from '../../context/AuthContext.jsx'
+import { getInitials } from '../../utils/getInitials.js'
 import Button from '../ui/Button.jsx'
 
 function getLinks(user) {
@@ -29,16 +30,6 @@ function getLinks(user) {
   }
 
   return linksByRole[user.role] ?? [{ label: 'Browse courses', to: '/courses' }]
-}
-
-function getInitials(name = '') {
-  return name
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0].toUpperCase())
-    .join('')
 }
 
 function NavigationLinks({ links, pathname, onNavigate, mobile = false }) {

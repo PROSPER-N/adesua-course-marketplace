@@ -116,6 +116,63 @@
       ]
     },
     {
+      "name": "Public statistics",
+      "item": [
+        {
+          "name": "Platform stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/stats",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "stats"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Purpose: Get live public platform totals.\n\nAccess: Public.\n\nBody: none.\n\nParameters: none.\n\nCourses counts published courses; instructors counts instructors with at least one published course; learners counts student accounts; categories counts all categories."
+          },
+          "response": [
+            {
+              "name": "Stats (200)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/stats",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "stats"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Stats fetched successfully\",\n  \"data\": {\n    \"courses\": 12,\n    \"instructors\": 2,\n    \"learners\": 3,\n    \"categories\": 7\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "Auth",
       "item": [
         {

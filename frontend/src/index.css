@@ -134,12 +134,27 @@ body {
   animation: drawer-enter 180ms ease-out both;
 }
 
+.skills-marquee-track {
+  animation: skills-scroll 42s linear infinite;
+}
+
+.skills-marquee:hover .skills-marquee-track,
+.skills-marquee:focus-within .skills-marquee-track {
+  animation-play-state: paused;
+}
+
 @keyframes drawer-enter {
   from {
     transform: translateX(100%);
   }
   to {
     transform: translateX(0);
+  }
+}
+
+@keyframes skills-scroll {
+  to {
+    transform: translateX(-50%);
   }
 }
 
@@ -155,6 +170,24 @@ body {
   }
   .drawer-enter {
     animation: none;
+  }
+  .skills-marquee {
+    overflow: visible;
+  }
+  .skills-marquee-track {
+    animation: none;
+    display: block;
+    width: auto;
+  }
+  .skills-marquee-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: auto;
+    padding-right: 0;
+  }
+  .skills-marquee-row[aria-hidden='true'] {
+    display: none;
   }
 }
 

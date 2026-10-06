@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import toast from 'react-hot-toast'
-import { Link, useNavigate } from 'react-router'
+import { Link, useNavigate, useSearchParams } from 'react-router'
 import Button from '../../components/ui/Button.jsx'
 import ErrorMessage from '../../components/ui/ErrorMessage.jsx'
 import FormField from '../../components/ui/FormField.jsx'
@@ -16,8 +16,14 @@ const ROLE_OPTIONS = [
 function RegisterPage() {
   const { register } = useAuth()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
-  const [form, setForm] = useState({ role: 'student', name: '', email: '', password: '' })
+  const [form, setForm] = useState({
+    role: searchParams.get('role') === 'instructor' ? 'instructor' : 'student',
+    name: '',
+    email: '',
+    password: '',
+  })
   const [loading, setLoading] = useState(false)
   const [bannerError, setBannerError] = useState('')
   const [fieldErrors, setFieldErrors] = useState({})

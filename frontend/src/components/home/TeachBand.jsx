@@ -1,5 +1,12 @@
+import { BadgeCheck, Send, UsersRound } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext.jsx'
 import Button from '../ui/Button.jsx'
+
+const TEACHING_BENEFITS = [
+  { label: 'Free to start teaching', icon: BadgeCheck },
+  { label: 'See your students and earnings', icon: UsersRound },
+  { label: "Publish when you're ready", icon: Send },
+]
 
 function TeachBand() {
   const { user, loading } = useAuth()
@@ -23,11 +30,22 @@ function TeachBand() {
           <p className="mt-3 text-lg text-white/80">
             Turn your skills into short video lessons, and earn when learners buy your course.
           </p>
+          <ul className="mt-6 grid gap-3 sm:grid-cols-3">
+            {TEACHING_BENEFITS.map(({ label, icon: Icon }) => (
+              <li
+                className="flex items-center gap-2 text-sm font-semibold text-white/90"
+                key={label}
+              >
+                <Icon aria-hidden="true" className="size-5 shrink-0 text-gold" />
+                <span>{label}</span>
+              </li>
+            ))}
+          </ul>
         </div>
         {/* The Button's usual green focus ring would vanish on dark green, so this one is gold. */}
         <Button
           className="shrink-0 focus-visible:outline-gold!"
-          to={isInstructor ? '/instructor' : '/register'}
+          to={isInstructor ? '/instructor' : '/register?role=instructor'}
           variant="gold"
         >
           {isInstructor ? 'Go to your dashboard' : 'Start teaching'}

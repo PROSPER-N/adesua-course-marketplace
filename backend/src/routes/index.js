@@ -4,6 +4,7 @@
 const express = require("express");
 
 const healthRoutes = require("./health.routes");
+const statsRoutes = require("./stats.routes");
 const authRoutes = require("./auth.routes");
 const categoriesRoutes = require("./categories.routes");
 const adminRoutes = require("./admin.routes");
@@ -18,6 +19,7 @@ const ordersRoutes = require("./orders.routes");
 const router = express.Router();
 
 router.use("/health", healthRoutes); // Member A
+router.use("/stats", statsRoutes); // Member A
 router.use("/auth", authRoutes); // Member A
 router.use("/categories", categoriesRoutes); // Member A
 router.use("/admin", adminRoutes); // Member A
