@@ -88,7 +88,7 @@ The app opens at http://localhost:5173.
 
 ## Test accounts
 
-`npm run seed -- --yes` creates these accounts. **Every account uses the password `Demo1234`.**
+`npm run seed -- --yes` creates these accounts. **Every account uses the password `Demo1234`.** The live demo's free course is enrolled by Kojo Ansah so the learning and lesson-player pages can be demonstrated.
 
 | Name | Email | Role |
 |---|---|---|
@@ -101,14 +101,14 @@ The app opens at http://localhost:5173.
 
 ## Screenshots
 
-These screenshots were captured from the live site. At the time of capture, the production API had no published courses or student enrollments. The course-details and lesson-player images show the unavailable state; no production content was created or changed to obtain screenshots.
+These screenshots were captured from the live site. The demo catalog includes a free course and a paid course. The Kojo Ansah demo account is enrolled in the free course; the paid course remains locked until checkout is completed.
 
 | Screen | 1280px | 390px |
 |---|---|---|
 | Home | ![Home at 1280px](docs/screenshots/home-1280.png) | ![Home at 390px](docs/screenshots/home-390.png) |
 | Browse courses | ![Browse courses at 1280px](docs/screenshots/courses-1280.png) | ![Browse courses at 390px](docs/screenshots/courses-390.png) |
-| Course details | ![Course details unavailable at 1280px](docs/screenshots/course-details-unavailable-1280.png) | — |
-| Lesson player | ![Lesson player unavailable at 1280px](docs/screenshots/lesson-player-unavailable-1280.png) | — |
+| Course details | ![Course details at 1280px](docs/screenshots/course-details-1280.png) | — |
+| Lesson player | ![Lesson player at 1280px](docs/screenshots/lesson-player-1280.png) | — |
 | My learning | ![My learning at 1280px](docs/screenshots/my-learning-1280.png) | — |
 | Instructor dashboard | ![Instructor dashboard at 1280px](docs/screenshots/instructor-dashboard-1280.png) | — |
 | Admin users | ![Admin users at 1280px](docs/screenshots/admin-users-1280.png) | — |
@@ -179,4 +179,3 @@ Adesua/
 - The demo checkout takes no real payments. "Paying" just marks the order as paid and enrolls the student.
 - The login token is stored in the browser's localStorage. That's simple, but a script injected into the page could read it. A production app would use an httpOnly cookie instead.
 - The free API may sleep after idle time. Its first request after sleeping can take up to a minute while it wakes.
-- The live demo currently has no published courses or student enrollments, so course details and the lesson player cannot be demonstrated until demo course data is restored.
