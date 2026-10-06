@@ -70,7 +70,8 @@ function CourseDetailPage() {
   }
 
   if (result.error) {
-    const notFound = result.error.response?.status === 404
+    // A malformed ID gets 400 "Invalid ID", the only 400 this route sends, so it's not found too.
+    const notFound = [400, 404].includes(result.error.response?.status)
     return (
       <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
         <ErrorMessage
