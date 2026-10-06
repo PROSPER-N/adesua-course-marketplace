@@ -23,6 +23,7 @@ const EMPTY_COURSE = {
   price: '0',
   thumbnailUrl: '',
   whatYouWillLearn: ['', '', '', '', '', ''],
+  status: 'draft',
 }
 const EMPTY_LESSON = {
   title: '',
@@ -46,6 +47,7 @@ function CourseFormPage() {
   const loadError = loading ? null : loadResult.error
   const [fieldErrors, setFieldErrors] = useState({})
   const [saving, setSaving] = useState(false)
+  const [changingStatus, setChangingStatus] = useState(false)
   const [lesson, setLesson] = useState(EMPTY_LESSON)
   const [lessonEditId, setLessonEditId] = useState('')
   const [lessonBusy, setLessonBusy] = useState(false)
@@ -79,6 +81,7 @@ function CourseFormPage() {
               '',
               '',
             ].slice(0, 6),
+            status: courseData.status ?? 'draft',
           })
           setLessons(courseData.lessons ?? [])
         }
@@ -151,14 +154,16 @@ function CourseFormPage() {
   }
 
   async function saveCourse({ publish = false } = {}) {
+    // Save and Publish each show their own loading state.
+    const setBusy = publish ? setChangingStatus : setSaving
     setFormError('')
     setFieldErrors({})
-    setSaving(true)
+    setBusy(true)
     const rawPrice = course.price.trim()
     const priceIsNumeric = /^(?:\d+(?:\.\d*)?|\.\d+)$/.test(rawPrice)
     if (rawPrice === '' || !priceIsNumeric) {
       setFieldErrors({ price: "Price can't be negative. Enter 0 for a free course." })
-      setSaving(false)
+      setBusy(false)
       return
     }
     const price = Number(rawPrice)
@@ -168,7 +173,7 @@ function CourseFormPage() {
           ? "Price can't be negative. Enter 0 for a free course."
           : "Price can't be more than 5,000."
       setFieldErrors({ price: message })
-      setSaving(false)
+      setBusy(false)
       return
     }
     try {
@@ -183,7 +188,21 @@ function CourseFormPage() {
       setFormError(getErrorMessage(error))
       setFieldErrors(getFieldErrors(error))
     } finally {
-      setSaving(false)
+      setBusy(false)
+    }
+  }
+
+  async function unpublishCourse() {
+    setFormError('')
+    setChangingStatus(true)
+    try {
+      await updateCourseStatus(id, 'draft')
+      setCourse((current) => ({ ...current, status: 'draft' }))
+      toast.success('Course unpublished')
+    } catch (error) {
+      setFormError(getErrorMessage(error))
+    } finally {
+      setChangingStatus(false)
     }
   }
 
@@ -268,6 +287,8 @@ function CourseFormPage() {
         />
       </div>
     )
+
+  const published = course.status === 'published'
 
   return (
     <div className="mx-auto max-w-5xl space-y-8 px-4 py-8 sm:px-6 lg:px-8">
@@ -390,20 +411,32 @@ function CourseFormPage() {
             ))}
           </fieldset>
           <div className="flex flex-wrap gap-3 border-t border-line pt-5">
-            <Button loading={saving} loadingText="Saving…" type="submit">
+            <Button disabled={changingStatus} loading={saving} loadingText="Saving…" type="submit">
               <Save aria-hidden="true" className="size-4" />
-              Save draft
+              {published ? 'Save changes' : 'Save draft'}
             </Button>
-            {editing && (
+            {editing && published && (
               <Button
-                disabled={checks.some((item) => !item.done)}
-                loading={saving}
+                disabled={saving}
+                loading={changingStatus}
+                loadingText="Unpublishing…"
+                onClick={unpublishCourse}
+                type="button"
+                variant="outline"
+              >
+                Unpublish
+              </Button>
+            )}
+            {editing && !published && (
+              <Button
+                disabled={saving || checks.some((item) => !item.done)}
+                loading={changingStatus}
                 loadingText="Publishing…"
                 onClick={() => saveCourse({ publish: true })}
                 type="button"
                 variant="gold"
               >
-                Publish course
+                Publish
               </Button>
             )}
             {editing && (
