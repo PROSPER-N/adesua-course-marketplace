@@ -2,13 +2,13 @@
 
 Adesua is a video course marketplace, built as our TS Academy full-stack capstone project (topic 56). Instructors publish video courses. Students enroll in free courses or buy paid ones through a demo checkout, then watch the lessons and track their progress. Admins manage users and categories.
 
-> Status: the backend foundation, the login, categories and admin APIs, CI and the live API are done. The frontend foundation, the Order and Enrollment models, and the Log in and Sign up pages are merged. The other features are in progress.
+> **Status: The MVP is complete and live.** Visit the [live site](https://adesua-course-marketplace.vercel.app) or the [live API](https://adesua-api.onrender.com/api/health).
 
 ## Features by role
 
 - **Visitors**
-  - Browse published courses, and search by title
-  - Filter by category, level and price (free or paid), and sort by newest, most popular or price
+  - See popular courses, live platform totals and skill shortcuts on Home
+  - Browse published courses, search by title, filter by category, level and price (free or paid), and sort by newest, most popular or price
   - Open a course to see its details, its lesson outline and any free preview lessons
 - **Students**
   - Sign up and log in
@@ -23,7 +23,7 @@ Adesua is a video course marketplace, built as our TS Academy full-stack capston
   - See platform totals
   - Search users, filter them by role, and deactivate or reactivate accounts
   - Create, rename and delete categories
-  - See every course, including drafts
+  - Search and filter all courses, including drafts; unpublish published courses and delete courses with no students
 
 ## Tech stack
 
@@ -99,6 +99,22 @@ The app opens at http://localhost:5173.
 | Kojo Ansah | kojo@example.com | student |
 | Esi Nyarko | esi@example.com | student |
 
+## Screenshots
+
+These screenshots were captured from the live site. At the time of capture, the production API had no published courses or student enrollments. The course-details and lesson-player images show the unavailable state; no production content was created or changed to obtain screenshots.
+
+| Screen | 1280px | 390px |
+|---|---|---|
+| Home | ![Home at 1280px](docs/screenshots/home-1280.png) | ![Home at 390px](docs/screenshots/home-390.png) |
+| Browse courses | ![Browse courses at 1280px](docs/screenshots/courses-1280.png) | ![Browse courses at 390px](docs/screenshots/courses-390.png) |
+| Course details | ![Course details unavailable at 1280px](docs/screenshots/course-details-unavailable-1280.png) | — |
+| Lesson player | ![Lesson player unavailable at 1280px](docs/screenshots/lesson-player-unavailable-1280.png) | — |
+| My learning | ![My learning at 1280px](docs/screenshots/my-learning-1280.png) | — |
+| Instructor dashboard | ![Instructor dashboard at 1280px](docs/screenshots/instructor-dashboard-1280.png) | — |
+| Admin users | ![Admin users at 1280px](docs/screenshots/admin-users-1280.png) | — |
+| Admin categories | ![Admin categories at 1280px](docs/screenshots/admin-categories-1280.png) | — |
+| Admin courses | ![Admin courses at 1280px](docs/screenshots/admin-courses-1280.png) | — |
+
 ## Scripts
 
 Run these inside `backend/`:
@@ -162,3 +178,5 @@ Adesua/
 
 - The demo checkout takes no real payments. "Paying" just marks the order as paid and enrolls the student.
 - The login token is stored in the browser's localStorage. That's simple, but a script injected into the page could read it. A production app would use an httpOnly cookie instead.
+- The free API may sleep after idle time. Its first request after sleeping can take up to a minute while it wakes.
+- The live demo currently has no published courses or student enrollments, so course details and the lesson player cannot be demonstrated until demo course data is restored.
