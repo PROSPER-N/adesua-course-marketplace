@@ -292,11 +292,11 @@ function CoursesPage() {
                 ))}
               </div>
 
-              {pagination.pages > 1 && (
+              {pagination.totalPages > 1 && (
                 <div className="mt-8">
                   <Pagination
                     page={pagination.page}
-                    totalPages={pagination.pages}
+                    totalPages={pagination.totalPages}
                     onPageChange={(page) => updateFilter('page', page)}
                   />
                 </div>
