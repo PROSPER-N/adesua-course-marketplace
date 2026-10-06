@@ -1,0 +1,1317 @@
+{
+  "info": {
+    "_postman_id": "75c97593-ec65-4e23-87bc-93d74c8c7a60",
+    "name": "Adesua - Member B (courses, lessons, instructor courses)",
+    "description": "Requests for every endpoint Member B owns, matching docs/API_CONTRACT.md. Each request has two saved example responses under it: a success and an error.\n\nEnvironments\nUse the environment files in docs/postman/:\n- Adesua local (`adesua-local.postman_environment.json`): the backend on your computer. The examples come from a freshly seeded local database.\n- Adesua production (`adesua-production.postman_environment.json`): the live API on Render (see docs/DEPLOYMENT.md). The first request after a quiet period can take up to a minute. Requests that create, change or delete courses and lessons change the live data.\n\nHow to use\n1. Import this file and the environment you need, then choose that environment (top right).\n2. Run Auth > Log in as instructor first. It saves the token as `{{token}}`, and the other requests send it automatically.\n3. Open this collection's Variables tab and set `categoryId` to the `_id` of a category (GET /api/categories lists them).\n4. Run Courses > Create a course. It saves the new draft's `_id` as `{{courseId}}`.\n5. Run Lessons > Add a lesson. It saves the lesson's `_id` as `{{lessonId}}`.\n6. Run Publish or unpublish a course, then Get a published course to see what the public course page gets.\n7. Delete a lesson and Delete a course remove what you made. The last lesson of a published course can't be deleted, so unpublish the course first.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "categoryId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "courseId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "lessonId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Log in as instructor",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Save the token so the other requests can send it as {{token}}.",
+                  "const body = pm.response.json();",
+                  "if (body.success) {",
+                  "  pm.environment.set(\"token\", body.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"kwame@example.com\",\n  \"password\": \"Demo1234\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Purpose: Log in as an instructor, for the course, lesson and instructor requests. Returns a token that the other requests send automatically.\n\nAccess: Public. Limited to 20 sign-up or login attempts per 15 minutes per IP address.\n\nBody (JSON):\n- `email` (required)\n- `password` (required)\n\nThe seeded instructors are kwame@example.com and ama@example.com. Every seeded account uses the password `Demo1234`.\n\nParameters: none.\n\nThis request saves the returned token as `{{token}}`."
+          },
+          "response": [
+            {
+              "name": "Logged in (200)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"kwame@example.com\",\n  \"password\": \"Demo1234\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Logged in successfully\",\n  \"data\": {\n    \"token\": \"<token>\",\n    \"user\": {\n      \"_id\": \"6ac4273ef3a5638ec5a64633\",\n      \"name\": \"Kwame Asante\",\n      \"email\": \"kwame@example.com\",\n      \"role\": \"instructor\",\n      \"bio\": \"Full-stack developer who has spent ten years building websites for small businesses.\",\n      \"isActive\": true,\n      \"createdAt\": \"2026-10-05T22:39:58.399Z\",\n      \"updatedAt\": \"2026-10-05T22:39:58.399Z\"\n    }\n  }\n}"
+            },
+            {
+              "name": "Wrong email or password (401)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"kwame@example.com\",\n  \"password\": \"WrongPass1\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Incorrect email or password\",\n  \"data\": null\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Courses",
+      "item": [
+        {
+          "name": "List published courses",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/courses?search=web",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "web"
+                }
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Purpose: List published courses, with search, filters, sorting and pages.\n\nAccess: Public.\n\nBody: none.\n\nParameters (query, all optional):\n- `search`: part of a title, ignoring capital letters\n- `category`: a category slug, like `web-development`\n- `level`: `beginner`, `intermediate` or `advanced`\n- `price`: `free` or `paid`\n- `sort`: `newest` (the default), `popular`, `price_asc` or `price_desc`\n- `page`: default 1\n- `limit`: default 9, at most 50\n\nDrafts never appear here."
+          },
+          "response": [
+            {
+              "name": "Courses (200)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/courses?search=web",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses"
+                  ],
+                  "query": [
+                    {
+                      "key": "search",
+                      "value": "web"
+                    }
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Courses fetched successfully\",\n  \"data\": {\n    \"items\": [\n      {\n        \"_id\": \"6ac42746f3a5638ec5a64672\",\n        \"title\": \"Responsive Websites With CSS\",\n        \"shortDescription\": \"Take your CSS skills further by creating layouts that work across phones, tablets, and desktops.\",\n        \"instructor\": {\n          \"_id\": \"6ac4273ef3a5638ec5a64634\",\n          \"name\": \"Ama Owusu\"\n        },\n        \"category\": {\n          \"_id\": \"6ac4273ff3a5638ec5a64638\",\n          \"name\": \"Web development\",\n          \"slug\": \"web-development\"\n        },\n        \"price\": 200,\n        \"level\": \"intermediate\",\n        \"thumbnailUrl\": \"\",\n        \"lessonCount\": 8,\n        \"totalMinutes\": 220,\n        \"studentCount\": 0,\n        \"createdAt\": \"2026-10-05T22:40:06.138Z\"\n      },\n      {\n        \"_id\": \"6ac42740f3a5638ec5a6463f\",\n        \"title\": \"Build Your First Web Page\",\n        \"shortDescription\": \"A practical introduction to HTML, CSS, and the structure of a modern web page.\",\n        \"instructor\": {\n          \"_id\": \"6ac4273ef3a5638ec5a64633\",\n          \"name\": \"Kwame Asante\"\n        },\n        \"category\": {\n          \"_id\": \"6ac4273ff3a5638ec5a64638\",\n          \"name\": \"Web development\",\n          \"slug\": \"web-development\"\n        },\n        \"price\": 0,\n        \"level\": \"beginner\",\n        \"thumbnailUrl\": \"\",\n        \"lessonCount\": 5,\n        \"totalMinutes\": 100,\n        \"studentCount\": 1,\n        \"createdAt\": \"2026-10-05T22:40:00.418Z\"\n      }\n    ],\n    \"pagination\": {\n      \"page\": 1,\n      \"limit\": 9,\n      \"total\": 2,\n      \"totalPages\": 1\n    }\n  }\n}"
+            },
+            {
+              "name": "Invalid page (400)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/courses?page=0",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "0"
+                    }
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Please fix the highlighted fields\",\n  \"data\": null,\n  \"errors\": [\n    {\n      \"field\": \"page\",\n      \"message\": \"Page and limit must be positive numbers.\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get a published course",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/courses/{{courseId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses",
+                "{{courseId}}"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Purpose: One published course with its instructor, category and lesson outline, for the course page.\n\nAccess: Public.\n\nBody: none.\n\nParameters:\n- `courseId` in the URL: the course's `_id`. Create a course saves it.\n\nLessons come in order. Only preview lessons include `videoUrl` and `content`. A draft gives 404, the same as an unknown course."
+          },
+          "response": [
+            {
+              "name": "Course (200)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/courses/{{courseId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "{{courseId}}"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Course fetched successfully\",\n  \"data\": {\n    \"_id\": \"6ac429d75d45bf0c0b8fb2ea\",\n    \"title\": \"Spreadsheet Skills for Everyday Work\",\n    \"shortDescription\": \"Organise numbers, lists and budgets with simple spreadsheet habits.\",\n    \"description\": \"Learn the spreadsheet basics that save time every week: tables, formulas, sorting, filters and simple charts.\",\n    \"whatYouWillLearn\": [\n      \"Build a clean table\",\n      \"Write simple formulas\",\n      \"Sort and filter data\",\n      \"Make a simple chart\"\n    ],\n    \"instructor\": {\n      \"_id\": \"6ac4273ef3a5638ec5a64633\",\n      \"name\": \"Kwame Asante\",\n      \"bio\": \"Full-stack developer who has spent ten years building websites for small businesses.\"\n    },\n    \"category\": {\n      \"_id\": \"6ac4273ff3a5638ec5a6463a\",\n      \"name\": \"Business\",\n      \"slug\": \"business\"\n    },\n    \"price\": 49,\n    \"level\": \"beginner\",\n    \"thumbnailUrl\": \"\",\n    \"status\": \"published\",\n    \"lessonCount\": 2,\n    \"totalMinutes\": 33,\n    \"studentCount\": 0,\n    \"createdAt\": \"2026-10-05T22:51:03.092Z\",\n    \"updatedAt\": \"2026-10-05T22:51:06.426Z\",\n    \"__v\": 0,\n    \"lessons\": [\n      {\n        \"_id\": \"6ac429d85d45bf0c0b8fb2eb\",\n        \"title\": \"Finding your way around a spreadsheet\",\n        \"videoUrl\": \"https://youtu.be/jNQXAC9IVRw\",\n        \"content\": \"Rows, columns and cells, and how to move between them quickly.\",\n        \"durationMinutes\": 15,\n        \"order\": 1,\n        \"isPreview\": true\n      },\n      {\n        \"_id\": \"6ac429da5d45bf0c0b8fb2ec\",\n        \"title\": \"Writing your first formulas\",\n        \"durationMinutes\": 18,\n        \"order\": 2,\n        \"isPreview\": false\n      }\n    ]\n  }\n}"
+            },
+            {
+              "name": "Draft course (404)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/courses/{{courseId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "{{courseId}}"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Course not found\",\n  \"data\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create a course",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Save the course's ID so the other requests can use {{courseId}}.",
+                  "const body = pm.response.json();",
+                  "if (body.success) {",
+                  "  pm.collectionVariables.set(\"courseId\", body.data._id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/courses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Spreadsheet Skills for Everyday Work\",\n  \"shortDescription\": \"Organise numbers, lists and budgets with simple spreadsheet habits.\",\n  \"description\": \"Learn the spreadsheet basics that save time every week: tables, formulas, sorting, filters and simple charts.\",\n  \"whatYouWillLearn\": [\n    \"Build a clean table\",\n    \"Write simple formulas\",\n    \"Sort and filter data\",\n    \"Make a simple chart\"\n  ],\n  \"category\": \"{{categoryId}}\",\n  \"price\": 49,\n  \"level\": \"beginner\",\n  \"thumbnailUrl\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Purpose: Create a course. It starts as a draft with no lessons.\n\nAccess: Instructor.\n\nBody (JSON):\n- `title` (required): 5 to 120 characters\n- `shortDescription` (required): up to 160 characters\n- `description` (required): at least 20 characters\n- `whatYouWillLearn`: up to 6 short points\n- `category` (required): a category `_id`, from the `categoryId` variable\n- `price` (required): 0 to 5,000, where 0 makes the course free\n- `level` (required): `beginner`, `intermediate` or `advanced`\n- `thumbnailUrl`: a full `https://` link, or empty to use the category cover\n\nOther fields, like `status` or `studentCount`, are ignored.\n\nParameters: none.\n\nThis request saves the course's `_id` as `{{courseId}}`."
+          },
+          "response": [
+            {
+              "name": "Course created (201)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/courses",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Spreadsheet Skills for Everyday Work\",\n  \"shortDescription\": \"Organise numbers, lists and budgets with simple spreadsheet habits.\",\n  \"description\": \"Learn the spreadsheet basics that save time every week: tables, formulas, sorting, filters and simple charts.\",\n  \"whatYouWillLearn\": [\n    \"Build a clean table\",\n    \"Write simple formulas\",\n    \"Sort and filter data\",\n    \"Make a simple chart\"\n  ],\n  \"category\": \"{{categoryId}}\",\n  \"price\": 49,\n  \"level\": \"beginner\",\n  \"thumbnailUrl\": \"\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Course created successfully\",\n  \"data\": {\n    \"title\": \"Spreadsheet Skills for Everyday Work\",\n    \"shortDescription\": \"Organise numbers, lists and budgets with simple spreadsheet habits.\",\n    \"description\": \"Learn the spreadsheet basics that save time every week: tables, formulas, sorting, filters and simple charts.\",\n    \"whatYouWillLearn\": [\n      \"Build a clean table\",\n      \"Write simple formulas\",\n      \"Sort and filter data\",\n      \"Make a simple chart\"\n    ],\n    \"instructor\": \"6ac4273ef3a5638ec5a64633\",\n    \"category\": \"6ac4273ff3a5638ec5a6463a\",\n    \"price\": 49,\n    \"level\": \"beginner\",\n    \"thumbnailUrl\": \"\",\n    \"status\": \"draft\",\n    \"lessonCount\": 0,\n    \"totalMinutes\": 0,\n    \"studentCount\": 0,\n    \"_id\": \"6ac429d75d45bf0c0b8fb2ea\",\n    \"createdAt\": \"2026-10-05T22:51:03.092Z\",\n    \"updatedAt\": \"2026-10-05T22:51:03.092Z\"\n  }\n}"
+            },
+            {
+              "name": "Invalid fields (400)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/courses",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Spreadsheet Skills for Everyday Work\",\n  \"shortDescription\": \"Organise numbers, lists and budgets with simple spreadsheet habits.\",\n  \"description\": \"Learn the spreadsheet basics that save time every week: tables, formulas, sorting, filters and simple charts.\",\n  \"category\": \"{{categoryId}}\",\n  \"price\": 6000,\n  \"level\": \"beginner\",\n  \"thumbnailUrl\": \"http://example.com/cover.png\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Please fix the highlighted fields\",\n  \"data\": null,\n  \"errors\": [\n    {\n      \"field\": \"price\",\n      \"message\": \"Price can't be more than 5,000.\"\n    },\n    {\n      \"field\": \"thumbnailUrl\",\n      \"message\": \"Enter a full link starting with https://.\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update a course",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/courses/{{courseId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses",
+                "{{courseId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 39,\n  \"shortDescription\": \"Organise numbers, lists and budgets with a few simple spreadsheet habits.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Purpose: Change a course's details.\n\nAccess: The course's instructor, or an admin.\n\nBody (JSON): any of the fields from Create a course. Fields you leave out don't change.\n\nParameters:\n- `courseId` in the URL."
+          },
+          "response": [
+            {
+              "name": "Course updated (200)",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/courses/{{courseId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "{{courseId}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"price\": 39,\n  \"shortDescription\": \"Organise numbers, lists and budgets with a few simple spreadsheet habits.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Course updated successfully\",\n  \"data\": {\n    \"_id\": \"6ac429d75d45bf0c0b8fb2ea\",\n    \"title\": \"Spreadsheet Skills for Everyday Work\",\n    \"shortDescription\": \"Organise numbers, lists and budgets with a few simple spreadsheet habits.\",\n    \"description\": \"Learn the spreadsheet basics that save time every week: tables, formulas, sorting, filters and simple charts.\",\n    \"whatYouWillLearn\": [\n      \"Build a clean table\",\n      \"Write simple formulas\",\n      \"Sort and filter data\",\n      \"Make a simple chart\"\n    ],\n    \"instructor\": {\n      \"_id\": \"6ac4273ef3a5638ec5a64633\",\n      \"name\": \"Kwame Asante\",\n      \"bio\": \"Full-stack developer who has spent ten years building websites for small businesses.\"\n    },\n    \"category\": {\n      \"_id\": \"6ac4273ff3a5638ec5a6463a\",\n      \"name\": \"Business\",\n      \"slug\": \"business\"\n    },\n    \"price\": 39,\n    \"level\": \"beginner\",\n    \"thumbnailUrl\": \"\",\n    \"status\": \"published\",\n    \"lessonCount\": 2,\n    \"totalMinutes\": 33,\n    \"studentCount\": 0,\n    \"createdAt\": \"2026-10-05T22:51:03.092Z\",\n    \"updatedAt\": \"2026-10-05T22:51:07.539Z\"\n  }\n}"
+            },
+            {
+              "name": "Unknown category (400)",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/courses/{{courseId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "{{courseId}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"category\": \"507f1f77bcf86cd799439011\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Please fix the highlighted fields\",\n  \"data\": null,\n  \"errors\": [\n    {\n      \"field\": \"category\",\n      \"message\": \"Choose a valid category.\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Publish or unpublish a course",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/courses/{{courseId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses",
+                "{{courseId}}",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"published\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Purpose: Publish a course, or move it back to drafts.\n\nAccess: The course's instructor, or an admin.\n\nBody (JSON):\n- `status` (required): `published` or `draft`\n\nParameters:\n- `courseId` in the URL.\n\nA course needs at least one lesson before it can be published."
+          },
+          "response": [
+            {
+              "name": "Course published (200)",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/courses/{{courseId}}/status",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "{{courseId}}",
+                    "status"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"published\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Course status updated successfully\",\n  \"data\": {\n    \"_id\": \"6ac429d75d45bf0c0b8fb2ea\",\n    \"title\": \"Spreadsheet Skills for Everyday Work\",\n    \"shortDescription\": \"Organise numbers, lists and budgets with simple spreadsheet habits.\",\n    \"description\": \"Learn the spreadsheet basics that save time every week: tables, formulas, sorting, filters and simple charts.\",\n    \"whatYouWillLearn\": [\n      \"Build a clean table\",\n      \"Write simple formulas\",\n      \"Sort and filter data\",\n      \"Make a simple chart\"\n    ],\n    \"instructor\": {\n      \"_id\": \"6ac4273ef3a5638ec5a64633\",\n      \"name\": \"Kwame Asante\",\n      \"bio\": \"Full-stack developer who has spent ten years building websites for small businesses.\"\n    },\n    \"category\": {\n      \"_id\": \"6ac4273ff3a5638ec5a6463a\",\n      \"name\": \"Business\",\n      \"slug\": \"business\"\n    },\n    \"price\": 49,\n    \"level\": \"beginner\",\n    \"thumbnailUrl\": \"\",\n    \"status\": \"published\",\n    \"lessonCount\": 1,\n    \"totalMinutes\": 12,\n    \"studentCount\": 0,\n    \"createdAt\": \"2026-10-05T22:51:03.092Z\",\n    \"updatedAt\": \"2026-10-05T22:51:04.894Z\"\n  }\n}"
+            },
+            {
+              "name": "No lessons yet (400)",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/courses/{{courseId}}/status",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "{{courseId}}",
+                    "status"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"published\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Add at least one lesson before publishing.\",\n  \"data\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete a course",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/courses/{{courseId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses",
+                "{{courseId}}"
+              ]
+            },
+            "description": "Purpose: Delete a course and its lessons.\n\nAccess: The course's instructor, or an admin.\n\nBody: none.\n\nParameters:\n- `courseId` in the URL.\n\nA course with students can't be deleted. Unpublish it instead."
+          },
+          "response": [
+            {
+              "name": "Course deleted (200)",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/courses/{{courseId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "{{courseId}}"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Course deleted successfully\",\n  \"data\": null\n}"
+            },
+            {
+              "name": "Course has students (400)",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/courses/6ac42740f3a5638ec5a6463f",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "6ac42740f3a5638ec5a6463f"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"This course has students. Unpublish it instead.\",\n  \"data\": null\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Lessons",
+      "item": [
+        {
+          "name": "Add a lesson",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Save the lesson's ID so the other requests can use {{lessonId}}.",
+                  "const body = pm.response.json();",
+                  "if (body.success) {",
+                  "  pm.collectionVariables.set(\"lessonId\", body.data._id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/courses/{{courseId}}/lessons",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses",
+                "{{courseId}}",
+                "lessons"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Getting around a spreadsheet\",\n  \"videoUrl\": \"https://youtu.be/jNQXAC9IVRw\",\n  \"content\": \"Rows, columns and cells, and how to move between them quickly.\",\n  \"durationMinutes\": 12,\n  \"isPreview\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Purpose: Add a lesson to a course. The course's `lessonCount` and `totalMinutes` go up.\n\nAccess: The course's instructor.\n\nBody (JSON):\n- `title` (required): 3 to 120 characters\n- `videoUrl`: a YouTube link (watch, youtu.be or embed)\n- `content`: the lesson notes\n- `durationMinutes` (required): 1 to 300\n- `isPreview`: true shows the video and notes on the public course page\n- `order`: 1 or more. Leave it out to add the lesson at the end.\n\nA lesson needs a YouTube link, notes, or both.\n\nParameters:\n- `courseId` in the URL.\n\nThis request saves the lesson's `_id` as `{{lessonId}}`."
+          },
+          "response": [
+            {
+              "name": "Lesson added (201)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/courses/{{courseId}}/lessons",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "{{courseId}}",
+                    "lessons"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Getting around a spreadsheet\",\n  \"videoUrl\": \"https://youtu.be/jNQXAC9IVRw\",\n  \"content\": \"Rows, columns and cells, and how to move between them quickly.\",\n  \"durationMinutes\": 12,\n  \"isPreview\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Lesson created successfully\",\n  \"data\": {\n    \"course\": \"6ac429d75d45bf0c0b8fb2ea\",\n    \"title\": \"Getting around a spreadsheet\",\n    \"videoUrl\": \"https://youtu.be/jNQXAC9IVRw\",\n    \"content\": \"Rows, columns and cells, and how to move between them quickly.\",\n    \"durationMinutes\": 12,\n    \"order\": 1,\n    \"isPreview\": true,\n    \"_id\": \"6ac429d85d45bf0c0b8fb2eb\",\n    \"createdAt\": \"2026-10-05T22:51:04.354Z\",\n    \"updatedAt\": \"2026-10-05T22:51:04.354Z\"\n  }\n}"
+            },
+            {
+              "name": "No video and no notes (400)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/courses/{{courseId}}/lessons",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "{{courseId}}",
+                    "lessons"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Getting around a spreadsheet\",\n  \"durationMinutes\": 12\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Add a YouTube link, lesson notes, or both.\",\n  \"data\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "Edit a lesson",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/lessons/{{lessonId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "lessons",
+                "{{lessonId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Finding your way around a spreadsheet\",\n  \"durationMinutes\": 15\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Purpose: Change a lesson. A new length updates the course's `totalMinutes`.\n\nAccess: The course's instructor.\n\nBody (JSON): any of the fields from Add a lesson. Fields you leave out don't change.\n\nParameters:\n- `lessonId` in the URL."
+          },
+          "response": [
+            {
+              "name": "Lesson updated (200)",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/lessons/{{lessonId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "lessons",
+                    "{{lessonId}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Finding your way around a spreadsheet\",\n  \"durationMinutes\": 15\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Lesson updated successfully\",\n  \"data\": {\n    \"_id\": \"6ac429d85d45bf0c0b8fb2eb\",\n    \"course\": \"6ac429d75d45bf0c0b8fb2ea\",\n    \"title\": \"Finding your way around a spreadsheet\",\n    \"videoUrl\": \"https://youtu.be/jNQXAC9IVRw\",\n    \"content\": \"Rows, columns and cells, and how to move between them quickly.\",\n    \"durationMinutes\": 15,\n    \"order\": 1,\n    \"isPreview\": true,\n    \"createdAt\": \"2026-10-05T22:51:04.354Z\",\n    \"updatedAt\": \"2026-10-05T22:51:05.707Z\"\n  }\n}"
+            },
+            {
+              "name": "Invalid length (400)",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/lessons/{{lessonId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "lessons",
+                    "{{lessonId}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"durationMinutes\": 0\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Please fix the highlighted fields\",\n  \"data\": null,\n  \"errors\": [\n    {\n      \"field\": \"durationMinutes\",\n      \"message\": \"Enter the length in minutes (1 to 300).\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete a lesson",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/lessons/{{lessonId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "lessons",
+                "{{lessonId}}"
+              ]
+            },
+            "description": "Purpose: Delete a lesson. The course's `lessonCount` and `totalMinutes` go down, and the lesson is removed from students' completed lessons.\n\nAccess: The course's instructor.\n\nBody: none.\n\nParameters:\n- `lessonId` in the URL.\n\nA published course must keep at least one lesson. To delete the last one, unpublish the course first."
+          },
+          "response": [
+            {
+              "name": "Lesson deleted (200)",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/lessons/{{lessonId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "lessons",
+                    "{{lessonId}}"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Lesson deleted successfully\",\n  \"data\": null\n}"
+            },
+            {
+              "name": "Last lesson of a published course (400)",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/lessons/{{lessonId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "lessons",
+                    "{{lessonId}}"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"A published course needs at least one lesson. Unpublish it first.\",\n  \"data\": null\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Instructor",
+      "item": [
+        {
+          "name": "My courses",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/instructor/courses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "instructor",
+                "courses"
+              ]
+            },
+            "description": "Purpose: The logged-in instructor's courses in any status, newest first, for the instructor dashboard.\n\nAccess: Instructor.\n\nBody: none.\n\nParameters: none."
+          },
+          "response": [
+            {
+              "name": "My courses (200)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/instructor/courses",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "instructor",
+                    "courses"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Instructor courses fetched successfully\",\n  \"data\": [\n    {\n      \"_id\": \"6ac42748f3a5638ec5a64688\",\n      \"title\": \"Content Planning for Beginners\",\n      \"shortDescription\": \"Build a simple content system that helps you publish consistently without guessing every day.\",\n      \"description\": \"Learn how to generate useful content ideas, organise them into a calendar, and create a sustainable publishing routine.\",\n      \"whatYouWillLearn\": [\n        \"Find useful content ideas\",\n        \"Organise a content calendar\",\n        \"Create repeatable workflows\",\n        \"Measure basic content results\"\n      ],\n      \"instructor\": \"6ac4273ef3a5638ec5a64633\",\n      \"category\": {\n        \"_id\": \"6ac4273ff3a5638ec5a6463c\",\n        \"name\": \"Marketing\",\n        \"slug\": \"marketing\"\n      },\n      \"price\": 95,\n      \"level\": \"beginner\",\n      \"thumbnailUrl\": \"\",\n      \"status\": \"published\",\n      \"lessonCount\": 7,\n      \"totalMinutes\": 175,\n      \"studentCount\": 0,\n      \"createdAt\": \"2026-10-05T22:40:08.649Z\",\n      \"updatedAt\": \"2026-10-05T22:40:09.440Z\",\n      \"__v\": 0\n    },\n    {\n      \"_id\": \"6ac42747f3a5638ec5a6467b\",\n      \"title\": \"Programming Logic Made Simple\",\n      \"shortDescription\": \"Develop the problem-solving habits that make learning any programming language easier.\",\n      \"description\": \"Work through practical programming problems while learning conditions, loops, functions, and structured thinking.\",\n      \"whatYouWillLearn\": [\n        \"Break problems into steps\",\n        \"Use conditions\",\n        \"Work with loops\",\n        \"Write reusable functions\"\n      ],\n      \"instructor\": \"6ac4273ef3a5638ec5a64633\",\n      \"category\": {\n        \"_id\": \"6ac4273ff3a5638ec5a64639\",\n        \"name\": \"Programming\",\n        \"slug\": \"programming\"\n      },\n      \"price\": 75,\n      \"level\": \"beginner\",\n      \"thumbnailUrl\": \"\",\n      \"status\": \"published\",\n      \"lessonCount\": 5,\n      \"totalMinutes\": 100,\n      \"studentCount\": 0,\n      \"createdAt\": \"2026-10-05T22:40:07.158Z\",\n      \"updatedAt\": \"2026-10-05T22:40:07.754Z\",\n      \"__v\": 0\n    },\n    {\n      \"_id\": \"6ac42745f3a5638ec5a6466a\",\n      \"title\": \"Building Better Personal Habits\",\n      \"shortDescription\": \"Create practical routines that make everyday goals easier to manage and maintain.\",\n      \"description\": \"Learn how to set realistic goals, build small habits, manage distractions, and review your progress.\",\n      \"whatYouWillLearn\": [\n        \"Set realistic goals\",\n        \"Build repeatable habits\",\n        \"Reduce common distractions\",\n        \"Review progress effectively\"\n      ],\n      \"instructor\": \"6ac4273ef3a5638ec5a64633\",\n      \"category\": {\n        \"_id\": \"6ac4273ff3a5638ec5a6463e\",\n        \"name\": \"Personal growth\",\n        \"slug\": \"personal-growth\"\n      },\n      \"price\": 0,\n      \"level\": \"beginner\",\n      \"thumbnailUrl\": \"\",\n      \"status\": \"published\",\n      \"lessonCount\": 7,\n      \"totalMinutes\": 175,\n      \"studentCount\": 0,\n      \"createdAt\": \"2026-10-05T22:40:05.243Z\",\n      \"updatedAt\": \"2026-10-05T22:40:06.032Z\",\n      \"__v\": 0\n    },\n    {\n      \"_id\": \"6ac42743f3a5638ec5a6465d\",\n      \"title\": \"Social Media Marketing Basics\",\n      \"shortDescription\": \"Understand the foundations of creating useful content and reaching the right audience online.\",\n      \"description\": \"Learn how to plan content, understand audiences, measure basic results, and build a consistent marketing routine.\",\n      \"whatYouWillLearn\": [\n        \"Define your audience\",\n        \"Plan useful content\",\n        \"Understand basic metrics\",\n        \"Build a simple content routine\"\n      ],\n      \"instructor\": \"6ac4273ef3a5638ec5a64633\",\n      \"category\": {\n        \"_id\": \"6ac4273ff3a5638ec5a6463c\",\n        \"name\": \"Marketing\",\n        \"slug\": \"marketing\"\n      },\n      \"price\": 150,\n      \"level\": \"intermediate\",\n      \"thumbnailUrl\": \"\",\n      \"status\": \"published\",\n      \"lessonCount\": 5,\n      \"totalMinutes\": 100,\n      \"studentCount\": 0,\n      \"createdAt\": \"2026-10-05T22:40:03.781Z\",\n      \"updatedAt\": \"2026-10-05T22:40:04.361Z\",\n      \"__v\": 0\n    },\n    {\n      \"_id\": \"6ac42741f3a5638ec5a6464c\",\n      \"title\": \"Starting a Small Business\",\n      \"shortDescription\": \"A practical guide to turning a simple idea into a structured small business.\",\n      \"description\": \"Learn how to define your offer, understand your customer, price your work, and organise your first business steps.\",\n      \"whatYouWillLearn\": [\n        \"Define a clear business offer\",\n        \"Identify your target customer\",\n        \"Create simple pricing\",\n        \"Plan your first sales activities\"\n      ],\n      \"instructor\": \"6ac4273ef3a5638ec5a64633\",\n      \"category\": {\n        \"_id\": \"6ac4273ff3a5638ec5a6463a\",\n        \"name\": \"Business\",\n        \"slug\": \"business\"\n      },\n      \"price\": 85,\n      \"level\": \"beginner\",\n      \"thumbnailUrl\": \"\",\n      \"status\": \"published\",\n      \"lessonCount\": 7,\n      \"totalMinutes\": 175,\n      \"studentCount\": 1,\n      \"createdAt\": \"2026-10-05T22:40:01.920Z\",\n      \"updatedAt\": \"2026-10-05T22:40:12.719Z\",\n      \"__v\": 0\n    },\n    {\n      \"_id\": \"6ac42740f3a5638ec5a6463f\",\n      \"title\": \"Build Your First Web Page\",\n      \"shortDescription\": \"A practical introduction to HTML, CSS, and the structure of a modern web page.\",\n      \"description\": \"Learn how websites are structured and build your first responsive web page using HTML and CSS.\",\n      \"whatYouWillLearn\": [\n        \"Understand basic HTML structure\",\n        \"Style pages with CSS\",\n        \"Create responsive layouts\",\n        \"Use semantic HTML\"\n      ],\n      \"instructor\": \"6ac4273ef3a5638ec5a64633\",\n      \"category\": {\n        \"_id\": \"6ac4273ff3a5638ec5a64638\",\n        \"name\": \"Web development\",\n        \"slug\": \"web-development\"\n      },\n      \"price\": 0,\n      \"level\": \"beginner\",\n      \"thumbnailUrl\": \"\",\n      \"status\": \"published\",\n      \"lessonCount\": 5,\n      \"totalMinutes\": 100,\n      \"studentCount\": 1,\n      \"createdAt\": \"2026-10-05T22:40:00.418Z\",\n      \"updatedAt\": \"2026-10-05T22:40:11.653Z\",\n      \"__v\": 0\n    }\n  ]\n}"
+            },
+            {
+              "name": "No token (401)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/instructor/courses",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "instructor",
+                    "courses"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Please log in to continue\",\n  \"data\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "My course for editing",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/instructor/courses/{{courseId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "instructor",
+                "courses",
+                "{{courseId}}"
+              ]
+            },
+            "description": "Purpose: One of my courses with its full lessons, including videos and notes, for the edit page.\n\nAccess: The instructor who owns the course.\n\nBody: none.\n\nParameters:\n- `courseId` in the URL."
+          },
+          "response": [
+            {
+              "name": "My course (200)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/instructor/courses/{{courseId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "instructor",
+                    "courses",
+                    "{{courseId}}"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Instructor course fetched successfully\",\n  \"data\": {\n    \"_id\": \"6ac429d75d45bf0c0b8fb2ea\",\n    \"title\": \"Spreadsheet Skills for Everyday Work\",\n    \"shortDescription\": \"Organise numbers, lists and budgets with simple spreadsheet habits.\",\n    \"description\": \"Learn the spreadsheet basics that save time every week: tables, formulas, sorting, filters and simple charts.\",\n    \"whatYouWillLearn\": [\n      \"Build a clean table\",\n      \"Write simple formulas\",\n      \"Sort and filter data\",\n      \"Make a simple chart\"\n    ],\n    \"instructor\": {\n      \"_id\": \"6ac4273ef3a5638ec5a64633\",\n      \"name\": \"Kwame Asante\",\n      \"bio\": \"Full-stack developer who has spent ten years building websites for small businesses.\"\n    },\n    \"category\": {\n      \"_id\": \"6ac4273ff3a5638ec5a6463a\",\n      \"name\": \"Business\",\n      \"slug\": \"business\"\n    },\n    \"price\": 49,\n    \"level\": \"beginner\",\n    \"thumbnailUrl\": \"\",\n    \"status\": \"published\",\n    \"lessonCount\": 2,\n    \"totalMinutes\": 33,\n    \"studentCount\": 0,\n    \"createdAt\": \"2026-10-05T22:51:03.092Z\",\n    \"updatedAt\": \"2026-10-05T22:51:06.426Z\",\n    \"__v\": 0,\n    \"lessons\": [\n      {\n        \"_id\": \"6ac429d85d45bf0c0b8fb2eb\",\n        \"course\": \"6ac429d75d45bf0c0b8fb2ea\",\n        \"title\": \"Finding your way around a spreadsheet\",\n        \"videoUrl\": \"https://youtu.be/jNQXAC9IVRw\",\n        \"content\": \"Rows, columns and cells, and how to move between them quickly.\",\n        \"durationMinutes\": 15,\n        \"order\": 1,\n        \"isPreview\": true,\n        \"createdAt\": \"2026-10-05T22:51:04.354Z\",\n        \"updatedAt\": \"2026-10-05T22:51:05.707Z\",\n        \"__v\": 0\n      },\n      {\n        \"_id\": \"6ac429da5d45bf0c0b8fb2ec\",\n        \"course\": \"6ac429d75d45bf0c0b8fb2ea\",\n        \"title\": \"Writing your first formulas\",\n        \"videoUrl\": \"\",\n        \"content\": \"Add, subtract and total a column with SUM.\",\n        \"durationMinutes\": 18,\n        \"order\": 2,\n        \"isPreview\": false,\n        \"createdAt\": \"2026-10-05T22:51:06.307Z\",\n        \"updatedAt\": \"2026-10-05T22:51:06.307Z\",\n        \"__v\": 0\n      }\n    ]\n  }\n}"
+            },
+            {
+              "name": "Another instructor's course (403)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/instructor/courses/6ac42749f3a5638ec5a64690",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "instructor",
+                    "courses",
+                    "6ac42749f3a5638ec5a64690"
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"You don't have permission to do that\",\n  \"data\": null\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

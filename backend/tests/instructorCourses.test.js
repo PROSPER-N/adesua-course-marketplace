@@ -1,12 +1,7 @@
 const request = require("supertest");
 
 const app = require("../src/app");
-const {
-  createUser,
-  tokenFor,
-  createCourse,
-  createLessons,
-} = require("./helpers");
+const { createUser, tokenFor, createCourse, createLessons } = require("./helpers");
 
 describe("Instructor Courses API", () => {
   describe("GET /api/instructor/courses", () => {
@@ -40,18 +35,13 @@ describe("Instructor Courses API", () => {
       expect(Array.isArray(res.body.data)).toBe(true);
       expect(res.body.data).toHaveLength(2);
 
-      const returnedIds = res.body.data.map((course) =>
-        course._id.toString(),
-      );
+      const returnedIds = res.body.data.map((course) => course._id.toString());
 
       expect(returnedIds).toContain(firstCourse._id.toString());
       expect(returnedIds).toContain(secondCourse._id.toString());
 
       expect(
-        res.body.data.every(
-          (course) =>
-            course.instructor.toString() === instructor._id.toString(),
-        ),
+        res.body.data.every((course) => course.instructor.toString() === instructor._id.toString())
       ).toBe(true);
     });
 
@@ -86,17 +76,11 @@ describe("Instructor Courses API", () => {
       expect(res.body.data.title).toBe("Complete Course");
       expect(res.body.data.lessons).toHaveLength(2);
 
-      expect(res.body.data.lessons[0]._id.toString()).toBe(
-        lessons[0]._id.toString(),
-      );
+      expect(res.body.data.lessons[0]._id.toString()).toBe(lessons[0]._id.toString());
 
-      expect(res.body.data.lessons[0].videoUrl).toBe(
-        "https://youtu.be/lesson1",
-      );
+      expect(res.body.data.lessons[0].videoUrl).toBe("https://youtu.be/lesson1");
 
-      expect(res.body.data.lessons[0].content).toBe(
-        "Notes for lesson 1.",
-      );
+      expect(res.body.data.lessons[0].content).toBe("Notes for lesson 1.");
     });
 
     test("non-owner instructor cannot access another instructor's course", async () => {
