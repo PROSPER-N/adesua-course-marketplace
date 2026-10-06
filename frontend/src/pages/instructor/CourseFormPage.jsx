@@ -239,6 +239,7 @@ function CourseFormPage() {
   }
 
   async function removeLesson(item) {
+    if (!window.confirm(`Delete “${item.title}”? This cannot be undone.`)) return
     setLessonBusy(true)
     setLessonError('')
     try {
