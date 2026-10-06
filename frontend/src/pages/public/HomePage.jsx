@@ -34,13 +34,13 @@ function HomePage() {
     <>
       <HomeHero categories={result.categories} loading={loading} />
       <PlatformStats />
+      <SkillsStrip />
       <CategoryChips
         categories={result.categories}
         error={loading ? null : result.error}
         loading={loading}
         onRetry={() => setAttempt((current) => current + 1)}
       />
-      <SkillsStrip />
       <PopularCourses />
       <HowItWorks />
       <TeachBand />
