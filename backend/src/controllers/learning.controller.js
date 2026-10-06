@@ -4,7 +4,7 @@ const Lesson = require("../models/Lesson");
 const AppError = require("../utils/AppError");
 const asyncHandler = require("../utils/asyncHandler");
 const { sendSuccess } = require("../utils/apiResponse");
-const { NOT_ENROLLED } = require("../services/enrollment.service");
+const { NOT_ENROLLED, calculateProgress } = require("../services/enrollment.service");
 
 // GET /api/courses/:id/lessons
 // Full lessons (videos and notes) for enrolled students, the course's instructor and admins.
@@ -26,7 +26,11 @@ const getCourseLessons = asyncHandler(async (req, res) => {
     if (!found) {
       throw new AppError(NOT_ENROLLED, 403);
     }
-    enrollment = { completedLessons: found.completedLessons, progress: found.progress };
+    enrollment = {
+      completedLessons: found.completedLessons,
+      // Worked out from the current lessonCount, so it stays right after lessons are added or deleted.
+      progress: calculateProgress(found.completedLessons.length, course.lessonCount),
+    };
   }
 
   const lessons = await Lesson.find({ course: course._id }).sort({ order: 1 });

@@ -1,126 +1,82 @@
 const { body, query } = require("express-validator");
+const { pageAndLimitRule } = require("./admin.validators");
 
-const courseCreateRules = [
-  body("title", "Title must be between 5 and 120 characters.")
+// The contract's words (docs/API_CONTRACT.md, "Validation messages").
+const TITLE_MSG = "Title must be between 5 and 120 characters.";
+const SHORT_DESCRIPTION_MSG = "Keep the short description under 160 characters.";
+const DESCRIPTION_MSG = "Description must be at least 20 characters.";
+const LEARN_MSG = "List up to 6 things students will learn.";
+const CATEGORY_MSG = "Choose a valid category.";
+const PRICE_MIN_MSG = "Price can't be negative. Enter 0 for a free course.";
+const PRICE_MAX_MSG = "Price can't be more than 5,000.";
+const LEVEL_MSG = "Choose a level.";
+const THUMBNAIL_MSG = "Enter a full link starting with https://.";
+const STATUS_MSG = "Status must be draft or published.";
+
+const LEVELS = ["beginner", "intermediate", "advanced"];
+
+// Below 0 and above 5,000 have different messages, so the second check runs only after the first passes.
+function priceRule() {
+  return body("price", PRICE_MIN_MSG)
+    .isFloat({ min: 0 })
+    .bail()
+    .isFloat({ max: 5000 })
+    .withMessage(PRICE_MAX_MSG)
+    .toFloat();
+}
+
+// An empty string means no thumbnail, so the course shows its category cover instead.
+function thumbnailRule() {
+  return body("thumbnailUrl", THUMBNAIL_MSG)
+    .optional()
     .isString()
     .trim()
-    .isLength({ min: 5, max: 120 }),
+    .if((value) => value !== "")
+    .isURL({ protocols: ["https"], require_protocol: true });
+}
 
-  body("shortDescription", "Keep the short description under 160 characters.")
+const courseCreateRules = [
+  body("title", TITLE_MSG).isString().trim().isLength({ min: 5, max: 120 }),
+  body("shortDescription", SHORT_DESCRIPTION_MSG).isString().trim().isLength({ max: 160 }),
+  body("description", DESCRIPTION_MSG).isString().trim().isLength({ min: 20 }),
+  body("whatYouWillLearn", LEARN_MSG).optional().isArray({ max: 6 }),
+  body("whatYouWillLearn.*").optional().isString().trim(),
+  body("category", CATEGORY_MSG).isString().isMongoId(),
+  priceRule(),
+  body("level", LEVEL_MSG).isString().isIn(LEVELS),
+  thumbnailRule(),
+];
+
+// Same checks as creating, but every field is optional.
+const courseUpdateRules = [
+  body("title", TITLE_MSG).optional().isString().trim().isLength({ min: 5, max: 120 }),
+  body("shortDescription", SHORT_DESCRIPTION_MSG)
+    .optional()
     .isString()
     .trim()
     .isLength({ max: 160 }),
-
-  body("description", "Description must be at least 20 characters.")
-    .isString()
-    .trim()
-    .isLength({ min: 20 }),
-
-  body("whatYouWillLearn")
-    .optional()
-    .isArray({ max: 6 })
-    .withMessage("List up to 6 things students will learn."),
-
-  body("whatYouWillLearn.*")
-    .optional()
-    .isString()
-    .trim(),
-
-  body("category", "Choose a valid category.").isString().isMongoId(),
-
-  body("price", "Price can't be negative. Enter 0 for a free course.")
-    .isNumeric()
-    .toFloat()
-    .isFloat({ min: 0, max: 5000 }),
-
-  body("level", "Choose a level.")
-    .isString()
-    .isIn(["beginner", "intermediate", "advanced"]),
-
-  body("thumbnailUrl").optional().isString().trim(),
+  body("description", DESCRIPTION_MSG).optional().isString().trim().isLength({ min: 20 }),
+  body("whatYouWillLearn", LEARN_MSG).optional().isArray({ max: 6 }),
+  body("whatYouWillLearn.*").optional().isString().trim(),
+  body("category", CATEGORY_MSG).optional().isString().isMongoId(),
+  priceRule().optional(),
+  body("level", LEVEL_MSG).optional().isString().isIn(LEVELS),
+  thumbnailRule(),
 ];
 
-const courseUpdateRules = [
-  body("title")
-    .optional()
-    .isString()
-    .trim()
-    .isLength({ min: 5, max: 120 })
-    .withMessage("Title must be between 5 and 120 characters."),
-
-  body("shortDescription")
-    .optional()
-    .isString()
-    .trim()
-    .isLength({ max: 160 })
-    .withMessage("Keep the short description under 160 characters."),
-
-  body("description")
-    .optional()
-    .isString()
-    .trim()
-    .isLength({ min: 20 })
-    .withMessage("Description must be at least 20 characters."),
-
-  body("whatYouWillLearn")
-    .optional()
-    .isArray({ max: 6 })
-    .withMessage("List up to 6 things students will learn."),
-
-  body("whatYouWillLearn.*")
-    .optional()
-    .isString()
-    .trim(),
-
-  body("category")
-    .optional()
-    .isString()
-    .isMongoId()
-    .withMessage("Choose a valid category."),
-
-  body("price")
-    .optional()
-    .isNumeric()
-    .toFloat()
-    .isFloat({ min: 0, max: 5000 })
-    .withMessage("Price must be between 0 and 5,000."),
-
-  body("level")
-    .optional()
-    .isString()
-    .isIn(["beginner", "intermediate", "advanced"])
-    .withMessage("Choose a level."),
-
-  body("thumbnailUrl").optional().isString().trim(),
-];
-
-const courseStatusRules = [
-  body("status", "Choose a valid course status.")
-    .isString()
-    .isIn(["draft", "published"]),
-];
+const courseStatusRules = [body("status", STATUS_MSG).isString().isIn(["draft", "published"])];
 
 const courseQueryRules = [
   query("search").optional().isString().trim(),
   query("category").optional().isString().trim(),
 
-  query("level")
-    .optional()
-    .isString()
-    .isIn(["beginner", "intermediate", "advanced"]),
+  query("level").optional().isString().isIn(LEVELS),
 
-  query("price")
-    .optional()
-    .isString()
-    .isIn(["free", "paid"]),
+  query("price").optional().isString().isIn(["free", "paid"]),
 
-  query("sort")
-    .optional()
-    .isString()
-    .isIn(["newest", "popular", "price_asc", "price_desc"]),
+  query("sort").optional().isString().isIn(["newest", "popular", "price_asc", "price_desc"]),
 
-  query("page").optional().isInt({ min: 1 }),
-  query("limit").optional().isInt({ min: 1, max: 50 }),
+  pageAndLimitRule(),
 ];
 
 module.exports = {

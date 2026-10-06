@@ -35,4 +35,4 @@ const userStatusRules = [
   body("isActive", "isActive must be true or false.").isBoolean({ strict: true }),
 ];
 
-module.exports = { listUsersRules, userStatusRules, listCoursesRules };
+module.exports = { listUsersRules, userStatusRules, listCoursesRules, pageAndLimitRule };

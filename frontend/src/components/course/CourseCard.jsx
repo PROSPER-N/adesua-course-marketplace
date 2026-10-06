@@ -1,6 +1,8 @@
-﻿import { Link } from 'react-router'
+import { Link } from 'react-router'
+import { formatMoney } from '../../utils/formatMoney.js'
 import CourseCover from './CourseCover.jsx'
 
+// course is one item from GET /api/courses.
 function CourseCard({ course }) {
   const {
     _id,
@@ -15,45 +17,33 @@ function CourseCard({ course }) {
   } = course
 
   const instructorName =
-    typeof instructor === 'string'
-      ? instructor
-      : instructor?.name ?? 'Instructor'
+    typeof instructor === 'string' ? instructor : (instructor?.name ?? 'Instructor')
 
-  const levelLabel = level
-    ? level.charAt(0).toUpperCase() + level.slice(1)
-    : ''
+  const levelLabel = level ? level.charAt(0).toUpperCase() + level.slice(1) : ''
 
   return (
     <Link
       to={`/courses/${_id}`}
-      className="group block overflow-hidden rounded-xl border border-gray-200 bg-white transition-shadow hover:shadow-md"
+      className="group block overflow-hidden rounded-xl border border-line bg-white transition-shadow hover:shadow-md"
     >
-      <CourseCover
-        title={title}
-        category={category}
-        thumbnailUrl={thumbnailUrl}
-      />
+      <CourseCover title={title} category={category} thumbnailUrl={thumbnailUrl} />
 
       <div className="space-y-2 p-4">
-        <h3 className="line-clamp-2 min-h-[3.5rem] font-semibold text-gray-900 group-hover:text-[var(--color-primary,#1E6B4A)]">
+        <h3 className="line-clamp-2 min-h-[3.5rem] font-semibold text-ink group-hover:text-brand">
           {title}
         </h3>
 
-        <p className="truncate text-sm text-gray-600">
-          {instructorName}
-        </p>
+        <p className="truncate text-sm text-muted">{instructorName}</p>
 
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-muted">
           {lessonCount} {lessonCount === 1 ? 'lesson' : 'lessons'}
           {levelLabel && ` · ${levelLabel}`}
         </p>
 
         <div className="flex items-center justify-between pt-1">
-          <span className="font-semibold text-gray-900">
-        {price === 0 ? 'Free' : `₦${Number(price).toLocaleString()}`}
-          </span>
+          <span className="font-semibold text-ink">{formatMoney(price)}</span>
 
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-muted">
             {studentCount} {studentCount === 1 ? 'student' : 'students'}
           </span>
         </div>
@@ -61,4 +51,5 @@ function CourseCard({ course }) {
     </Link>
   )
 }
-  export default CourseCard
+
+export default CourseCard

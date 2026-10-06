@@ -115,6 +115,31 @@ describe("GET /api/courses/:id/lessons", () => {
     });
   });
 
+  it("works out the student's progress from the course's current lessons", async () => {
+    const { user, auth } = await loginAs("student");
+    const instructor = await createUser({ role: "instructor" });
+    const course = await createCourse({ status: "published", instructor: instructor._id });
+    const lessons = await createLessons(course, 2);
+    await Enrollment.create({
+      user: user._id,
+      course: course._id,
+      completedLessons: lessons.map((lesson) => lesson._id),
+      progress: 100,
+    });
+
+    // The instructor adds a third lesson after the student finished the first two.
+    const added = await request(app)
+      .post(`/api/courses/${course._id}/lessons`)
+      .set("Authorization", `Bearer ${tokenFor(instructor)}`)
+      .send({ title: "A new lesson", content: "New notes.", durationMinutes: 10 });
+    expect(added.status).toBe(201);
+
+    const res = await getLessons(course._id, auth);
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.enrollment.progress).toBe(67);
+  });
+
   it("gives the course's instructor and an admin the lessons, with no enrollment", async () => {
     const owner = await createUser({ role: "instructor" });
     const course = await createCourse({ status: "published", instructor: owner._id });

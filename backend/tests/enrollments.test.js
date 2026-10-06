@@ -162,8 +162,14 @@ describe("GET /api/enrollments/my", () => {
     const shared = { instructor: instructor._id, category: design._id };
     const older = await publishedCourse({ title: "Logo design basics", ...shared });
     const newer = await publishedCourse({ title: "Brand identity", ...shared });
+    const [firstLesson] = await createLessons(newer, 2);
     await Enrollment.create({ user: user._id, course: older._id });
-    await Enrollment.create({ user: user._id, course: newer._id, progress: 50 });
+    await Enrollment.create({
+      user: user._id,
+      course: newer._id,
+      completedLessons: [firstLesson._id],
+      progress: 50,
+    });
     await Enrollment.create({ user: classmate._id, course: older._id });
 
     const res = await getMine(auth);
@@ -184,12 +190,16 @@ describe("GET /api/enrollments/my", () => {
       "createdAt",
       "progress",
     ]);
-    expect(item).toMatchObject({ progress: 50, completedAt: null, completedLessons: [] });
+    expect(item).toMatchObject({
+      progress: 50,
+      completedAt: null,
+      completedLessons: [String(firstLesson._id)],
+    });
     expect(item.course).toEqual({
       _id: String(newer._id),
       title: "Brand identity",
       thumbnailUrl: "",
-      lessonCount: 0,
+      lessonCount: 2,
       category: { _id: String(design._id), name: "Design", slug: "design" },
       instructor: { name: instructor.name },
     });
@@ -202,6 +212,31 @@ describe("GET /api/enrollments/my", () => {
 
     expect(res.status).toBe(200);
     expect(res.body.data).toEqual([]);
+  });
+
+  it("works out progress from the course's current lessons", async () => {
+    const { user, auth } = await loginAs("student");
+    const instructor = await createUser({ role: "instructor" });
+    const course = await publishedCourse({ instructor: instructor._id });
+    const lessons = await createLessons(course, 2);
+    await Enrollment.create({
+      user: user._id,
+      course: course._id,
+      completedLessons: lessons.map((lesson) => lesson._id),
+      progress: 100,
+    });
+
+    // The instructor adds a third lesson after the student finished the first two.
+    const added = await request(app)
+      .post(`/api/courses/${course._id}/lessons`)
+      .set("Authorization", `Bearer ${tokenFor(instructor)}`)
+      .send({ title: "A new lesson", content: "New notes.", durationMinutes: 10 });
+    expect(added.status).toBe(201);
+
+    const res = await getMine(auth);
+
+    expect(res.status).toBe(200);
+    expect(res.body.data[0].progress).toBe(67);
   });
 });
 
