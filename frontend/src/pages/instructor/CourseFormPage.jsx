@@ -50,6 +50,8 @@ function CourseFormPage() {
   const [lessonEditId, setLessonEditId] = useState('')
   const [lessonBusy, setLessonBusy] = useState(false)
   const [lessonError, setLessonError] = useState('')
+  // Separate from fieldErrors, because a course and a lesson both have a "title" field.
+  const [lessonFieldErrors, setLessonFieldErrors] = useState({})
   const [formError, setFormError] = useState('')
   const [deleting, setDeleting] = useState(false)
 
@@ -188,6 +190,7 @@ function CourseFormPage() {
   async function saveLesson(event) {
     event.preventDefault()
     setLessonError('')
+    setLessonFieldErrors({})
     setLessonBusy(true)
     const data = {
       title: lesson.title.trim(),
@@ -210,7 +213,7 @@ function CourseFormPage() {
       setLessonEditId('')
     } catch (error) {
       setLessonError(getErrorMessage(error))
-      setFieldErrors(getFieldErrors(error))
+      setLessonFieldErrors(getFieldErrors(error))
     } finally {
       setLessonBusy(false)
     }
@@ -473,6 +476,7 @@ function CourseFormPage() {
                           isPreview: Boolean(item.isPreview),
                         })
                         setLessonError('')
+                        setLessonFieldErrors({})
                       }}
                       size="sm"
                       variant="outline"
@@ -501,7 +505,7 @@ function CourseFormPage() {
               {lessonEditId ? 'Edit lesson' : 'Add a lesson'}
             </h3>
             <Input
-              error={fieldErrors.title}
+              error={lessonFieldErrors.title}
               label="Lesson title"
               maxLength={120}
               name="title"
@@ -513,7 +517,7 @@ function CourseFormPage() {
             />
             <div className="grid gap-4 sm:grid-cols-2">
               <Input
-                error={fieldErrors.videoUrl}
+                error={lessonFieldErrors.videoUrl}
                 hint="Optional YouTube URL."
                 label="YouTube URL"
                 name="videoUrl"
@@ -524,7 +528,7 @@ function CourseFormPage() {
                 value={lesson.videoUrl}
               />
               <Input
-                error={fieldErrors.durationMinutes}
+                error={lessonFieldErrors.durationMinutes}
                 label="Duration (minutes)"
                 max="300"
                 min="1"
@@ -538,7 +542,7 @@ function CourseFormPage() {
               />
             </div>
             <Textarea
-              error={fieldErrors.content}
+              error={lessonFieldErrors.content}
               hint="Lesson notes or written content."
               label="Lesson notes"
               name="content"
@@ -568,6 +572,7 @@ function CourseFormPage() {
                     setLessonEditId('')
                     setLesson(EMPTY_LESSON)
                     setLessonError('')
+                    setLessonFieldErrors({})
                   }}
                   type="button"
                   variant="ghost"
