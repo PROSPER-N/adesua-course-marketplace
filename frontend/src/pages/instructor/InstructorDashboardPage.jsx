@@ -11,6 +11,11 @@ import ErrorMessage from '../../components/ui/ErrorMessage.jsx'
 import { formatMoney } from '../../utils/formatMoney.js'
 import { getErrorMessage } from '../../utils/getErrorMessage.js'
 
+// "published" -> "Published", "beginner" -> "Beginner".
+function capitalize(text) {
+  return text.charAt(0).toUpperCase() + text.slice(1)
+}
+
 function InstructorDashboardPage() {
   const [attempt, setAttempt] = useState(0)
   const [result, setResult] = useState({ attempt: -1, courses: [], error: null })
@@ -166,12 +171,12 @@ function InstructorDashboardPage() {
                         <p className="truncate font-semibold text-ink">{course.title}</p>
                         <p className="mt-1 text-xs text-muted">
                           {course.category?.name ?? 'Uncategorized'} ·{' '}
-                          {course.level ?? 'Level not set'}
+                          {course.level ? capitalize(course.level) : 'Level not set'}
                         </p>
                       </td>
                       <td className="px-4 py-4">
                         <Badge variant={course.status === 'published' ? 'green' : 'neutral'}>
-                          {course.status}
+                          {capitalize(course.status)}
                         </Badge>
                       </td>
                       <td className="px-4 py-4">{formatMoney(course.price)}</td>
@@ -191,11 +196,11 @@ function InstructorDashboardPage() {
                       <h3 className="break-words font-semibold text-ink">{course.title}</h3>
                       <p className="mt-1 text-sm text-muted">
                         {course.category?.name ?? 'Uncategorized'} ·{' '}
-                        {course.level ?? 'Level not set'}
+                        {course.level ? capitalize(course.level) : 'Level not set'}
                       </p>
                     </div>
                     <Badge variant={course.status === 'published' ? 'green' : 'neutral'}>
-                      {course.status}
+                      {capitalize(course.status)}
                     </Badge>
                   </div>
                   <dl className="mt-4 grid grid-cols-3 gap-2 text-sm">
