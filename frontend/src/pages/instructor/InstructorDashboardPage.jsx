@@ -103,6 +103,12 @@ function InstructorDashboardPage() {
         <Trash2 aria-hidden="true" className="size-4" />
         Delete
       </Button>
+      {/* Shown as text, because a tooltip doesn't appear on touch screens or disabled buttons. */}
+      {course.studentCount > 0 && (
+        <p className="w-full text-xs text-muted">
+          Courses with students can't be deleted. Unpublish instead.
+        </p>
+      )}
     </div>
   )
 
