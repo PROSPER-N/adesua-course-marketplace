@@ -3,6 +3,7 @@ import { getCategories } from '../../api/categories.js'
 import CategoryChips from '../../components/home/CategoryChips.jsx'
 import HomeHero from '../../components/home/HomeHero.jsx'
 import HowItWorks from '../../components/home/HowItWorks.jsx'
+import PopularCourses from '../../components/home/PopularCourses.jsx'
 import TeachBand from '../../components/home/TeachBand.jsx'
 
 function HomePage() {
@@ -36,7 +37,7 @@ function HomePage() {
         loading={loading}
         onRetry={() => setAttempt((current) => current + 1)}
       />
-      {/* The Popular courses grid goes here once Member B's CourseCard and courses API are merged. */}
+      <PopularCourses />
       <HowItWorks />
       <TeachBand />
     </>
