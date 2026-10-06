@@ -15,6 +15,8 @@ function InstructorDashboardPage() {
   const [attempt, setAttempt] = useState(0)
   const [result, setResult] = useState({ attempt: -1, courses: [], error: null })
   const [busyId, setBusyId] = useState('')
+  // A new key remounts the stats, so their counts load again after a course changes.
+  const [statsKey, setStatsKey] = useState(0)
   const loading = result.attempt !== attempt
 
   const refresh = useCallback(() => {
@@ -39,6 +41,7 @@ function InstructorDashboardPage() {
           item._id === course._id ? { ...item, ...updated } : item,
         ),
       }))
+      setStatsKey((value) => value + 1)
       toast.success(status === 'published' ? 'Course published' : 'Course unpublished')
     } catch (error) {
       toast.error(getErrorMessage(error))
@@ -56,6 +59,7 @@ function InstructorDashboardPage() {
         ...current,
         courses: current.courses.filter((item) => item._id !== course._id),
       }))
+      setStatsKey((value) => value + 1)
       toast.success('Course deleted')
     } catch (error) {
       toast.error(getErrorMessage(error))
@@ -110,7 +114,7 @@ function InstructorDashboardPage() {
           Create course
         </Button>
       </header>
-      <InstructorStats />
+      <InstructorStats key={statsKey} />
       <section className="space-y-4">
         <div className="flex items-center justify-between gap-3">
           <h2 className="font-display text-2xl font-bold text-ink">Your courses</h2>
