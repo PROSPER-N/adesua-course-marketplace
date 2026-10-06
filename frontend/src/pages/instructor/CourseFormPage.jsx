@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { ArrowLeft, Plus, Save, Trash2 } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -16,7 +16,6 @@ import { getErrorMessage, getFieldErrors } from '../../utils/getErrorMessage.js'
 
 const EMPTY_COURSE = {
   title: '',
-  shortDescription: '',
   description: '',
   category: '',
   level: 'beginner',
@@ -36,7 +35,10 @@ const EMPTY_LESSON = {
 function CourseFormPage() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const editing = Boolean(id)
+  const [savedCourseId, setSavedCourseId] = useState('')
+  const createdCourseRef = useRef(false)
+  const courseId = id || savedCourseId
+  const editing = Boolean(courseId)
   const [attempt, setAttempt] = useState(0)
   const loadKey = `${id ?? 'new'}:${attempt}`
   const [course, setCourse] = useState(EMPTY_COURSE)
@@ -58,6 +60,11 @@ function CourseFormPage() {
   const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
+    if (createdCourseRef.current) {
+      setLoadResult({ key: loadKey, error: null })
+      return undefined
+    }
+
     let active = true
     Promise.all([getCategories(), editing ? getMyCourse(id) : Promise.resolve(null)])
       .then(([categoryList, courseData]) => {
@@ -66,7 +73,6 @@ function CourseFormPage() {
         if (courseData) {
           setCourse({
             title: courseData.title ?? '',
-            shortDescription: courseData.shortDescription ?? '',
             description: courseData.description ?? '',
             category: courseData.category?._id ?? courseData.category ?? '',
             level: courseData.level ?? 'beginner',
@@ -106,11 +112,6 @@ function CourseFormPage() {
         done: course.title.trim().length >= 5 && course.title.trim().length <= 120,
       },
       {
-        label: 'Short description is provided (up to 160 characters)',
-        done:
-          course.shortDescription.trim().length > 0 && course.shortDescription.trim().length <= 160,
-      },
-      {
         label: 'Description has at least 20 characters',
         done: course.description.trim().length >= 20,
       },
@@ -141,9 +142,10 @@ function CourseFormPage() {
     }))
   }
   function payload(price) {
+    const normalizedDescription = course.description.trim().replace(/\s+/g, ' ')
     return {
       title: course.title.trim(),
-      shortDescription: course.shortDescription.trim(),
+      shortDescription: normalizedDescription.slice(0, 160),
       description: course.description.trim(),
       category: course.category,
       level: course.level,
@@ -153,34 +155,70 @@ function CourseFormPage() {
     }
   }
 
+  function getValidatedPayload() {
+    const rawPrice = course.price.trim()
+    const priceIsNumeric = /^(?:\d+(?:\.\d*)?|\.\d+)$/.test(rawPrice)
+    if (rawPrice === '' || !priceIsNumeric) {
+      setFieldErrors({ price: "Price can't be negative. Enter 0 for a free course." })
+      return null
+    }
+    const price = Number(rawPrice)
+    if (!Number.isFinite(price) || price < 0 || price > 5000) {
+      setFieldErrors({
+        price:
+          price < 0
+            ? "Price can't be negative. Enter 0 for a free course."
+            : "Price can't be more than 5,000.",
+      })
+      return null
+    }
+    return payload(price)
+  }
+
+  async function ensureCourseSaved() {
+    if (courseId) return courseId
+
+    setFormError('')
+    setFieldErrors({})
+    const data = getValidatedPayload()
+    if (!data) return ''
+
+    setSaving(true)
+    try {
+      const saved = await createCourse(data)
+      createdCourseRef.current = true
+      setSavedCourseId(saved._id)
+      navigate(`/instructor/courses/${saved._id}/edit`, { replace: true })
+      return saved._id
+    } catch (error) {
+      setFormError(getErrorMessage(error))
+      setFieldErrors(getFieldErrors(error))
+      return ''
+    } finally {
+      setSaving(false)
+    }
+  }
+
   async function saveCourse({ publish = false } = {}) {
     // Save and Publish each show their own loading state.
     const setBusy = publish ? setChangingStatus : setSaving
     setFormError('')
     setFieldErrors({})
     setBusy(true)
-    const rawPrice = course.price.trim()
-    const priceIsNumeric = /^(?:\d+(?:\.\d*)?|\.\d+)$/.test(rawPrice)
-    if (rawPrice === '' || !priceIsNumeric) {
-      setFieldErrors({ price: "Price can't be negative. Enter 0 for a free course." })
-      setBusy(false)
-      return
-    }
-    const price = Number(rawPrice)
-    if (!Number.isFinite(price) || price < 0 || price > 5000) {
-      const message =
-        price < 0
-          ? "Price can't be negative. Enter 0 for a free course."
-          : "Price can't be more than 5,000."
-      setFieldErrors({ price: message })
+    const data = getValidatedPayload()
+    if (!data) {
       setBusy(false)
       return
     }
     try {
       const saved = editing
-        ? await updateCourse(id, payload(price))
-        : await createCourse(payload(price))
-      if (publish) await updateCourseStatus(saved._id ?? id, 'published')
+        ? await updateCourse(courseId, data)
+        : await createCourse(data)
+      if (!editing) {
+        createdCourseRef.current = true
+        setSavedCourseId(saved._id)
+      }
+      if (publish) await updateCourseStatus(saved._id ?? courseId, 'published')
       toast.success(publish ? 'Course published' : 'Course saved')
       if (!editing) navigate(`/instructor/courses/${saved._id}/edit`, { replace: true })
       else if (publish) navigate('/instructor')
@@ -196,7 +234,7 @@ function CourseFormPage() {
     setFormError('')
     setChangingStatus(true)
     try {
-      await updateCourseStatus(id, 'draft')
+      await updateCourseStatus(courseId, 'draft')
       setCourse((current) => ({ ...current, status: 'draft' }))
       toast.success('Course unpublished')
     } catch (error) {
@@ -224,7 +262,9 @@ function CourseFormPage() {
         setLessons((current) => current.map((item) => (item._id === lessonEditId ? updated : item)))
         toast.success('Lesson updated')
       } else {
-        const created = await createLesson(id, data)
+        const targetCourseId = await ensureCourseSaved()
+        if (!targetCourseId) return
+        const created = await createLesson(targetCourseId, data)
         setLessons((current) => [...current, created].sort((a, b) => a.order - b.order))
         toast.success('Lesson added')
       }
@@ -261,7 +301,7 @@ function CourseFormPage() {
     if (!window.confirm('Delete this course and its lessons? This cannot be undone.')) return
     setDeleting(true)
     try {
-      await deleteCourse(id)
+      await deleteCourse(courseId)
       toast.success('Course deleted')
       navigate('/instructor')
     } catch (error) {
@@ -328,17 +368,8 @@ function CourseFormPage() {
             value={course.title}
           />
           <Textarea
-            error={fieldErrors.shortDescription}
-            hint="Shown in course cards. Keep it to 160 characters or fewer."
-            label="Short description"
-            maxLength={160}
-            name="shortDescription"
-            onChange={updateField}
-            required
-            value={course.shortDescription}
-          />
-          <Textarea
             error={fieldErrors.description}
+            hint="The opening text appears on course cards."
             label="Course description"
             name="description"
             onChange={updateField}
@@ -411,48 +442,6 @@ function CourseFormPage() {
               />
             ))}
           </fieldset>
-          <div className="flex flex-wrap gap-3 border-t border-line pt-5">
-            <Button disabled={changingStatus} loading={saving} loadingText="Saving…" type="submit">
-              <Save aria-hidden="true" className="size-4" />
-              {published ? 'Save changes' : 'Save draft'}
-            </Button>
-            {editing && published && (
-              <Button
-                disabled={saving}
-                loading={changingStatus}
-                loadingText="Unpublishing…"
-                onClick={unpublishCourse}
-                type="button"
-                variant="outline"
-              >
-                Unpublish
-              </Button>
-            )}
-            {editing && !published && (
-              <Button
-                disabled={saving || checks.some((item) => !item.done)}
-                loading={changingStatus}
-                loadingText="Publishing…"
-                onClick={() => saveCourse({ publish: true })}
-                type="button"
-                variant="gold"
-              >
-                Publish
-              </Button>
-            )}
-            {editing && (
-              <Button
-                disabled={deleting}
-                loading={deleting}
-                onClick={removeCourse}
-                type="button"
-                variant="danger"
-              >
-                <Trash2 aria-hidden="true" className="size-4" />
-                Delete course
-              </Button>
-            )}
-          </div>
         </div>
         <aside className="h-fit rounded-2xl border border-line bg-white p-5">
           <h2 className="font-display text-lg font-bold text-ink">Publish checklist</h2>
@@ -470,154 +459,199 @@ function CourseFormPage() {
             ))}
           </ul>
           <p className="mt-4 text-xs leading-5 text-muted">
-            The server requires at least one lesson before publishing. You can save a draft before
-            completing the checklist.
+            The server requires at least one lesson before publishing. Add lessons here, then
+            publish when the checklist is complete.
           </p>
         </aside>
       </form>
-      {editing && (
-        <section className="space-y-5 rounded-2xl border border-line bg-white p-4 sm:p-6">
-          <div>
-            <h2 className="font-display text-2xl font-bold text-ink">Lessons</h2>
-            <p className="mt-1 text-sm text-muted">
-              Add notes or a YouTube link. Preview lessons are visible before enrollment.
-            </p>
-          </div>
-          {lessons.length > 0 && (
-            <ol className="divide-y divide-line rounded-xl border border-line">
-              {lessons.map((item) => (
-                <li
-                  className="flex flex-wrap items-center justify-between gap-3 p-4"
-                  key={item._id}
-                >
-                  <div className="min-w-0">
-                    <p className="break-words font-semibold text-ink">
-                      {item.order}. {item.title}
-                    </p>
-                    <p className="mt-1 text-sm text-muted">
-                      {item.durationMinutes} min · {item.isPreview ? 'Preview' : 'Locked'}
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      onClick={() => {
-                        setLessonEditId(item._id)
-                        setLesson({
-                          title: item.title ?? '',
-                          videoUrl: item.videoUrl ?? '',
-                          content: item.content ?? '',
-                          durationMinutes: String(item.durationMinutes ?? 10),
-                          isPreview: Boolean(item.isPreview),
-                        })
-                        setLessonError('')
-                        setLessonFieldErrors({})
-                      }}
-                      size="sm"
-                      variant="outline"
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      disabled={
-                        lessonBusy || (course.status === 'published' && lessons.length <= 1)
-                      }
-                      onClick={() => removeLesson(item)}
-                      size="sm"
-                      variant="danger"
-                    >
-                      <Trash2 aria-hidden="true" className="size-4" />
-                      Delete
-                    </Button>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          )}
-          {lessonError && <ErrorMessage message={lessonError} title="Couldn't save lesson" />}
-          <form className="grid gap-4 rounded-xl bg-surface p-4" noValidate onSubmit={saveLesson}>
-            <h3 className="font-semibold text-ink">
-              {lessonEditId ? 'Edit lesson' : 'Add a lesson'}
-            </h3>
+      <section className="space-y-5 rounded-2xl border border-line bg-white p-4 sm:p-6">
+        <div>
+          <h2 className="font-display text-2xl font-bold text-ink">Lessons</h2>
+          <p className="mt-1 text-sm text-muted">
+            Adding your first lesson saves the course as a draft. Add notes or a YouTube link;
+            preview lessons are visible before enrollment.
+          </p>
+        </div>
+        {lessons.length > 0 && (
+          <ol className="divide-y divide-line rounded-xl border border-line">
+            {lessons.map((item) => (
+              <li
+                className="flex flex-wrap items-center justify-between gap-3 p-4"
+                key={item._id}
+              >
+                <div className="min-w-0">
+                  <p className="break-words font-semibold text-ink">
+                    {item.order}. {item.title}
+                  </p>
+                  <p className="mt-1 text-sm text-muted">
+                    {item.durationMinutes} min · {item.isPreview ? 'Preview' : 'Locked'}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    onClick={() => {
+                      setLessonEditId(item._id)
+                      setLesson({
+                        title: item.title ?? '',
+                        videoUrl: item.videoUrl ?? '',
+                        content: item.content ?? '',
+                        durationMinutes: String(item.durationMinutes ?? 10),
+                        isPreview: Boolean(item.isPreview),
+                      })
+                      setLessonError('')
+                      setLessonFieldErrors({})
+                    }}
+                    size="sm"
+                    variant="outline"
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    disabled={lessonBusy || (course.status === 'published' && lessons.length <= 1)}
+                    onClick={() => removeLesson(item)}
+                    size="sm"
+                    variant="danger"
+                  >
+                    <Trash2 aria-hidden="true" className="size-4" />
+                    Delete
+                  </Button>
+                </div>
+              </li>
+            ))}
+          </ol>
+        )}
+        {lessonError && <ErrorMessage message={lessonError} title="Couldn't save lesson" />}
+        <form className="grid gap-4 rounded-xl bg-surface p-4" noValidate onSubmit={saveLesson}>
+          <h3 className="font-semibold text-ink">
+            {lessonEditId ? 'Edit lesson' : 'Add a lesson'}
+          </h3>
+          <Input
+            error={lessonFieldErrors.title}
+            label="Lesson title"
+            maxLength={120}
+            name="title"
+            onChange={(event) =>
+              setLesson((current) => ({ ...current, title: event.target.value }))
+            }
+            required
+            value={lesson.title}
+          />
+          <div className="grid gap-4 sm:grid-cols-2">
             <Input
-              error={lessonFieldErrors.title}
-              label="Lesson title"
-              maxLength={120}
-              name="title"
+              error={lessonFieldErrors.videoUrl}
+              hint="Optional YouTube URL."
+              label="YouTube URL"
+              name="videoUrl"
               onChange={(event) =>
-                setLesson((current) => ({ ...current, title: event.target.value }))
+                setLesson((current) => ({ ...current, videoUrl: event.target.value }))
+              }
+              type="url"
+              value={lesson.videoUrl}
+            />
+            <Input
+              error={lessonFieldErrors.durationMinutes}
+              label="Duration (minutes)"
+              max="300"
+              min="1"
+              name="durationMinutes"
+              onChange={(event) =>
+                setLesson((current) => ({ ...current, durationMinutes: event.target.value }))
               }
               required
-              value={lesson.title}
+              type="number"
+              value={lesson.durationMinutes}
             />
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Input
-                error={lessonFieldErrors.videoUrl}
-                hint="Optional YouTube URL."
-                label="YouTube URL"
-                name="videoUrl"
-                onChange={(event) =>
-                  setLesson((current) => ({ ...current, videoUrl: event.target.value }))
-                }
-                type="url"
-                value={lesson.videoUrl}
-              />
-              <Input
-                error={lessonFieldErrors.durationMinutes}
-                label="Duration (minutes)"
-                max="300"
-                min="1"
-                name="durationMinutes"
-                onChange={(event) =>
-                  setLesson((current) => ({ ...current, durationMinutes: event.target.value }))
-                }
-                required
-                type="number"
-                value={lesson.durationMinutes}
-              />
-            </div>
-            <Textarea
-              error={lessonFieldErrors.content}
-              hint="Lesson notes or written content."
-              label="Lesson notes"
-              name="content"
+          </div>
+          <Textarea
+            error={lessonFieldErrors.content}
+            hint="Lesson notes or written content."
+            label="Lesson notes"
+            name="content"
+            onChange={(event) =>
+              setLesson((current) => ({ ...current, content: event.target.value }))
+            }
+            value={lesson.content}
+          />
+          <label className="flex items-center gap-2 text-sm font-medium text-ink">
+            <input
+              checked={lesson.isPreview}
               onChange={(event) =>
-                setLesson((current) => ({ ...current, content: event.target.value }))
+                setLesson((current) => ({ ...current, isPreview: event.target.checked }))
               }
-              value={lesson.content}
+              type="checkbox"
             />
-            <label className="flex items-center gap-2 text-sm font-medium text-ink">
-              <input
-                checked={lesson.isPreview}
-                onChange={(event) =>
-                  setLesson((current) => ({ ...current, isPreview: event.target.checked }))
-                }
-                type="checkbox"
-              />
-              Allow this lesson as a free preview
-            </label>
-            <div className="flex flex-wrap gap-3">
-              <Button loading={lessonBusy} loadingText="Saving lesson…" type="submit">
-                <Plus aria-hidden="true" className="size-4" />
-                {lessonEditId ? 'Save lesson' : 'Add lesson'}
+            Allow this lesson as a free preview
+          </label>
+          <div className="flex flex-wrap gap-3">
+            <Button loading={lessonBusy} loadingText="Saving lesson…" type="submit">
+              <Plus aria-hidden="true" className="size-4" />
+              {lessonEditId ? 'Save lesson' : 'Add lesson'}
+            </Button>
+            {lessonEditId && (
+              <Button
+                onClick={() => {
+                  setLessonEditId('')
+                  setLesson(EMPTY_LESSON)
+                  setLessonError('')
+                  setLessonFieldErrors({})
+                }}
+                type="button"
+                variant="ghost"
+              >
+                Cancel edit
               </Button>
-              {lessonEditId && (
-                <Button
-                  onClick={() => {
-                    setLessonEditId('')
-                    setLesson(EMPTY_LESSON)
-                    setLessonError('')
-                    setLessonFieldErrors({})
-                  }}
-                  type="button"
-                  variant="ghost"
-                >
-                  Cancel edit
-                </Button>
-              )}
-            </div>
-          </form>
-        </section>
-      )}
+            )}
+          </div>
+        </form>
+        <div className="flex flex-wrap gap-3 border-t border-line pt-5">
+          <Button
+            disabled={changingStatus}
+            loading={saving}
+            loadingText="Saving…"
+            onClick={() => saveCourse()}
+            type="button"
+          >
+            <Save aria-hidden="true" className="size-4" />
+            {published ? 'Save changes' : 'Save draft'}
+          </Button>
+          {editing && published && (
+            <Button
+              disabled={saving}
+              loading={changingStatus}
+              loadingText="Unpublishing…"
+              onClick={unpublishCourse}
+              type="button"
+              variant="outline"
+            >
+              Unpublish
+            </Button>
+          )}
+          {editing && !published && (
+            <Button
+              disabled={saving || checks.some((item) => !item.done)}
+              loading={changingStatus}
+              loadingText="Publishing…"
+              onClick={() => saveCourse({ publish: true })}
+              type="button"
+              variant="gold"
+            >
+              Publish
+            </Button>
+          )}
+          {editing && (
+            <Button
+              disabled={deleting}
+              loading={deleting}
+              onClick={removeCourse}
+              type="button"
+              variant="danger"
+            >
+              <Trash2 aria-hidden="true" className="size-4" />
+              Delete course
+            </Button>
+          )}
+        </div>
+      </section>
     </div>
   )
 }
