@@ -1,4 +1,4 @@
-// 0 -> "Free", 180 -> "₦180", and with { decimals: true } -> "₦180.00".
+// 0 -> "Free", 180 -> "$180", and with { decimals: true } -> "$180.00".
 export function formatMoney(amount, { decimals = false } = {}) {
   const value = Number(amount)
 
@@ -9,5 +9,5 @@ export function formatMoney(amount, { decimals = false } = {}) {
     minimumFractionDigits: decimals ? 2 : 0,
     maximumFractionDigits: 2,
   })
-  return `₦${formatted}`
+  return `$${formatted}`
 }

@@ -352,7 +352,7 @@ function CourseFormPage() {
             <Input
               error={fieldErrors.price}
               hint="Enter 0 for a free course; maximum 5,000."
-              label="Price (₦)"
+              label="Price (USD)"
               max="5000"
               min="0"
               name="price"
