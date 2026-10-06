@@ -2,15 +2,18 @@ import { BookOpen, Clock3, GraduationCap, LockKeyhole, PlayCircle } from 'lucide
 import { useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { getCourse } from '../../api/courses.js'
+import { getMyEnrollments } from '../../api/enrollments.js'
 import EnrollButton from '../../components/course/EnrollButton.jsx'
 import Badge from '../../components/ui/Badge.jsx'
 import ErrorMessage from '../../components/ui/ErrorMessage.jsx'
 import Spinner from '../../components/ui/Spinner.jsx'
+import { useAuth } from '../../context/AuthContext.jsx'
 import { formatMoney } from '../../utils/formatMoney.js'
 import { getErrorMessage } from '../../utils/getErrorMessage.js'
 
 function CourseDetailPage() {
   const { id } = useParams()
+  const { user, loading: authLoading } = useAuth()
   const [attempt, setAttempt] = useState(0)
   const [result, setResult] = useState({ key: '', course: null, error: null })
   const key = `${id}:${attempt}`
@@ -27,6 +30,35 @@ function CourseDetailPage() {
   }, [id, key])
 
   useEffect(loadCourse, [loadCourse])
+
+  // Enrolled students can open every lesson, so the locks are only for everyone else. The answer
+  // remembers the student and course it belongs to, the same way EnrollButton checks.
+  const enrollmentKey = user?.role === 'student' ? `${user._id}|${id}` : ''
+  const [enrollmentCheck, setEnrollmentCheck] = useState({ key: '', enrolled: false })
+
+  useEffect(() => {
+    if (!enrollmentKey) return undefined
+
+    let ignore = false
+    getMyEnrollments()
+      .then((enrollments) => {
+        const enrolled = enrollments.some((enrollment) => enrollment.course?._id === id)
+        if (!ignore) setEnrollmentCheck({ key: enrollmentKey, enrolled })
+      })
+      // If the check fails, the locks show, as they do for a student who isn't enrolled.
+      .catch(() => {
+        if (!ignore) setEnrollmentCheck({ key: enrollmentKey, enrolled: false })
+      })
+
+    return () => {
+      ignore = true
+    }
+  }, [enrollmentKey, id])
+
+  // Waits for both checks, so an enrolled student never sees the locks flash.
+  const showLocks =
+    !authLoading &&
+    (!enrollmentKey || (enrollmentCheck.key === enrollmentKey && !enrollmentCheck.enrolled))
 
   if (loading) {
     return (
@@ -156,10 +188,12 @@ function CourseDetailPage() {
                         Preview
                       </>
                     ) : (
-                      <>
-                        <LockKeyhole aria-hidden="true" className="size-4" />
-                        Enroll to unlock
-                      </>
+                      showLocks && (
+                        <>
+                          <LockKeyhole aria-hidden="true" className="size-4" />
+                          Enroll to unlock
+                        </>
+                      )
                     )}
                   </span>
                 </li>
