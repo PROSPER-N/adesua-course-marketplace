@@ -442,48 +442,6 @@ function CourseFormPage() {
               />
             ))}
           </fieldset>
-          <div className="flex flex-wrap gap-3 border-t border-line pt-5">
-            <Button disabled={changingStatus} loading={saving} loadingText="Saving…" type="submit">
-              <Save aria-hidden="true" className="size-4" />
-              {published ? 'Save changes' : 'Save draft'}
-            </Button>
-            {editing && published && (
-              <Button
-                disabled={saving}
-                loading={changingStatus}
-                loadingText="Unpublishing…"
-                onClick={unpublishCourse}
-                type="button"
-                variant="outline"
-              >
-                Unpublish
-              </Button>
-            )}
-            {editing && !published && (
-              <Button
-                disabled={saving || checks.some((item) => !item.done)}
-                loading={changingStatus}
-                loadingText="Publishing…"
-                onClick={() => saveCourse({ publish: true })}
-                type="button"
-                variant="gold"
-              >
-                Publish
-              </Button>
-            )}
-            {editing && (
-              <Button
-                disabled={deleting}
-                loading={deleting}
-                onClick={removeCourse}
-                type="button"
-                variant="danger"
-              >
-                <Trash2 aria-hidden="true" className="size-4" />
-                Delete course
-              </Button>
-            )}
-          </div>
         </div>
         <aside className="h-fit rounded-2xl border border-line bg-white p-5">
           <h2 className="font-display text-lg font-bold text-ink">Publish checklist</h2>
@@ -645,6 +603,54 @@ function CourseFormPage() {
             )}
           </div>
         </form>
+        <div className="flex flex-wrap gap-3 border-t border-line pt-5">
+          <Button
+            disabled={changingStatus}
+            loading={saving}
+            loadingText="Saving…"
+            onClick={() => saveCourse()}
+            type="button"
+          >
+            <Save aria-hidden="true" className="size-4" />
+            {published ? 'Save changes' : 'Save draft'}
+          </Button>
+          {editing && published && (
+            <Button
+              disabled={saving}
+              loading={changingStatus}
+              loadingText="Unpublishing…"
+              onClick={unpublishCourse}
+              type="button"
+              variant="outline"
+            >
+              Unpublish
+            </Button>
+          )}
+          {editing && !published && (
+            <Button
+              disabled={saving || checks.some((item) => !item.done)}
+              loading={changingStatus}
+              loadingText="Publishing…"
+              onClick={() => saveCourse({ publish: true })}
+              type="button"
+              variant="gold"
+            >
+              Publish
+            </Button>
+          )}
+          {editing && (
+            <Button
+              disabled={deleting}
+              loading={deleting}
+              onClick={removeCourse}
+              type="button"
+              variant="danger"
+            >
+              <Trash2 aria-hidden="true" className="size-4" />
+              Delete course
+            </Button>
+          )}
+        </div>
       </section>
     </div>
   )
