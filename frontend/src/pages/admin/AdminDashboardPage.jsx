@@ -1,17 +1,21 @@
 import { Link, useSearchParams } from 'react-router'
 import AdminStats from '../../components/admin/AdminStats.jsx'
 import CategoriesTab from '../../components/admin/CategoriesTab.jsx'
+import CoursesTab from '../../components/admin/CoursesTab.jsx'
 import UsersTab from '../../components/admin/UsersTab.jsx'
 
 const TABS = [
   { id: 'users', label: 'Users' },
   { id: 'categories', label: 'Categories' },
+  { id: 'courses', label: 'Courses' },
 ]
 
 function AdminDashboardPage() {
   const [searchParams] = useSearchParams()
   // The tab lives in the URL, so a refresh or a shared link opens the same tab.
-  const tab = searchParams.get('tab') === 'categories' ? 'categories' : 'users'
+  const tab = ['categories', 'courses'].includes(searchParams.get('tab'))
+    ? searchParams.get('tab')
+    : 'users'
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
@@ -44,7 +48,15 @@ function AdminDashboardPage() {
         })}
       </nav>
 
-      <div className="mt-6">{tab === 'categories' ? <CategoriesTab /> : <UsersTab />}</div>
+      <div className="mt-6">
+        {tab === 'categories' ? (
+          <CategoriesTab />
+        ) : tab === 'courses' ? (
+          <CoursesTab key={searchParams.get('search') ?? ''} />
+        ) : (
+          <UsersTab />
+        )}
+      </div>
     </div>
   )
 }
