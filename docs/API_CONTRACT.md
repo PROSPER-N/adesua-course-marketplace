@@ -31,6 +31,7 @@ Base URL: `/api` (locally `http://localhost:5000/api`). Private routes need the 
 | Method | Path | Access | Purpose | Owner | Route file |
 |---|---|---|---|---|---|
 | GET | `/api/health` | Public | API is running | A | `health.routes.js` |
+| GET | `/api/stats` | Public | Published courses, eligible instructors, learners and categories | A | `stats.routes.js` |
 | POST | `/api/auth/register` | Public | Create a student or instructor account | A | `auth.routes.js` |
 | POST | `/api/auth/login` | Public | Log in | A | `auth.routes.js` |
 | GET | `/api/auth/me` | Logged in | Current user | A | `auth.routes.js` |
@@ -79,6 +80,7 @@ Base URL: `/api` (locally `http://localhost:5000/api`). Private routes need the 
 
 - register, login: `{ token, user }`. The user never includes the password.
 - `GET /api/auth/me`: `{ user }`
+- `GET /api/stats`: `{ courses, instructors, learners, categories }`, where courses counts published courses, instructors counts instructors with at least one published course, learners counts student accounts, and categories counts all categories
 - `GET /api/categories`: `[ { _id, name, slug, courseCount } ]`, where `courseCount` counts published courses
 - `GET /api/courses`, each item: `{ _id, title, shortDescription, price, level, thumbnailUrl, lessonCount, totalMinutes, studentCount, createdAt, category: { _id, name, slug }, instructor: { _id, name } }`
 - `GET /api/courses/:id`: every course field, plus:
@@ -105,6 +107,7 @@ The `message` of each successful response. The frontend shows some of them word 
 | Method | Path | Message |
 |---|---|---|
 | GET | `/api/health` | API is running |
+| GET | `/api/stats` | Stats fetched successfully |
 | POST | `/api/auth/register` | Account created successfully |
 | POST | `/api/auth/login` | Logged in successfully |
 | GET | `/api/auth/me` | Current user |
