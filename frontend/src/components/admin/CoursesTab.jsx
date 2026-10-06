@@ -175,7 +175,10 @@ function CourseLoadingState() {
           <li className="skeleton-shimmer h-48 rounded-xl" key={index} />
         ))}
       </ul>
-      <div aria-hidden="true" className="hidden rounded-xl border border-line bg-white px-4 md:block">
+      <div
+        aria-hidden="true"
+        className="hidden rounded-xl border border-line bg-white px-4 md:block"
+      >
         {Array.from({ length: 5 }, (_, index) => (
           <SkeletonRow key={index} />
         ))}

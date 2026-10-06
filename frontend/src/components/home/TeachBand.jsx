@@ -32,7 +32,10 @@ function TeachBand() {
           </p>
           <ul className="mt-6 grid gap-3 sm:grid-cols-3">
             {TEACHING_BENEFITS.map(({ label, icon: Icon }) => (
-              <li className="flex items-center gap-2 text-sm font-semibold text-white/90" key={label}>
+              <li
+                className="flex items-center gap-2 text-sm font-semibold text-white/90"
+                key={label}
+              >
                 <Icon aria-hidden="true" className="size-5 shrink-0 text-gold" />
                 <span>{label}</span>
               </li>

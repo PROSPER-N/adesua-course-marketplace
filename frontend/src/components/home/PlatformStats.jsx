@@ -38,11 +38,7 @@ function PlatformStats() {
       >
         {result.loading
           ? STAT_ITEMS.map(({ label }) => (
-              <div
-                aria-hidden="true"
-                className="skeleton-shimmer h-16 rounded-xl"
-                key={label}
-              />
+              <div aria-hidden="true" className="skeleton-shimmer h-16 rounded-xl" key={label} />
             ))
           : STAT_ITEMS.map(({ label, key, icon: Icon }) => (
               <div className="flex items-center gap-3 rounded-xl bg-white px-4 py-3" key={key}>
