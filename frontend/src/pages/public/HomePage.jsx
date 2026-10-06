@@ -3,6 +3,7 @@ import { getCategories } from '../../api/categories.js'
 import CategoryChips from '../../components/home/CategoryChips.jsx'
 import HomeHero from '../../components/home/HomeHero.jsx'
 import HowItWorks from '../../components/home/HowItWorks.jsx'
+import PlatformStats from '../../components/home/PlatformStats.jsx'
 import PopularCourses from '../../components/home/PopularCourses.jsx'
 import TeachBand from '../../components/home/TeachBand.jsx'
 
@@ -31,6 +32,7 @@ function HomePage() {
   return (
     <>
       <HomeHero categories={result.categories} loading={loading} />
+      <PlatformStats />
       <CategoryChips
         categories={result.categories}
         error={loading ? null : result.error}
