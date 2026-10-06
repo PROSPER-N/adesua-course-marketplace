@@ -40,7 +40,7 @@ function CourseDetailPage() {
   if (result.error) {
     const notFound = result.error.response?.status === 404
     return (
-      <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+      <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
         <ErrorMessage
           message={
             notFound
@@ -50,7 +50,7 @@ function CourseDetailPage() {
           onRetry={notFound ? undefined : () => setAttempt((value) => value + 1)}
           title={notFound ? 'Course not found' : "Couldn't load this course"}
         />
-      </main>
+      </div>
     )
   }
 
@@ -65,7 +65,7 @@ function CourseDetailPage() {
   const level = course.level ? course.level[0].toUpperCase() + course.level.slice(1) : 'All levels'
 
   return (
-    <main className="pb-24 lg:pb-12">
+    <div className="pb-24 lg:pb-12">
       <header className="bg-brand-dark text-white">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
           <div>
@@ -196,7 +196,7 @@ function CourseDetailPage() {
           </p>
         </aside>
       </div>
-    </main>
+    </div>
   )
 }
 

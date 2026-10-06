@@ -257,17 +257,17 @@ function CourseFormPage() {
     )
   if (loadError)
     return (
-      <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
+      <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
         <ErrorMessage
           message={getErrorMessage(loadError)}
           onRetry={() => setAttempt((value) => value + 1)}
           title="Couldn't load course details"
         />
-      </main>
+      </div>
     )
 
   return (
-    <main className="mx-auto max-w-5xl space-y-8 px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-5xl space-y-8 px-4 py-8 sm:px-6 lg:px-8">
       <header>
         <Link
           className="inline-flex items-center gap-2 text-sm font-semibold text-brand hover:underline"
@@ -579,7 +579,7 @@ function CourseFormPage() {
           </form>
         </section>
       )}
-    </main>
+    </div>
   )
 }
 

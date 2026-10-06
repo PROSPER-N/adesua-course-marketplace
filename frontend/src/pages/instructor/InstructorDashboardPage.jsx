@@ -98,7 +98,7 @@ function InstructorDashboardPage() {
   )
 
   return (
-    <main className="mx-auto max-w-7xl space-y-9 px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-7xl space-y-9 px-4 py-8 sm:px-6 lg:px-8">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-sm font-semibold uppercase tracking-wide text-brand">Instructor</p>
@@ -215,7 +215,7 @@ function InstructorDashboardPage() {
           </>
         )}
       </section>
-    </main>
+    </div>
   )
 }
 
