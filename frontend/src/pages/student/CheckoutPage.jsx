@@ -1,6 +1,6 @@
 import { CircleCheck, CreditCard, Info, SearchX, Smartphone } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { useParams } from 'react-router'
+import { useParams, useSearchParams } from 'react-router'
 import { getCourse } from '../../api/courses.js'
 import { getMyEnrollments } from '../../api/enrollments.js'
 import { createOrder, payOrder } from '../../api/orders.js'
@@ -11,6 +11,7 @@ import ErrorMessage from '../../components/ui/ErrorMessage.jsx'
 import { formatMoney } from '../../utils/formatMoney.js'
 import { getErrorMessage } from '../../utils/getErrorMessage.js'
 import { PAYMENT_METHODS } from '../../utils/paymentMethods.js'
+import { removeCartItem } from '../../utils/cart.js'
 
 const METHOD_ICONS = { momo: Smartphone, card: CreditCard }
 
@@ -36,6 +37,7 @@ function CheckoutSkeleton() {
 
 function CheckoutPage() {
   const { courseId } = useParams()
+  const [searchParams] = useSearchParams()
 
   // A result remembers the request it answers, so the page loads until the latest one has one.
   const [attempt, setAttempt] = useState(0)
@@ -83,6 +85,7 @@ function CheckoutPage() {
         setUnpaidOrder(order)
       }
       const paid = await payOrder(order._id)
+      if (searchParams.get('from') === 'cart') removeCartItem(courseId)
       setPaidOrder(paid.order)
     } catch (error) {
       if (error.response?.status === 409) setEnrolledWhilePaying(true)

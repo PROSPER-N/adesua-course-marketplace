@@ -3,6 +3,7 @@ import CourseDetailPage from './pages/public/CourseDetailPage.jsx'
 import CoursesPage from './pages/public/CoursesPage.jsx'
 import AboutPage from './pages/public/AboutPage.jsx'
 import HomePage from './pages/public/HomePage.jsx'
+import CartPage from './pages/public/CartPage.jsx'
 import LoginPage from './pages/public/LoginPage.jsx'
 import RegisterPage from './pages/public/RegisterPage.jsx'
 import CheckoutPage from './pages/student/CheckoutPage.jsx'
@@ -26,6 +27,7 @@ function App() {
         <Route element={<HomePage />} index />
         <Route element={<CoursesPage />} path="courses" />
         <Route element={<CourseDetailPage />} path="courses/:id" />
+        <Route element={<CartPage />} path="cart" />
         <Route element={<AboutPage />} path="about" />
 
         <Route element={<GuestRoute />}>

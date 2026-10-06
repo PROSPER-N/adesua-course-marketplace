@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { getCourse } from '../../api/courses.js'
 import { getMyEnrollments } from '../../api/enrollments.js'
+import AddToCartButton from '../../components/course/AddToCartButton.jsx'
 import EnrollButton from '../../components/course/EnrollButton.jsx'
 import Badge from '../../components/ui/Badge.jsx'
 import ErrorMessage from '../../components/ui/ErrorMessage.jsx'
@@ -224,6 +225,7 @@ function CourseDetailPage() {
             </p>
             <div className="lg:mt-4">
               <EnrollButton course={course} />
+              <AddToCartButton course={course} />
             </div>
           </div>
           <p className="hidden text-sm text-muted lg:mt-4 lg:block">

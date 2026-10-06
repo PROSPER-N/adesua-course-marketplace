@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import toast from 'react-hot-toast'
-import { Link, useNavigate, useSearchParams } from 'react-router'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router'
 import Button from '../../components/ui/Button.jsx'
 import ErrorMessage from '../../components/ui/ErrorMessage.jsx'
 import FormField from '../../components/ui/FormField.jsx'
@@ -16,6 +16,7 @@ const ROLE_OPTIONS = [
 function RegisterPage() {
   const { register } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
   const [searchParams] = useSearchParams()
 
   const [form, setForm] = useState({
@@ -48,7 +49,13 @@ function RegisterPage() {
       })
       const firstName = user.name.trim().split(/\s+/)[0]
       toast.success(`Welcome to Adesua, ${firstName}!`)
-      navigate(homePathForRole(user.role), { replace: true })
+      const from = location.state?.from
+      navigate(
+        from && user.role === 'student'
+          ? `${from.pathname}${from.search ?? ''}`
+          : homePathForRole(user.role),
+        { replace: true },
+      )
     } catch (error) {
       // 400: messages go under their fields. 409 (email taken) and other errors: the banner.
       setBannerError(getErrorMessage(error))

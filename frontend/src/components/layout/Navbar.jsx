@@ -2,7 +2,9 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router'
 import Menu from 'lucide-react/dist/esm/icons/menu.mjs'
 import X from 'lucide-react/dist/esm/icons/x.mjs'
+import ShoppingCart from 'lucide-react/dist/esm/icons/shopping-cart.mjs'
 import { useAuth } from '../../context/AuthContext.jsx'
+import { useCart } from '../../hooks/useCart.js'
 import { getInitials } from '../../utils/getInitials.js'
 import Button from '../ui/Button.jsx'
 
@@ -93,6 +95,7 @@ function AccountActions({ user, logout, mobile = false, onNavigate }) {
 
 function Navbar() {
   const { user, logout } = useAuth()
+  const { items } = useCart()
   const { pathname } = useLocation()
   const [menuState, setMenuState] = useState({ open: false, pathname })
   const menuOpen = menuState.open && menuState.pathname === pathname
@@ -174,8 +177,11 @@ function Navbar() {
 
         <nav aria-label="Main navigation" className="hidden items-center gap-5 md:flex">
           <NavigationLinks links={links} pathname={pathname} />
+          <CartLink count={items.length} />
           <AccountActions logout={logout} user={user} />
         </nav>
+
+        <CartLink className="ml-auto md:hidden" count={items.length} />
 
         <button
           aria-controls="mobile-navigation"
@@ -242,6 +248,27 @@ function Navbar() {
         </div>
       )}
     </header>
+  )
+}
+
+function CartLink({ count, className = '' }) {
+  return (
+    <Link
+      aria-label={`Cart, ${count} ${count === 1 ? 'course' : 'courses'}`}
+      className={`relative inline-flex size-11 items-center justify-center rounded-lg text-brand-dark hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${className}`}
+      to="/cart"
+    >
+      <ShoppingCart aria-hidden="true" className="size-5" />
+      <span className="sr-only">Cart</span>
+      {count > 0 && (
+        <span
+          aria-hidden="true"
+          className="absolute right-0.5 top-0.5 flex min-w-5 items-center justify-center rounded-full bg-gold px-1 text-xs font-bold text-ink"
+        >
+          {count > 99 ? '99+' : count}
+        </span>
+      )}
+    </Link>
   )
 }
 

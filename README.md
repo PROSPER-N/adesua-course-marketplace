@@ -8,6 +8,7 @@ Adesua is a video course marketplace, built as our TS Academy full-stack capston
 
 - **Visitors**
   - See popular courses, live platform totals and skill shortcuts on Home
+  - Save courses to a browser cart before signing in
   - Browse published courses, search by title, filter by category, level and price (free or paid), and sort by newest, most popular or price
   - Open a course to see its details, its lesson outline and any free preview lessons
 - **Students**
@@ -179,3 +180,4 @@ Adesua/
 - The demo checkout takes no real payments. "Paying" just marks the order as paid and enrolls the student.
 - The login token is stored in the browser's localStorage. That's simple, but a script injected into the page could read it. A production app would use an httpOnly cookie instead.
 - The free API may sleep after idle time. Its first request after sleeping can take up to a minute while it wakes.
+- The cart is saved in this browser's localStorage and does not sync across devices. Checkout and free enrollment happen one course at a time.
