@@ -102,18 +102,17 @@ The app opens at http://localhost:5173.
 
 ## Screenshots
 
-These screenshots were captured from the live site. The demo catalog includes a free course and a paid course. The Kojo Ansah demo account is enrolled in the free course; the paid course remains locked until checkout is completed.
+These screenshots were taken on a freshly seeded development database, using the test accounts above. The lesson player, My learning and the cart show Akosua Mensah's account.
 
 | Screen | 1280px | 390px |
 |---|---|---|
 | Home | ![Home at 1280px](docs/screenshots/home-1280.png) | ![Home at 390px](docs/screenshots/home-390.png) |
-| Browse courses | ![Browse courses at 1280px](docs/screenshots/courses-1280.png) | ![Browse courses at 390px](docs/screenshots/courses-390.png) |
-| Course details | ![Course details at 1280px](docs/screenshots/course-details-1280.png) | — |
+| Browse courses | ![Browse courses at 1280px](docs/screenshots/courses-1280.png) | — |
+| Course details | ![Course details at 1280px](docs/screenshots/course-details-1280.png) | ![Course details at 390px](docs/screenshots/course-details-390.png) |
 | Lesson player | ![Lesson player at 1280px](docs/screenshots/lesson-player-1280.png) | — |
 | My learning | ![My learning at 1280px](docs/screenshots/my-learning-1280.png) | — |
+| Cart | ![Cart at 1280px](docs/screenshots/cart-1280.png) | — |
 | Instructor dashboard | ![Instructor dashboard at 1280px](docs/screenshots/instructor-dashboard-1280.png) | — |
-| Admin users | ![Admin users at 1280px](docs/screenshots/admin-users-1280.png) | — |
-| Admin categories | ![Admin categories at 1280px](docs/screenshots/admin-categories-1280.png) | — |
 | Admin courses | ![Admin courses at 1280px](docs/screenshots/admin-courses-1280.png) | — |
 
 ## Scripts
