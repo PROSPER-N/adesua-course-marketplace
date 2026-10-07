@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext.jsx'
 import { useCart } from '../../hooks/useCart.js'
 import { getInitials } from '../../utils/getInitials.js'
 import Button from '../ui/Button.jsx'
+import ThemeToggle from './ThemeToggle.jsx'
 
 function getLinks(user) {
   if (!user) {
@@ -175,6 +176,7 @@ function Navbar() {
 
         <nav aria-label="Main navigation" className="hidden items-center gap-5 md:flex">
           <NavigationLinks links={links} pathname={pathname} />
+          <ThemeToggle />
           <CartLink count={items.length} />
           <AccountActions logout={logout} user={user} />
         </nav>
@@ -239,7 +241,8 @@ function Navbar() {
               />
             </nav>
 
-            <div className="mt-auto border-t border-line pt-5">
+            <div className="mt-auto grid gap-5 border-t border-line pt-5">
+              <ThemeToggle mobile />
               <AccountActions logout={logout} mobile onNavigate={handleNavigate} user={user} />
             </div>
           </aside>
