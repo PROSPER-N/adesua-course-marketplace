@@ -1,6 +1,6 @@
 # Adesua
 
-Adesua is a video course marketplace, built as our TS Academy full-stack capstone project (topic 56). Instructors publish video courses. Students enroll in free courses or buy paid ones through a demo checkout, then watch the lessons and track their progress. Admins manage users and categories.
+Adesua is a video course marketplace, built as our TS Academy full-stack capstone project (topic 56). Instructors publish video courses. Students enroll in free courses or buy paid ones through a demo checkout, then watch the lessons and track their progress. Admins manage users, categories and courses.
 
 > **Status: The MVP is complete and live.** Visit the [live site](https://adesua-course-marketplace.vercel.app) or the [live API](https://adesua-api.onrender.com/api/health).
 
@@ -89,7 +89,7 @@ The app opens at http://localhost:5173.
 
 ## Test accounts
 
-`npm run seed -- --yes` creates these accounts. **Every account uses the password `Demo1234`.** The live demo's free course is enrolled by Kojo Ansah so the learning and lesson-player pages can be demonstrated.
+`npm run seed -- --yes` creates these accounts. **Every account uses the password `Demo1234`.** The seed also adds 12 published courses and 1 draft, and enrolls the students at different stages: Akosua Mensah has finished a free course and is halfway through a paid one, Kojo Ansah has started a free course and bought a paid one, and Esi Nyarko has finished a paid course.
 
 | Name | Email | Role |
 |---|---|---|
