@@ -32,6 +32,8 @@ const EMPTY_LESSON = {
   durationMinutes: '10',
   isPreview: false,
 }
+// The course fields in page order, so focus goes to the first one with an error.
+const COURSE_FIELDS = ['title', 'description', 'category', 'level', 'price', 'thumbnailUrl']
 
 function CourseFormPage() {
   const { id } = useParams()
@@ -61,6 +63,9 @@ function CourseFormPage() {
   const [lessonFieldErrors, setLessonFieldErrors] = useState({})
   const [formError, setFormError] = useState('')
   const [deleting, setDeleting] = useState(false)
+  const courseFormRef = useRef(null)
+  // A new object each time, so the same field can be focused again.
+  const [invalidField, setInvalidField] = useState(null)
 
   useEffect(() => {
     if (createdCourseRef.current) {
@@ -107,6 +112,16 @@ function CourseFormPage() {
       active = false
     }
   }, [attempt, editing, id, loadKey])
+
+  // The course details sit above the lessons and the save buttons, so their errors can be
+  // off-screen. This runs after the error is shown, then brings the field into view.
+  useEffect(() => {
+    const element = invalidField && courseFormRef.current?.elements.namedItem(invalidField.name)
+    if (!element) return
+    element.focus({ preventScroll: true })
+    // Centered, so the sticky navbar doesn't cover it.
+    element.scrollIntoView({ block: 'center' })
+  }, [invalidField])
 
   const checks = useMemo(() => {
     const rawPrice = course.price.trim()
@@ -175,6 +190,7 @@ function CourseFormPage() {
     const priceIsNumeric = /^(?:\d+(?:\.\d*)?|\.\d+)$/.test(rawPrice)
     if (rawPrice === '' || !priceIsNumeric) {
       setFieldErrors({ price: "Price can't be negative. Enter 0 for a free course." })
+      setInvalidField({ name: 'price' })
       return null
     }
     const price = Number(rawPrice)
@@ -185,9 +201,21 @@ function CourseFormPage() {
             ? "Price can't be negative. Enter 0 for a free course."
             : "Price can't be more than 5,000.",
       })
+      setInvalidField({ name: 'price' })
       return null
     }
     return payload(price)
+  }
+
+  // Shows a failed course save on its fields and moves focus to the first one.
+  // Returns false when no field is to blame, for example when the server can't be reached.
+  function showCourseErrors(error) {
+    const errors = getFieldErrors(error)
+    setFormError(getErrorMessage(error))
+    setFieldErrors(errors)
+    const name = COURSE_FIELDS.find((field) => errors[field])
+    if (name) setInvalidField({ name })
+    return Boolean(name)
   }
 
   async function ensureCourseSaved() {
@@ -210,8 +238,8 @@ function CourseFormPage() {
       navigate(`/instructor/courses/${saved._id}/edit`, { replace: true })
       return saved._id
     } catch (error) {
-      setFormError(getErrorMessage(error))
-      setFieldErrors(getFieldErrors(error))
+      // Without a field to focus, the message also goes next to the lesson form.
+      if (!showCourseErrors(error)) setLessonError(getErrorMessage(error))
       return ''
     } finally {
       setSaving(false)
@@ -244,8 +272,7 @@ function CourseFormPage() {
       if (!editing) navigate(`/instructor/courses/${saved._id}/edit`, { replace: true })
       else if (publish) navigate('/instructor')
     } catch (error) {
-      setFormError(getErrorMessage(error))
-      setFieldErrors(getFieldErrors(error))
+      showCourseErrors(error)
     } finally {
       setBusy(false)
     }
@@ -377,6 +404,7 @@ function CourseFormPage() {
           event.preventDefault()
           saveCourse()
         }}
+        ref={courseFormRef}
       >
         <div className="min-w-0 space-y-6 rounded-2xl border border-line bg-white p-4 sm:p-6">
           <Input
