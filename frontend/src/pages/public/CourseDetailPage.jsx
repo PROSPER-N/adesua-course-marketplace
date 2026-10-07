@@ -5,9 +5,11 @@ import { getCourse } from '../../api/courses.js'
 import { getMyEnrollments } from '../../api/enrollments.js'
 import AddToCartButton from '../../components/course/AddToCartButton.jsx'
 import EnrollButton from '../../components/course/EnrollButton.jsx'
+import CourseReviews from '../../components/reviews/CourseReviews.jsx'
 import Badge from '../../components/ui/Badge.jsx'
 import ErrorMessage from '../../components/ui/ErrorMessage.jsx'
 import Spinner from '../../components/ui/Spinner.jsx'
+import StarRating from '../../components/ui/StarRating.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { summaryRepeatsDescription } from '../../utils/courseSummary.js'
 import { formatMoney } from '../../utils/formatMoney.js'
@@ -32,6 +34,23 @@ function CourseDetailPage() {
   }, [id, key])
 
   useEffect(loadCourse, [loadCourse])
+
+  // After the viewer's own review changes, the course and instructor ratings are fetched again
+  // without the full-page spinner.
+  const refreshRatings = useCallback(() => {
+    getCourse(id)
+      .then((fresh) =>
+        setResult((current) =>
+          current.course
+            ? {
+                ...current,
+                course: { ...current.course, rating: fresh.rating, instructor: fresh.instructor },
+              }
+            : current,
+        ),
+      )
+      .catch(() => {})
+  }, [id])
 
   // Enrolled students can open every lesson, so the locks are only for everyone else. The answer
   // remembers the student and course it belongs to, the same way EnrollButton checks.
@@ -61,6 +80,15 @@ function CourseDetailPage() {
   const showLocks =
     !authLoading &&
     (!enrollmentKey || (enrollmentCheck.key === enrollmentKey && !enrollmentCheck.enrolled))
+
+  // Enrolled students can review the course, other students are asked to enroll, and guests get
+  // a login link. Instructors and admins only read the reviews.
+  let reviewer = null
+  if (!authLoading && !user) {
+    reviewer = 'guest'
+  } else if (enrollmentKey && enrollmentCheck.key === enrollmentKey) {
+    reviewer = enrollmentCheck.enrolled ? 'enrolled' : 'student'
+  }
 
   if (loading) {
     return (
@@ -217,6 +245,15 @@ function CourseDetailPage() {
               {course.instructor?.headline && (
                 <p className="text-sm text-muted">{course.instructor.headline}</p>
               )}
+              {course.instructor?.rating?.count > 0 && (
+                <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted">
+                  <StarRating value={course.instructor.rating.average} />
+                  <span>
+                    instructor rating · {course.instructor.rating.count}{' '}
+                    {course.instructor.rating.count === 1 ? 'review' : 'reviews'}
+                  </span>
+                </p>
+              )}
               {course.instructor?.bio && (
                 <p className="mt-2 whitespace-pre-line leading-7 text-muted">
                   {course.instructor.bio}
@@ -224,6 +261,7 @@ function CourseDetailPage() {
               )}
             </div>
           </section>
+          <CourseReviews courseId={id} key={id} onChange={refreshRatings} reviewer={reviewer} />
         </div>
         <aside className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-white p-3 shadow-[0_-4px_16px_rgba(0,0,0,0.08)] lg:sticky lg:top-24 lg:inset-x-auto lg:bottom-auto lg:z-auto lg:h-fit lg:rounded-2xl lg:border lg:border-line lg:p-5 lg:shadow-sm">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 lg:block">
