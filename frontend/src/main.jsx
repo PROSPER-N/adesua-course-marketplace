@@ -4,7 +4,10 @@ import { BrowserRouter } from 'react-router'
 import { Toaster } from 'react-hot-toast'
 import './index.css'
 import { AuthProvider } from './context/AuthContext.jsx'
+import { startTheme } from './utils/theme.js'
 import App from './App.jsx'
+
+startTheme()
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
