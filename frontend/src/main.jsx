@@ -11,7 +11,17 @@ createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <AuthProvider>
         <App />
-        <Toaster position="top-right" />
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            // Toasts are white by default, so they take the theme colours instead.
+            style: {
+              background: 'var(--color-card)',
+              border: '1px solid var(--color-line)',
+              color: 'var(--color-ink)',
+            },
+          }}
+        />
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>,
