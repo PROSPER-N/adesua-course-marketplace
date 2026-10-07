@@ -110,6 +110,7 @@ router.patch(
 - Submit buttons use the `loading` prop, so people can't submit twice.
 - Use `getErrorMessage` for error text and `getFieldErrors` for field errors.
 - Reuse the components in `components/ui`. Use only the theme colours.
+  - They're tokens in `index.css`, each with a light and a dark value. Use `bg-card` instead of `bg-white` for cards, panels and inputs, `bg-brand-fill` for solid green buttons, `border-field` for input borders and `bg-band` for deep green bands.
 - Build mobile first, and check every page at 390px, 820px and 1280px.
 
 ## Databases
