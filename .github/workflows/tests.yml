@@ -67,6 +67,11 @@ jobs:
       - name: Lint
         if: hashFiles('frontend/package.json') != ''
         run: npm run lint
+      # Prettier isn't a dependency, so the version is pinned here. A new release can't fail the check.
+      # It uses the frontend override in the root .prettierrc.
+      - name: Check formatting
+        if: hashFiles('frontend/package.json') != ''
+        run: npx --yes prettier@3.9.9 --check "src/**/*.{js,jsx,css}" index.html vite.config.js package.json .oxlintrc.json vercel.json
       - name: Build
         if: hashFiles('frontend/package.json') != ''
         run: npm run build
