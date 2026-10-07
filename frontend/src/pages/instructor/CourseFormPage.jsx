@@ -38,6 +38,8 @@ function CourseFormPage() {
   const navigate = useNavigate()
   const [savedCourseId, setSavedCourseId] = useState('')
   const createdCourseRef = useRef(false)
+  // The description and summary as last saved.
+  const lastSavedRef = useRef({ description: '', shortDescription: '' })
   const courseId = id || savedCourseId
   const editing = Boolean(courseId)
   const [attempt, setAttempt] = useState(0)
@@ -90,6 +92,10 @@ function CourseFormPage() {
             ].slice(0, 6),
             status: courseData.status ?? 'draft',
           })
+          lastSavedRef.current = {
+            description: courseData.description ?? '',
+            shortDescription: courseData.shortDescription ?? '',
+          }
           setLessons(courseData.lessons ?? [])
         }
         setLoadResult({ key: loadKey, error: null })
@@ -142,10 +148,19 @@ function CourseFormPage() {
       ),
     }))
   }
+  // An existing course keeps its saved summary, which may be hand-written,
+  // until its description changes.
+  function summaryFor(description) {
+    const saved = lastSavedRef.current
+    if (saved.shortDescription && description.trim() === saved.description.trim()) {
+      return saved.shortDescription
+    }
+    return makeCourseSummary(description)
+  }
   function payload(price) {
     return {
       title: course.title.trim(),
-      shortDescription: makeCourseSummary(course.description),
+      shortDescription: summaryFor(course.description),
       description: course.description.trim(),
       category: course.category,
       level: course.level,
@@ -186,6 +201,10 @@ function CourseFormPage() {
     setSaving(true)
     try {
       const saved = await createCourse(data)
+      lastSavedRef.current = {
+        description: data.description,
+        shortDescription: data.shortDescription,
+      }
       createdCourseRef.current = true
       setSavedCourseId(saved._id)
       navigate(`/instructor/courses/${saved._id}/edit`, { replace: true })
@@ -212,6 +231,10 @@ function CourseFormPage() {
     }
     try {
       const saved = editing ? await updateCourse(courseId, data) : await createCourse(data)
+      lastSavedRef.current = {
+        description: data.description,
+        shortDescription: data.shortDescription,
+      }
       if (!editing) {
         createdCourseRef.current = true
         setSavedCourseId(saved._id)
