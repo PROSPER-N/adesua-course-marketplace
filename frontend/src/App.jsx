@@ -6,6 +6,7 @@ import HomePage from './pages/public/HomePage.jsx'
 import CartPage from './pages/public/CartPage.jsx'
 import LoginPage from './pages/public/LoginPage.jsx'
 import RegisterPage from './pages/public/RegisterPage.jsx'
+import ReviewsPage from './pages/public/ReviewsPage.jsx'
 import CheckoutPage from './pages/student/CheckoutPage.jsx'
 import LessonPlayerPage from './pages/student/LessonPlayerPage.jsx'
 import MyLearningPage from './pages/student/MyLearningPage.jsx'
@@ -29,6 +30,7 @@ function App() {
         <Route element={<CourseDetailPage />} path="courses/:id" />
         <Route element={<CartPage />} path="cart" />
         <Route element={<AboutPage />} path="about" />
+        <Route element={<ReviewsPage />} path="reviews" />
 
         <Route element={<GuestRoute />}>
           <Route element={<LoginPage />} path="login" />

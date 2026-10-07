@@ -19,6 +19,7 @@ const columns = [
     title: 'Adesua',
     links: [
       { label: 'About us', to: '/about' },
+      { label: 'Reviews', to: '/reviews' },
       { label: 'Home', to: '/' },
     ],
   },
