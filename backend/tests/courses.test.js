@@ -6,6 +6,7 @@ const { createUser, tokenFor, createCourse, createLessons } = require("./helpers
 const Category = require("../src/models/Category");
 const Course = require("../src/models/Course");
 const Lesson = require("../src/models/Lesson");
+const User = require("../src/models/User");
 
 const PAGE_LIMIT_MSG = "Page and limit must be positive numbers.";
 
@@ -146,6 +147,20 @@ describe("Courses API", () => {
         "order",
         "title",
       ]);
+    });
+
+    test("includes the instructor's headline", async () => {
+      const instructor = await createUser({ role: "instructor" });
+      await User.updateOne({ _id: instructor._id }, { headline: "Web developer and teacher" });
+      const course = await createCourse({ instructor: instructor._id, status: "published" });
+
+      const res = await request(app).get(`/api/courses/${course._id}`);
+
+      expect(res.status).toBe(200);
+      expect(res.body.data.instructor).toMatchObject({
+        name: instructor.name,
+        headline: "Web developer and teacher",
+      });
     });
 
     test("returns 404 for a draft course", async () => {

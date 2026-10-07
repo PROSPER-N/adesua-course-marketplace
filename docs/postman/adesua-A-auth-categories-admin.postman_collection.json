@@ -222,11 +222,11 @@
                 }
               }
             },
-            "description": "Purpose: Create a student or instructor account. Returns a login token.\n\nAccess: Public. Limited to 20 sign-up or login attempts per 15 minutes per IP address.\n\nBody (JSON):\n- `name` (required): 2 to 50 characters\n- `email` (required): a valid email address\n- `password` (required): at least 8 characters, with a letter and a number\n- `role` (optional): `student` (the default) or `instructor`. Sign-up can never create an admin.\n\nParameters: none.\n\nThis request saves the returned token as `{{token}}`."
+            "description": "Purpose: Create a student or instructor account. Returns a login token.\n\nAccess: Public. Limited to 20 sign-up or login attempts per 15 minutes per IP address.\n\nBody (JSON):\n- `name` (required): 2 to 50 characters\n- `email` (required): a valid email address\n- `password` (required): at least 8 characters, with a letter and a number\n- `role` (optional): `student` (the default) or `instructor`. Sign-up can never create an admin.\n- `headline` (instructors, required): 5 to 80 characters\n- `teachingArea` (instructors, required): a category `_id` from List categories\n- `interests` (students, optional): up to 5 different category `_id`s from List categories\n\nFields for the other role are ignored.\n\nParameters: none.\n\nThis request saves the returned token as `{{token}}`."
           },
           "response": [
             {
-              "name": "Account created (201)",
+              "name": "Learner account created (201)",
               "originalRequest": {
                 "method": "POST",
                 "header": [
@@ -250,7 +250,7 @@
                 },
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"name\": \"Yaw Boateng\",\n  \"email\": \"yaw@example.com\",\n  \"password\": \"Demo1234\",\n  \"role\": \"student\"\n}",
+                  "raw": "{\n  \"name\": \"Yaw Boateng\",\n  \"email\": \"yaw@example.com\",\n  \"password\": \"Demo1234\",\n  \"role\": \"student\",\n  \"interests\": [\n    \"6ac62ba94973890c9a75d9fe\",\n    \"6ac62ba94973890c9a75da03\"\n  ]\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -268,7 +268,52 @@
                 }
               ],
               "cookie": [],
-              "body": "{\n  \"success\": true,\n  \"message\": \"Account created successfully\",\n  \"data\": {\n    \"token\": \"<token>\",\n    \"user\": {\n      \"name\": \"Yaw Boateng\",\n      \"email\": \"yaw@example.com\",\n      \"role\": \"student\",\n      \"bio\": \"\",\n      \"isActive\": true,\n      \"_id\": \"6abcf00662d6f33dd061f140\",\n      \"createdAt\": \"2026-09-30T11:18:30.129Z\",\n      \"updatedAt\": \"2026-09-30T11:18:30.129Z\"\n    }\n  }\n}"
+              "body": "{\n  \"success\": true,\n  \"message\": \"Account created successfully\",\n  \"data\": {\n    \"token\": \"<token>\",\n    \"user\": {\n      \"name\": \"Yaw Boateng\",\n      \"email\": \"yaw@example.com\",\n      \"role\": \"student\",\n      \"bio\": \"\",\n      \"interests\": [\n        \"6ac62ba94973890c9a75d9fe\",\n        \"6ac62ba94973890c9a75da03\"\n      ],\n      \"isActive\": true,\n      \"_id\": \"6ac62c1358a65dc89a474e07\",\n      \"createdAt\": \"2026-10-07T11:25:07.215Z\",\n      \"updatedAt\": \"2026-10-07T11:25:07.215Z\"\n    }\n  }\n}"
+            },
+            {
+              "name": "Instructor account created (201)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/register",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "register"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Efua Darko\",\n  \"email\": \"efua@example.com\",\n  \"password\": \"Demo1234\",\n  \"role\": \"instructor\",\n  \"headline\": \"Data analyst and Excel trainer\",\n  \"teachingArea\": \"6ac62ba94973890c9a75da00\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Account created successfully\",\n  \"data\": {\n    \"token\": \"<token>\",\n    \"user\": {\n      \"name\": \"Efua Darko\",\n      \"email\": \"efua@example.com\",\n      \"role\": \"instructor\",\n      \"bio\": \"\",\n      \"headline\": \"Data analyst and Excel trainer\",\n      \"teachingArea\": \"6ac62ba94973890c9a75da00\",\n      \"isActive\": true,\n      \"_id\": \"6ac62c1358a65dc89a474e08\",\n      \"createdAt\": \"2026-10-07T11:25:07.508Z\",\n      \"updatedAt\": \"2026-10-07T11:25:07.508Z\"\n    }\n  }\n}"
             },
             {
               "name": "Invalid fields (400)",
@@ -314,6 +359,96 @@
               ],
               "cookie": [],
               "body": "{\n  \"success\": false,\n  \"message\": \"Please fix the highlighted fields\",\n  \"data\": null,\n  \"errors\": [\n    {\n      \"field\": \"name\",\n      \"message\": \"Name must be between 2 and 50 characters.\"\n    },\n    {\n      \"field\": \"email\",\n      \"message\": \"Enter a valid email address.\"\n    },\n    {\n      \"field\": \"password\",\n      \"message\": \"Password must be at least 8 characters and include a letter and a number.\"\n    }\n  ]\n}"
+            },
+            {
+              "name": "Instructor details missing (400)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/register",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "register"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Efua Darko\",\n  \"email\": \"efua@example.com\",\n  \"password\": \"Demo1234\",\n  \"role\": \"instructor\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Please fix the highlighted fields\",\n  \"data\": null,\n  \"errors\": [\n    {\n      \"field\": \"headline\",\n      \"message\": \"Add a short headline, like Web developer and teacher.\"\n    },\n    {\n      \"field\": \"teachingArea\",\n      \"message\": \"Choose your main teaching area.\"\n    }\n  ]\n}"
+            },
+            {
+              "name": "Too many interests (400)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/register",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "register"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Yaw Boateng\",\n  \"email\": \"yaw@example.com\",\n  \"password\": \"Demo1234\",\n  \"role\": \"student\",\n  \"interests\": [\n    \"6ac62ba94973890c9a75d9fe\",\n    \"6ac62ba94973890c9a75d9ff\",\n    \"6ac62ba94973890c9a75da00\",\n    \"6ac62ba94973890c9a75da01\",\n    \"6ac62ba94973890c9a75da02\",\n    \"6ac62ba94973890c9a75da03\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Please fix the highlighted fields\",\n  \"data\": null,\n  \"errors\": [\n    {\n      \"field\": \"interests\",\n      \"message\": \"Choose up to 5 interests.\"\n    }\n  ]\n}"
             },
             {
               "name": "Email already used (409)",

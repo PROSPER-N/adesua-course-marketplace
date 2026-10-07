@@ -214,6 +214,9 @@ function CourseDetailPage() {
             <h2 className="font-display text-2xl font-bold text-ink">Your instructor</h2>
             <div className="mt-4 rounded-xl border border-line bg-white p-5">
               <p className="font-semibold text-ink">{course.instructor?.name ?? 'Instructor'}</p>
+              {course.instructor?.headline && (
+                <p className="text-sm text-muted">{course.instructor.headline}</p>
+              )}
               {course.instructor?.bio && (
                 <p className="mt-2 whitespace-pre-line leading-7 text-muted">
                   {course.instructor.bio}

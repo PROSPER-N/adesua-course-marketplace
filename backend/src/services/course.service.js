@@ -111,7 +111,7 @@ async function getPublishedCourseById(courseId) {
     status: "published",
   })
     .populate("category", "_id name slug")
-    .populate("instructor", "_id name bio")
+    .populate("instructor", "_id name bio headline")
     .lean();
 
   if (!course) {

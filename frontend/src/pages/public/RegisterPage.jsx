@@ -1,9 +1,13 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router'
+import { getCategories } from '../../api/categories.js'
+import InterestPicker from '../../components/auth/InterestPicker.jsx'
 import Button from '../../components/ui/Button.jsx'
 import ErrorMessage from '../../components/ui/ErrorMessage.jsx'
 import FormField from '../../components/ui/FormField.jsx'
+import Input from '../../components/ui/Input.jsx'
+import Select from '../../components/ui/Select.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { getErrorMessage, getFieldErrors } from '../../utils/getErrorMessage.js'
 import { homePathForRole } from '../../utils/homePathForRole.js'
@@ -12,6 +16,17 @@ const ROLE_OPTIONS = [
   { value: 'student', title: 'Learn', description: 'Browse and enroll in courses' },
   { value: 'instructor', title: 'Teach', description: 'Create and publish courses' },
 ]
+
+const PANEL_TEXT = {
+  student: {
+    title: 'Learn practical skills.',
+    text: 'Short courses from people who use these skills every day.',
+  },
+  instructor: {
+    title: 'Teach what you know.',
+    text: 'Create courses, add lessons and reach learners around the world.',
+  },
+}
 
 function RegisterPage() {
   const { register } = useAuth()
@@ -24,14 +39,50 @@ function RegisterPage() {
     name: '',
     email: '',
     password: '',
+    headline: '',
+    teachingArea: '',
+    interests: [],
   })
   const [loading, setLoading] = useState(false)
   const [bannerError, setBannerError] = useState('')
   const [fieldErrors, setFieldErrors] = useState({})
+  const isInstructor = form.role === 'instructor'
+  const panel = PANEL_TEXT[form.role]
+
+  // The categories give learners their interests and instructors their teaching areas.
+  // Each load or retry is a new attempt, and the list is loading until that attempt answers.
+  const [attempt, setAttempt] = useState(0)
+  const [categoryResult, setCategoryResult] = useState({ attempt: -1, categories: [], error: null })
+  const categoriesLoading = categoryResult.attempt !== attempt
+  const categoriesError = categoriesLoading ? null : categoryResult.error
+
+  useEffect(() => {
+    let ignore = false
+    getCategories()
+      .then((categories) => {
+        if (!ignore) setCategoryResult({ attempt, categories, error: null })
+      })
+      .catch((error) => {
+        if (!ignore) setCategoryResult({ attempt, categories: [], error })
+      })
+
+    return () => {
+      ignore = true
+    }
+  }, [attempt])
 
   function handleChange(event) {
     const { name, value } = event.target
     setForm((current) => ({ ...current, [name]: value }))
+  }
+
+  function toggleInterest(id) {
+    setForm((current) => ({
+      ...current,
+      interests: current.interests.includes(id)
+        ? current.interests.filter((interest) => interest !== id)
+        : [...current.interests, id],
+    }))
   }
 
   async function handleSubmit(event) {
@@ -41,11 +92,16 @@ function RegisterPage() {
     setLoading(true)
 
     try {
+      // Only the chosen role's own fields are sent.
+      const profile = isInstructor
+        ? { headline: form.headline.trim(), teachingArea: form.teachingArea }
+        : { interests: form.interests }
       const user = await register({
         role: form.role,
         name: form.name.trim(),
         email: form.email.trim(),
         password: form.password,
+        ...profile,
       })
       const firstName = user.name.trim().split(/\s+/)[0]
       toast.success(`Welcome to Adesua, ${firstName}!`)
@@ -77,11 +133,9 @@ function RegisterPage() {
         />
         <div className="relative max-w-md">
           <p className="font-display text-4xl font-extrabold leading-tight text-white xl:text-5xl">
-            Learn it, or teach it.
+            {panel.title}
           </p>
-          <p className="mt-4 text-lg text-white/80">
-            One account lets you take courses or share what you know.
-          </p>
+          <p className="mt-4 text-lg text-white/80">{panel.text}</p>
         </div>
       </aside>
 
@@ -148,6 +202,55 @@ function RegisterPage() {
               type="password"
               value={form.password}
             />
+
+            {isInstructor ? (
+              <>
+                <Input
+                  error={fieldErrors.headline}
+                  hint="Shown under your name on your course pages."
+                  label="Professional headline"
+                  maxLength={80}
+                  name="headline"
+                  onChange={handleChange}
+                  placeholder="Web developer and teacher"
+                  value={form.headline}
+                />
+                <Select
+                  disabled={categoriesLoading}
+                  error={fieldErrors.teachingArea}
+                  label="Main teaching area"
+                  name="teachingArea"
+                  onChange={handleChange}
+                  value={form.teachingArea}
+                >
+                  <option value="">
+                    {categoriesLoading ? 'Loading areas…' : 'Choose an area'}
+                  </option>
+                  {categoryResult.categories.map((category) => (
+                    <option key={category._id} value={category._id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </Select>
+                {categoriesError && (
+                  <ErrorMessage
+                    message={getErrorMessage(categoriesError)}
+                    onRetry={() => setAttempt((current) => current + 1)}
+                    title="Couldn't load the teaching areas"
+                  />
+                )}
+              </>
+            ) : (
+              <InterestPicker
+                categories={categoryResult.categories}
+                error={fieldErrors.interests}
+                loadError={categoriesError}
+                loading={categoriesLoading}
+                onRetry={() => setAttempt((current) => current + 1)}
+                onToggle={toggleInterest}
+                selected={form.interests}
+              />
+            )}
 
             <Button fullWidth loading={loading} loadingText="Creating account…" type="submit">
               Create account

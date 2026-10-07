@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
 const NAME_MSG = "Name must be between 2 and 50 characters.";
+const HEADLINE_MSG = "Add a short headline, like Web developer and teacher.";
+const INTERESTS_MSG = "Choose up to 5 interests.";
 
 const userSchema = new mongoose.Schema(
   {
@@ -35,6 +37,26 @@ const userSchema = new mongoose.Schema(
       trim: true,
       maxlength: [300, "Bio can't be more than 300 characters."],
       default: "",
+    },
+    // Instructors only. Shown under their name on their course pages.
+    headline: {
+      type: String,
+      trim: true,
+      maxlength: [80, HEADLINE_MSG],
+    },
+    // Instructors only.
+    teachingArea: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+    },
+    // Students only. No default, so instructors and admins don't get an empty list.
+    interests: {
+      type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
+      default: undefined,
+      validate: {
+        validator: (interests) => interests.length <= 5,
+        message: INTERESTS_MSG,
+      },
     },
     isActive: {
       type: Boolean,
