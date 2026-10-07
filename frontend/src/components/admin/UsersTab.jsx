@@ -114,7 +114,7 @@ function UsersTab() {
   let content
   if (loading) {
     content = (
-      <div className="rounded-xl border border-line bg-white px-4">
+      <div className="rounded-xl border border-line bg-card px-4">
         {Array.from({ length: 5 }, (_, index) => (
           <SkeletonRow key={index} />
         ))}

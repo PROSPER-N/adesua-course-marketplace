@@ -65,7 +65,7 @@ function CategoriesTab() {
 
   if (loading) {
     return (
-      <div className="rounded-xl border border-line bg-white px-4">
+      <div className="rounded-xl border border-line bg-card px-4">
         {Array.from({ length: 5 }, (_, index) => (
           <SkeletonRow key={index} />
         ))}
@@ -86,7 +86,7 @@ function CategoriesTab() {
   return (
     <section aria-label="Categories" className="grid gap-5">
       <form
-        className="grid gap-2 rounded-xl border border-line bg-white p-4"
+        className="grid gap-2 rounded-xl border border-line bg-card p-4"
         noValidate
         onSubmit={handleAdd}
       >
@@ -120,7 +120,7 @@ function CategoriesTab() {
           title="No categories yet"
         />
       ) : (
-        <ul className="divide-y divide-line rounded-xl border border-line bg-white">
+        <ul className="divide-y divide-line rounded-xl border border-line bg-card">
           {result.categories.map((category) => (
             <CategoryRow
               category={category}
