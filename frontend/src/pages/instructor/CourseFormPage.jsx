@@ -211,9 +211,7 @@ function CourseFormPage() {
       return
     }
     try {
-      const saved = editing
-        ? await updateCourse(courseId, data)
-        : await createCourse(data)
+      const saved = editing ? await updateCourse(courseId, data) : await createCourse(data)
       if (!editing) {
         createdCourseRef.current = true
         setSavedCourseId(saved._id)
@@ -475,10 +473,7 @@ function CourseFormPage() {
         {lessons.length > 0 && (
           <ol className="divide-y divide-line rounded-xl border border-line">
             {lessons.map((item) => (
-              <li
-                className="flex flex-wrap items-center justify-between gap-3 p-4"
-                key={item._id}
-              >
+              <li className="flex flex-wrap items-center justify-between gap-3 p-4" key={item._id}>
                 <div className="min-w-0">
                   <p className="break-words font-semibold text-ink">
                     {item.order}. {item.title}

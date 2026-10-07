@@ -20,12 +20,7 @@ function AddToCartButton({ course }) {
   }
 
   return (
-    <Button
-      className="mt-2"
-      fullWidth
-      onClick={toggleCart}
-      variant="outline"
-    >
+    <Button className="mt-2" fullWidth onClick={toggleCart} variant="outline">
       {inCart ? (
         <>
           <Check aria-hidden="true" className="size-4" />
