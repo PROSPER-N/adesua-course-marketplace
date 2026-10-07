@@ -8,9 +8,14 @@ const { sendSuccess } = require("../utils/apiResponse");
 const register = asyncHandler(async (req, res) => {
   // Take only these fields, so nobody can send isActive or other fields in the body.
   const { name, email, password, role = "student" } = req.body;
+  // Each role saves only its own profile fields. The other role's fields are ignored.
+  const profile =
+    role === "instructor"
+      ? { headline: req.body.headline, teachingArea: req.body.teachingArea }
+      : { interests: req.body.interests ?? [] };
 
   // If the email is taken, MongoDB throws a duplicate key error and errorHandler sends 409.
-  const user = await User.create({ name, email, password, role });
+  const user = await User.create({ name, email, password, role, ...profile });
 
   sendSuccess(res, {
     statusCode: 201,
