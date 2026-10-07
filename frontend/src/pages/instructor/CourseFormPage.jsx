@@ -12,6 +12,7 @@ import Input from '../../components/ui/Input.jsx'
 import Select from '../../components/ui/Select.jsx'
 import Spinner from '../../components/ui/Spinner.jsx'
 import Textarea from '../../components/ui/Textarea.jsx'
+import { makeCourseSummary } from '../../utils/courseSummary.js'
 import { getErrorMessage, getFieldErrors } from '../../utils/getErrorMessage.js'
 
 const EMPTY_COURSE = {
@@ -142,10 +143,9 @@ function CourseFormPage() {
     }))
   }
   function payload(price) {
-    const normalizedDescription = course.description.trim().replace(/\s+/g, ' ')
     return {
       title: course.title.trim(),
-      shortDescription: normalizedDescription.slice(0, 160),
+      shortDescription: makeCourseSummary(course.description),
       description: course.description.trim(),
       category: course.category,
       level: course.level,
