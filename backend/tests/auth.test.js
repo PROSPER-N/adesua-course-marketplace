@@ -1,6 +1,11 @@
+const mongoose = require("mongoose");
 const request = require("supertest");
 const app = require("../src/app");
+const User = require("../src/models/User");
 const { createUser, tokenFor, TEST_PASSWORD } = require("./helpers");
+
+const HEADLINE_MSG = "Add a short headline, like Web developer and teacher.";
+const INTERESTS_MSG = "Choose up to 5 interests.";
 
 const newStudent = { name: "Akosua Mensah", email: "akosua@example.com", password: "Demo1234" };
 
@@ -96,5 +101,35 @@ describe("GET /api/auth/me", () => {
 
     expect(res.status).toBe(200);
     expect(res.body.data.user).toMatchObject({ email: user.email, role: "instructor" });
+  });
+});
+
+describe("User model profile fields", () => {
+  const userData = { name: "Model Test", email: "model@test.com", password: TEST_PASSWORD };
+
+  it("rejects a headline over 80 characters", async () => {
+    await expect(
+      User.create({ ...userData, role: "instructor", headline: "a".repeat(81) })
+    ).rejects.toMatchObject({
+      name: "ValidationError",
+      errors: { headline: expect.objectContaining({ message: HEADLINE_MSG }) },
+    });
+  });
+
+  it("rejects more than 5 interests", async () => {
+    const interests = Array.from({ length: 6 }, () => new mongoose.Types.ObjectId());
+
+    await expect(User.create({ ...userData, interests })).rejects.toMatchObject({
+      name: "ValidationError",
+      errors: { interests: expect.objectContaining({ message: INTERESTS_MSG }) },
+    });
+  });
+
+  it("gives instructors and admins no interests list", async () => {
+    const instructor = await createUser({ role: "instructor" });
+    const admin = await createUser({ role: "admin" });
+
+    expect(instructor.toJSON().interests).toBeUndefined();
+    expect(admin.toJSON().interests).toBeUndefined();
   });
 });
