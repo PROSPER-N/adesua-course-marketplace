@@ -390,7 +390,7 @@ function CourseFormPage() {
           />
           <Textarea
             error={fieldErrors.description}
-            hint="The opening text appears on course cards."
+            hint="The opening becomes the course summary (up to 160 characters)."
             label="Course description"
             name="description"
             onChange={updateField}
