@@ -12,3 +12,10 @@ export function makeCourseSummary(description) {
   const start = lastSpace > 0 ? text.slice(0, lastSpace) : text.slice(0, SUMMARY_LENGTH - 1)
   return `${start.replace(/[\s,;:.–—-]+$/, '')}…`
 }
+
+// True when the summary is just the start of the description, so showing both would repeat it.
+export function summaryRepeatsDescription(summary, description) {
+  const normalize = (text) => (text ?? '').trim().replace(/\s+/g, ' ')
+  const start = normalize(summary).replace(/…$/, '').trimEnd()
+  return normalize(description).startsWith(start)
+}
