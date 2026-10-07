@@ -1,5 +1,8 @@
 @import 'tailwindcss';
 
+/* dark: utilities follow the theme chosen on the site, not only the device setting. */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
 @theme {
   --color-brand: #1e6b4a;
   --color-brand-hover: #185a3e;
@@ -29,6 +32,28 @@
   --color-footer: #10231a;
   --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
   --font-sans: 'Instrument Sans', system-ui, sans-serif;
+}
+
+/* The dark theme, on when <html> has data-theme="dark". Text colours get lighter and backgrounds
+   darker. The fills, gold, the bands and the footer keep their light values. */
+[data-theme='dark'] {
+  --color-brand: #5cc595;
+  --color-brand-hover: #7fd6ad;
+  --color-brand-dark: #a6e2c3;
+  --color-brand-soft: #173527;
+  --color-brand-fill-hover: #23825a;
+  --color-gold-soft: #3a2f15;
+  --color-ink: #e7efea;
+  --color-muted: #a5b2aa;
+  --color-line: #2b3a33;
+  --color-field: #718079;
+  --color-surface: #131c17;
+  --color-page: #0e1512;
+  --color-card: #17211c;
+  --color-overlay: rgb(0 0 0 / 0.6);
+  --color-shadow: rgb(0 0 0 / 0.5);
+  --color-danger: #ff8b7d;
+  --color-danger-soft: #3b1a17;
 }
 
 body {
