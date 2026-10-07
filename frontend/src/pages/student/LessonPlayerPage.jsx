@@ -34,7 +34,7 @@ function PlayerHeader({ role, course, lessons, enrollment }) {
   const doneCount = enrollment ? countDone(lessons, enrollment.completedLessons) : 0
 
   return (
-    <header className="border-b border-line bg-white">
+    <header className="border-b border-line bg-card">
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 sm:px-6 lg:px-8">
         <Link
           className="inline-flex shrink-0 items-center gap-1.5 rounded-md text-sm font-semibold text-brand hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
@@ -76,10 +76,11 @@ function Video({ lesson }) {
   const embedUrl = youtubeEmbedUrl(lesson.videoUrl)
   if (!embedUrl) {
     return (
-      <div className="flex aspect-video w-full flex-col items-center justify-center gap-4 rounded-xl bg-ink p-6 text-center text-white">
+      <div className="flex aspect-video w-full flex-col items-center justify-center gap-4 rounded-xl bg-band p-6 text-center text-white">
         <p>This video can't be played here.</p>
+        {/* Gold, as on the Home teach band, stands out on deep green in both themes. */}
         <a
-          className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-white px-4 font-semibold text-ink hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-gold px-4 font-semibold text-on-gold hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
           href={lesson.videoUrl}
           rel="noopener noreferrer"
           target="_blank"
@@ -92,7 +93,7 @@ function Video({ lesson }) {
   }
 
   return (
-    <div className="aspect-video w-full overflow-hidden rounded-xl bg-ink">
+    <div className="aspect-video w-full overflow-hidden rounded-xl bg-band">
       <iframe
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowFullScreen
@@ -113,7 +114,7 @@ function PlayerSkeleton() {
         <div className="skeleton-shimmer mt-5 h-8 w-2/3 rounded" />
         <div className="skeleton-shimmer mt-3 h-4 w-1/4 rounded" />
       </div>
-      <div className="hidden rounded-xl border border-line bg-white px-4 lg:block">
+      <div className="hidden rounded-xl border border-line bg-card px-4 lg:block">
         {Array.from({ length: 4 }, (_, index) => (
           <SkeletonRow columns={2} key={index} />
         ))}
@@ -284,7 +285,7 @@ function LessonPlayerPage() {
             </nav>
 
             {/* Below lg the lesson list folds away here; from lg up it sits in the sidebar. */}
-            <details className="mt-6 overflow-hidden rounded-xl border border-line bg-white lg:hidden">
+            <details className="mt-6 overflow-hidden rounded-xl border border-line bg-card lg:hidden">
               <summary className="cursor-pointer px-4 py-3 font-semibold text-ink">
                 Course content <span className="font-normal text-muted">· {listSummary}</span>
               </summary>
@@ -293,7 +294,7 @@ function LessonPlayerPage() {
               </div>
             </details>
 
-            <section className="mt-6 rounded-xl border border-line bg-white p-5 sm:p-6">
+            <section className="mt-6 rounded-xl border border-line bg-card p-5 sm:p-6">
               <h2 className="font-display text-xl font-bold text-ink">Lesson notes</h2>
               {lesson.content ? (
                 <p className="mt-3 leading-relaxed whitespace-pre-line text-ink">
@@ -307,7 +308,7 @@ function LessonPlayerPage() {
 
           <aside
             aria-label="Course content"
-            className="hidden overflow-hidden rounded-xl border border-line bg-white lg:sticky lg:top-6 lg:block"
+            className="hidden overflow-hidden rounded-xl border border-line bg-card lg:sticky lg:top-6 lg:block"
           >
             <div className="border-b border-line px-4 py-3">
               <h2 className="font-semibold text-ink">Course content</h2>
