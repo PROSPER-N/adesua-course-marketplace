@@ -16,6 +16,7 @@ const instructorCoursesRoutes = require("./instructorCourses.routes");
 const instructorStatsRoutes = require("./instructorStats.routes");
 const enrollmentsRoutes = require("./enrollments.routes");
 const ordersRoutes = require("./orders.routes");
+const siteReviewsRoutes = require("./siteReviews.routes");
 
 const router = express.Router();
 
@@ -39,5 +40,7 @@ router.use("/instructor", instructorStatsRoutes); // Member C
 
 router.use("/enrollments", enrollmentsRoutes); // Member C
 router.use("/orders", ordersRoutes); // Member C
+
+router.use("/reviews", siteReviewsRoutes); // Member A
 
 module.exports = router;
