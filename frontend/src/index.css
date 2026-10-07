@@ -135,11 +135,17 @@ body {
 }
 
 .skills-marquee-track {
-  animation: skills-scroll 42s linear infinite;
+  animation: skills-scroll 40s linear infinite;
 }
 
-.skills-marquee:hover .skills-marquee-track,
-.skills-marquee:focus-within .skills-marquee-track {
+/* Touch screens keep :hover after a tap, which would leave the strip stopped there. */
+@media (hover: hover) {
+  .skills-marquee:hover .skills-marquee-track {
+    animation-play-state: paused;
+  }
+}
+
+.skills-marquee:has(:focus-visible) .skills-marquee-track {
   animation-play-state: paused;
 }
 

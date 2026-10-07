@@ -1,4 +1,4 @@
-import Search from 'lucide-react/dist/esm/icons/search.mjs'
+import { Search } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import CourseCover from '../course/CourseCover.jsx'
@@ -85,11 +85,12 @@ function HomeHero({ categories, loading }) {
         </div>
 
         {showCovers && (
-          // Decorative examples. Below lg they sit in one row that scrolls sideways.
-          // scroll-px matches px, or snapping would pull the first cover to the screen edge.
+          // Decorative examples. Below lg they sit in one row that scrolls sideways and always
+          // stops on a cover. scroll-px matches px, or snapping would pull the first cover to the
+          // screen edge.
           <div
             aria-hidden="true"
-            className="-mx-4 flex snap-x scroll-px-4 gap-4 overflow-x-auto px-4 pb-2 sm:-mx-6 sm:scroll-px-6 sm:px-6 lg:mx-0 lg:grid lg:grid-cols-2 lg:overflow-visible lg:px-0 lg:pb-0"
+            className="-mx-4 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto scroll-smooth px-4 pb-2 motion-reduce:scroll-auto sm:-mx-6 sm:scroll-px-6 sm:px-6 lg:mx-0 lg:grid lg:grid-cols-2 lg:overflow-visible lg:px-0 lg:pb-0"
           >
             {loading
               ? COVER_EXAMPLES.map(({ slug }) => (
