@@ -24,6 +24,20 @@ async function recalculateCourseRating(courseId) {
   return { ratingAverage, ratingCount };
 }
 
+// An instructor's rating: the average instructorRating of the visible reviews on all their
+// published courses, rounded to 1 decimal. Worked out when a course page is read.
+async function getInstructorRating(instructorId) {
+  const courseIds = await Course.find({ instructor: instructorId, status: "published" }).distinct(
+    "_id"
+  );
+  const [result] = await CourseReview.aggregate([
+    { $match: { course: { $in: courseIds }, isHidden: false } },
+    { $group: { _id: null, average: { $avg: "$instructorRating" }, count: { $sum: 1 } } },
+  ]);
+
+  return { average: result ? roundRating(result.average) : 0, count: result ? result.count : 0 };
+}
+
 // The summary under a list of reviews: the average, the count and how many reviews gave
 // each number of stars. field is "courseRating" for course reviews and "rating" for platform ones.
 async function summarize(Model, filter, field) {
@@ -67,4 +81,10 @@ async function saveReview(Model, owner, fields) {
   return { review, created };
 }
 
-module.exports = { roundRating, recalculateCourseRating, summarize, saveReview };
+module.exports = {
+  roundRating,
+  recalculateCourseRating,
+  getInstructorRating,
+  summarize,
+  saveReview,
+};

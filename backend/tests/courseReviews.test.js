@@ -383,3 +383,70 @@ describe("My course review: /api/courses/:id/reviews/mine", () => {
     expect(res.body.message).toBe("Course not found");
   });
 });
+
+describe("Ratings in course data", () => {
+  it("adds rating { average, count } to the course list and details", async () => {
+    const course = await createCourse({ status: "published" });
+    await addReview(course, { courseRating: 5 });
+    await addReview(course, { courseRating: 4 });
+    await recalculateCourseRating(course._id);
+
+    const list = await request(app).get("/api/courses");
+    const details = await request(app).get(`/api/courses/${course._id}`);
+
+    const [item] = list.body.data.items;
+    expect(item.rating).toEqual({ average: 4.5, count: 2 });
+    expect(item.ratingAverage).toBeUndefined();
+    expect(item.ratingCount).toBeUndefined();
+    expect(details.body.data.rating).toEqual({ average: 4.5, count: 2 });
+    expect(details.body.data.ratingAverage).toBeUndefined();
+  });
+
+  it("averages the instructor's visible reviews across their published courses", async () => {
+    const instructor = await createUser({ role: "instructor" });
+    const first = await createCourse({ instructor: instructor._id, status: "published" });
+    const second = await createCourse({ instructor: instructor._id, status: "published" });
+    const draft = await createCourse({ instructor: instructor._id, status: "draft" });
+    const otherCourse = await createCourse({ status: "published" });
+
+    await addReview(first, { instructorRating: 5 });
+    await addReview(first, { instructorRating: 4 });
+    await addReview(second, { instructorRating: 3 });
+    // None of these count: a hidden review, a draft course and another instructor's course.
+    await addReview(second, { instructorRating: 1, isHidden: true });
+    await addReview(draft, { instructorRating: 1 });
+    await addReview(otherCourse, { instructorRating: 1 });
+
+    const res = await request(app).get(`/api/courses/${first._id}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.instructor.rating).toEqual({ average: 4, count: 3 });
+  });
+
+  it("gives a course with no reviews a zero rating", async () => {
+    const course = await createCourse({ status: "published" });
+
+    const res = await request(app).get(`/api/courses/${course._id}`);
+
+    expect(res.body.data.rating).toEqual({ average: 0, count: 0 });
+    expect(res.body.data.instructor.rating).toEqual({ average: 0, count: 0 });
+  });
+
+  it("doesn't let the course owner set the rating", async () => {
+    const instructor = await createUser({ role: "instructor" });
+    const course = await createCourse({ instructor: instructor._id });
+
+    const res = await request(app)
+      .patch(`/api/courses/${course._id}`)
+      .set(authHeader(instructor))
+      .send({ title: "A brand new course title", ratingAverage: 5, ratingCount: 99 });
+
+    expect(res.status).toBe(200);
+    const saved = await Course.findById(course._id).lean();
+    expect(saved).toMatchObject({
+      title: "A brand new course title",
+      ratingAverage: 0,
+      ratingCount: 0,
+    });
+  });
+});
