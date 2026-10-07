@@ -4,14 +4,27 @@ import { BrowserRouter } from 'react-router'
 import { Toaster } from 'react-hot-toast'
 import './index.css'
 import { AuthProvider } from './context/AuthContext.jsx'
+import { startTheme } from './utils/theme.js'
 import App from './App.jsx'
+
+startTheme()
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
         <App />
-        <Toaster position="top-right" />
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            // Toasts are white by default, so they take the theme colours instead.
+            style: {
+              background: 'var(--color-card)',
+              border: '1px solid var(--color-line)',
+              color: 'var(--color-ink)',
+            },
+          }}
+        />
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>,

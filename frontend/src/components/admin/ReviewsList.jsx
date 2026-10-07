@@ -47,7 +47,7 @@ function ReviewsList({ reviews, type, pendingId, onToggle }) {
 
   return (
     <>
-      <div className="hidden overflow-x-auto rounded-xl border border-line bg-white md:block">
+      <div className="hidden overflow-x-auto rounded-xl border border-line bg-card md:block">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-line bg-surface text-xs tracking-wide text-muted uppercase">
             <tr>
@@ -109,7 +109,7 @@ function ReviewsList({ reviews, type, pendingId, onToggle }) {
 
       <ul className="grid gap-3 md:hidden">
         {reviews.map((review) => (
-          <li className="rounded-xl border border-line bg-white p-4" key={review._id}>
+          <li className="rounded-xl border border-line bg-card p-4" key={review._id}>
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <p className="truncate font-semibold text-ink">

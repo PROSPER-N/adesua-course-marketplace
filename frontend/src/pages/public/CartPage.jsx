@@ -114,7 +114,7 @@ function CartPage() {
 
               return (
                 <li
-                  className="grid gap-4 rounded-xl border border-line bg-white p-4 sm:grid-cols-[12rem_minmax(0,1fr)] sm:items-center"
+                  className="grid gap-4 rounded-xl border border-line bg-card p-4 sm:grid-cols-[12rem_minmax(0,1fr)] sm:items-center"
                   key={course._id}
                 >
                   <Link
@@ -216,7 +216,7 @@ function CartPage() {
 
           <aside
             aria-label="Cart summary"
-            className="rounded-xl border border-line bg-white p-5 lg:sticky lg:top-24"
+            className="rounded-xl border border-line bg-card p-5 lg:sticky lg:top-24"
           >
             <h2 className="font-display text-xl font-bold text-ink">Summary</h2>
             <p className="mt-2 text-sm text-muted">

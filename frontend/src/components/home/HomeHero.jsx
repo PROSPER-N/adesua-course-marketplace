@@ -74,7 +74,7 @@ function HomeHero({ categories, loading }) {
             <span className="text-sm font-semibold text-muted">Popular:</span>
             {POPULAR_SEARCHES.map((word) => (
               <Link
-                className="rounded-full border border-line bg-white px-3 py-1.5 text-sm font-semibold text-ink hover:border-brand hover:text-brand-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                className="rounded-full border border-line bg-card px-3 py-1.5 text-sm font-semibold text-ink hover:border-brand hover:text-brand-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                 key={word}
                 to={`/courses?search=${encodeURIComponent(word)}`}
               >

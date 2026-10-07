@@ -122,7 +122,7 @@ function RegisterPage() {
 
   return (
     <div className="grid min-h-[calc(100vh-4rem)] lg:grid-cols-2">
-      <aside className="relative hidden overflow-hidden bg-brand-dark lg:flex lg:flex-col lg:justify-center lg:px-14 xl:px-20">
+      <aside className="relative hidden overflow-hidden bg-band lg:flex lg:flex-col lg:justify-center lg:px-14 xl:px-20">
         <div
           aria-hidden="true"
           className="absolute inset-0"
@@ -154,7 +154,7 @@ function RegisterPage() {
               <div className="grid gap-3 sm:grid-cols-2">
                 {ROLE_OPTIONS.map((option) => (
                   <label
-                    className="flex cursor-pointer flex-col gap-1 rounded-lg border border-line bg-white p-4 has-checked:border-brand has-checked:bg-brand-soft has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-brand"
+                    className="flex cursor-pointer flex-col gap-1 rounded-lg border border-line bg-card p-4 has-checked:border-brand has-checked:bg-brand-soft has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-brand"
                     key={option.value}
                   >
                     <input

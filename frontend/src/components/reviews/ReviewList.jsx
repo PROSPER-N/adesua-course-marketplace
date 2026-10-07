@@ -6,7 +6,7 @@ import StarRating from '../ui/StarRating.jsx'
 // and whether a learner or an instructor wrote them.
 function ReviewList({ reviews }) {
   return (
-    <ul className="divide-y divide-line overflow-hidden rounded-xl border border-line bg-white">
+    <ul className="divide-y divide-line overflow-hidden rounded-xl border border-line bg-card">
       {reviews.map((review) => {
         const name = review.user?.name ?? 'Adesua member'
         const role = review.user?.role

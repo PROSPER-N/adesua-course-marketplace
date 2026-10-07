@@ -57,7 +57,7 @@ function WhatPeopleSay() {
               <li aria-hidden="true" className="skeleton-shimmer h-48 rounded-xl" key={index} />
             ))
           : result.reviews.map((review) => (
-              <li className="rounded-xl border border-line bg-white p-5" key={review._id}>
+              <li className="rounded-xl border border-line bg-card p-5" key={review._id}>
                 <figure className="flex h-full flex-col">
                   <StarRating value={review.rating} />
                   {/* Long reviews are cut short here; the Reviews page shows them in full. */}

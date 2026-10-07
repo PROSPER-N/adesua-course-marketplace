@@ -42,7 +42,7 @@ function SkillsStrip() {
               {SKILLS.map((skill) => (
                 <li key={skill}>
                   <Link
-                    className="inline-flex min-h-10 items-center whitespace-nowrap rounded-full border border-line bg-white px-4 text-sm font-semibold text-ink hover:border-brand hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                    className="inline-flex min-h-10 items-center whitespace-nowrap rounded-full border border-line bg-card px-4 text-sm font-semibold text-ink hover:border-brand hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                     tabIndex={duplicate ? -1 : undefined}
                     to={`/courses?search=${encodeURIComponent(skill)}`}
                   >

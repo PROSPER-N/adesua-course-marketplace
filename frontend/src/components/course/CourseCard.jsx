@@ -26,7 +26,7 @@ function CourseCard({ course }) {
   return (
     <Link
       to={`/courses/${_id}`}
-      className="group block overflow-hidden rounded-xl border border-line bg-white transition-shadow hover:shadow-md"
+      className="group block overflow-hidden rounded-xl border border-line bg-card transition-shadow hover:shadow-md"
     >
       <CourseCover title={title} category={category} thumbnailUrl={thumbnailUrl} />
 

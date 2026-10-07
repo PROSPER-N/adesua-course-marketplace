@@ -129,7 +129,7 @@ function CourseDetailPage() {
 
   return (
     <div className="pb-24 lg:pb-12">
-      <header className="bg-brand-dark text-white">
+      <header className="bg-band text-white">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
           <div>
             <Link className="text-sm font-semibold text-white/80 hover:text-white" to="/courses">
@@ -187,7 +187,7 @@ function CourseDetailPage() {
           )}
           <section>
             <h2 className="font-display text-2xl font-bold text-ink">Course lessons</h2>
-            <ol className="mt-4 divide-y divide-line overflow-hidden rounded-xl border border-line bg-white">
+            <ol className="mt-4 divide-y divide-line overflow-hidden rounded-xl border border-line bg-card">
               {lessons.map((lesson, index) => (
                 <li
                   className="flex items-start justify-between gap-4 px-4 py-4 sm:px-5"
@@ -240,7 +240,7 @@ function CourseDetailPage() {
           </section>
           <section>
             <h2 className="font-display text-2xl font-bold text-ink">Your instructor</h2>
-            <div className="mt-4 rounded-xl border border-line bg-white p-5">
+            <div className="mt-4 rounded-xl border border-line bg-card p-5">
               <p className="font-semibold text-ink">{course.instructor?.name ?? 'Instructor'}</p>
               {course.instructor?.headline && (
                 <p className="text-sm text-muted">{course.instructor.headline}</p>
@@ -263,7 +263,7 @@ function CourseDetailPage() {
           </section>
           <CourseReviews courseId={id} key={id} onChange={refreshRatings} reviewer={reviewer} />
         </div>
-        <aside className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-white p-3 shadow-[0_-4px_16px_rgba(0,0,0,0.08)] lg:sticky lg:top-24 lg:inset-x-auto lg:bottom-auto lg:z-auto lg:h-fit lg:rounded-2xl lg:border lg:border-line lg:p-5 lg:shadow-sm">
+        <aside className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-card p-3 shadow-[0_-4px_16px_var(--color-shadow)] lg:sticky lg:top-24 lg:inset-x-auto lg:bottom-auto lg:z-auto lg:h-fit lg:rounded-2xl lg:border lg:border-line lg:p-5 lg:shadow-sm">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 lg:block">
             <p className="shrink-0 font-display text-xl font-bold text-ink lg:text-3xl">
               {formatMoney(course.price)}

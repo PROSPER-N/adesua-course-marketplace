@@ -81,7 +81,7 @@ function CourseCards({ courses, actionProps }) {
   return (
     <ul className="grid gap-3 md:hidden">
       {courses.map((course) => (
-        <li className="rounded-xl border border-line bg-white p-4" key={course._id}>
+        <li className="rounded-xl border border-line bg-card p-4" key={course._id}>
           <CourseIdentity course={course} />
           <dl className="mt-4 grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
             <div>
@@ -122,7 +122,7 @@ function CourseCards({ courses, actionProps }) {
 
 function CourseTable({ courses, actionProps }) {
   return (
-    <div className="hidden overflow-x-auto rounded-xl border border-line bg-white md:block">
+    <div className="hidden overflow-x-auto rounded-xl border border-line bg-card md:block">
       <table className="w-full text-left text-sm">
         <thead className="border-b border-line bg-surface text-xs tracking-wide text-muted uppercase">
           <tr>
@@ -177,7 +177,7 @@ function CourseLoadingState() {
       </ul>
       <div
         aria-hidden="true"
-        className="hidden rounded-xl border border-line bg-white px-4 md:block"
+        className="hidden rounded-xl border border-line bg-card px-4 md:block"
       >
         {Array.from({ length: 5 }, (_, index) => (
           <SkeletonRow key={index} />

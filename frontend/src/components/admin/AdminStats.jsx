@@ -1,7 +1,4 @@
-import BookOpen from 'lucide-react/dist/esm/icons/book-open.mjs'
-import GraduationCap from 'lucide-react/dist/esm/icons/graduation-cap.mjs'
-import Users from 'lucide-react/dist/esm/icons/users.mjs'
-import Wallet from 'lucide-react/dist/esm/icons/wallet.mjs'
+import { BookOpen, GraduationCap, Users, Wallet } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { getAdminStats } from '../../api/admin.js'
 import { formatMoney } from '../../utils/formatMoney.js'
@@ -38,7 +35,7 @@ function AdminStats() {
     return (
       <div aria-hidden="true" className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {Array.from({ length: 4 }, (_, index) => (
-          <div className="rounded-xl border border-line bg-white p-5" key={index}>
+          <div className="rounded-xl border border-line bg-card p-5" key={index}>
             <div className="skeleton-shimmer h-4 w-24 rounded" />
             <div className="skeleton-shimmer mt-4 h-8 w-16 rounded" />
           </div>
@@ -74,7 +71,7 @@ function AdminStats() {
       {cards.map(({ label, value, icon: Icon }) => (
         // justify-between keeps the numbers in a row level when one label wraps to two lines.
         <div
-          className="flex flex-col justify-between gap-3 rounded-xl border border-line bg-white p-5"
+          className="flex flex-col justify-between gap-3 rounded-xl border border-line bg-card p-5"
           key={label}
         >
           <div className="flex items-start justify-between gap-2">

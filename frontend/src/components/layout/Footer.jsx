@@ -27,7 +27,8 @@ const columns = [
 
 function Footer() {
   return (
-    <footer className="bg-footer text-white">
+    // On the dark page the footer's green is close to the page colour, so a border marks the edge.
+    <footer className="bg-footer text-white dark:border-t dark:border-line">
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-3 lg:px-8">
         {columns.map(({ title, links }) => (
           <section key={title}>

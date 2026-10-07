@@ -85,7 +85,7 @@ function MyReview({ ratings, load, save, remove, onChange }) {
     )
   } else if (review && !editing) {
     content = (
-      <div className="rounded-xl border border-line bg-white p-5">
+      <div className="rounded-xl border border-line bg-card p-5">
         {review.isHidden && (
           <p className="mb-4 rounded-lg bg-surface px-3 py-2 text-sm text-muted">
             An admin has hidden this review, so only you can see it.
@@ -127,7 +127,7 @@ function MyReview({ ratings, load, save, remove, onChange }) {
     )
   } else {
     content = (
-      <div className="rounded-xl border border-line bg-white p-5">
+      <div className="rounded-xl border border-line bg-card p-5">
         <ReviewForm
           errors={errors}
           initial={review}

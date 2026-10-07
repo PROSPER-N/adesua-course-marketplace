@@ -75,7 +75,7 @@ function LoginPage() {
 
   return (
     <div className="grid min-h-[calc(100vh-4rem)] lg:grid-cols-2">
-      <aside className="relative hidden overflow-hidden bg-brand-dark lg:flex lg:flex-col lg:justify-center lg:px-14 xl:px-20">
+      <aside className="relative hidden overflow-hidden bg-band lg:flex lg:flex-col lg:justify-center lg:px-14 xl:px-20">
         <div
           aria-hidden="true"
           className="absolute inset-0"
