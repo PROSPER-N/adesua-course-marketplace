@@ -64,11 +64,13 @@ beforeAll(async () => {
   await Promise.all(Object.values(mongoose.models).map((model) => model.createIndexes()));
 }, SETUP_TIMEOUT_MS);
 
+// Atlas can also be slow to answer here, so the cleanup gets as long as the connection does
+// instead of Jest's usual hook limit.
 afterEach(async () => {
   if (!isSafeToClear) return;
   const collections = await mongoose.connection.db.collections();
   await Promise.all(collections.map((collection) => collection.deleteMany({})));
-});
+}, CONNECT_TIMEOUT_MS);
 
 afterAll(async () => {
   await mongoose.disconnect();

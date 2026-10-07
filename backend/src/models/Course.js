@@ -87,6 +87,16 @@ const courseSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    // The course's rating from its visible reviews, rounded to 1 decimal. review.service.js
+    // updates both whenever a review is created, updated, deleted, hidden or shown.
+    ratingAverage: {
+      type: Number,
+      default: 0,
+    },
+    ratingCount: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );

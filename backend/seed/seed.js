@@ -8,6 +8,7 @@ const seedUsers = require("./data/users");
 const seedCategories = require("./data/categories");
 const seedCourses = require("./data/courses");
 const seedEnrollments = require("./data/enrollments");
+const seedReviews = require("./data/reviews");
 
 async function seed() {
   if (!process.env.MONGO_URI) {
@@ -46,10 +47,11 @@ async function seed() {
   const users = await seedUsers({ categories });
   const courses = await seedCourses({ users, categories });
   const enrollments = await seedEnrollments({ users, categories, courses });
+  const reviews = await seedReviews({ users, courses, enrollments });
 
   console.log(
-    `Created ${users.length} users, ${categories.length} categories, ` +
-      `${courses.length} courses and ${enrollments.length} enrollments.`
+    `Created ${users.length} users, ${categories.length} categories, ${courses.length} courses, ` +
+      `${enrollments.length} enrollments and ${reviews.length} reviews.`
   );
   console.log("\nTest accounts (every password is Demo1234):");
   console.table(users.map((user) => ({ name: user.name, email: user.email, role: user.role })));

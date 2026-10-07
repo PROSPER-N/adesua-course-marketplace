@@ -1,5 +1,6 @@
 import { Link } from 'react-router'
 import { formatMoney } from '../../utils/formatMoney.js'
+import StarRating from '../ui/StarRating.jsx'
 import CourseCover from './CourseCover.jsx'
 
 // course is one item from GET /api/courses.
@@ -14,6 +15,7 @@ function CourseCard({ course }) {
     level,
     price = 0,
     studentCount = 0,
+    rating,
   } = course
 
   const instructorName =
@@ -34,6 +36,19 @@ function CourseCard({ course }) {
         </h3>
 
         <p className="truncate text-sm text-muted">{instructorName}</p>
+
+        {/* The row keeps its height without a rating, so cards side by side still line up. */}
+        <div className="flex min-h-5 items-center gap-1.5 text-sm">
+          {rating?.count > 0 && (
+            <>
+              <StarRating value={rating.average} />
+              <span className="text-muted">
+                ({rating.count})
+                <span className="sr-only"> {rating.count === 1 ? 'review' : 'reviews'}</span>
+              </span>
+            </>
+          )}
+        </div>
 
         <p className="text-sm text-muted">
           {lessonCount} {lessonCount === 1 ? 'lesson' : 'lessons'}

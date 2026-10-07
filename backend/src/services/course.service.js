@@ -6,6 +6,7 @@ const Enrollment = require("../models/Enrollment");
 const AppError = require("../utils/AppError");
 const escapeRegex = require("../utils/escapeRegex");
 const { getPagination, buildPagination } = require("../utils/pagination");
+const { getInstructorRating } = require("./review.service");
 
 // The only fields a request can set. Everything else (_id, instructor, status, the counters,
 // the dates) is set by the server, so a client can't publish a course or fake its numbers.
@@ -40,6 +41,11 @@ function invalidCategoryError() {
   return new AppError("Please fix the highlighted fields", 400, [
     { field: "category", message: "Choose a valid category." },
   ]);
+}
+
+// The public API sends a course's stored rating as rating: { average, count }.
+function withRating({ ratingAverage = 0, ratingCount = 0, ...course }) {
+  return { ...course, rating: { average: ratingAverage, count: ratingCount } };
 }
 
 async function findCategoryBySlug(slug) {
@@ -87,7 +93,7 @@ async function getPublishedCourses(query) {
   const [courses, total] = await Promise.all([
     Course.find(filter)
       .select(
-        "_id title shortDescription price level thumbnailUrl lessonCount totalMinutes studentCount createdAt category instructor"
+        "_id title shortDescription price level thumbnailUrl lessonCount totalMinutes studentCount ratingAverage ratingCount createdAt category instructor"
       )
       .populate("category", "_id name slug")
       .populate("instructor", "_id name")
@@ -100,7 +106,7 @@ async function getPublishedCourses(query) {
   ]);
 
   return {
-    items: courses,
+    items: courses.map(withRating),
     pagination: buildPagination(page, limit, total),
   };
 }
@@ -131,8 +137,14 @@ async function getPublishedCourseById(courseId) {
     return safeLesson;
   });
 
+  const instructor = course.instructor && {
+    ...course.instructor,
+    rating: await getInstructorRating(course.instructor._id),
+  };
+
   return {
-    ...course,
+    ...withRating(course),
+    instructor,
     lessons: safeLessons,
   };
 }
