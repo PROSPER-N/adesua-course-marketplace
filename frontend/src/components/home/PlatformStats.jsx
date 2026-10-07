@@ -119,7 +119,7 @@ function PlatformStats() {
               const shown = Math.round(value * easeOutCubic(progress))
 
               return (
-                <div className="flex items-center gap-3 rounded-xl bg-white px-4 py-3" key={key}>
+                <div className="flex items-center gap-3 rounded-xl bg-card px-4 py-3" key={key}>
                   <Icon aria-hidden="true" className="size-5 shrink-0 text-brand" />
                   <div>
                     <p className="font-display text-xl font-extrabold leading-tight tabular-nums text-ink">

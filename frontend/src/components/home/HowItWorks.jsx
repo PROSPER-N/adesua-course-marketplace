@@ -25,11 +25,11 @@ function HowItWorks() {
         </h2>
         <ol className="mt-6 grid gap-4 md:grid-cols-3">
           {STEPS.map(({ title, text }, index) => (
-            <li className="rounded-xl border border-line bg-white p-6" key={title}>
+            <li className="rounded-xl border border-line bg-card p-6" key={title}>
               {/* The list already tells screen readers the step number. */}
               <span
                 aria-hidden="true"
-                className="flex size-10 items-center justify-center rounded-full bg-brand font-display text-lg font-bold text-white"
+                className="flex size-10 items-center justify-center rounded-full bg-brand-fill font-display text-lg font-bold text-white"
               >
                 {index + 1}
               </span>

@@ -31,7 +31,7 @@ function CategoryChips({ categories, loading, error, onRetry }) {
         {categories.map((category) => (
           <li key={category._id}>
             <Link
-              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line bg-white px-4 font-semibold text-ink hover:border-brand hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line bg-card px-4 font-semibold text-ink hover:border-brand hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
               to={`/courses?category=${category.slug}`}
             >
               {category.name}
