@@ -7,7 +7,7 @@ function RatingSummary({ summary }) {
   const { average, count, breakdown } = summary
 
   return (
-    <div className="grid gap-6 rounded-xl border border-line bg-white p-5 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center sm:gap-10">
+    <div className="grid gap-6 rounded-xl border border-line bg-card p-5 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center sm:gap-10">
       <div>
         <p
           aria-hidden="true"
