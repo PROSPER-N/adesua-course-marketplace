@@ -73,7 +73,7 @@ function AccountActions({ user, logout, mobile = false, onNavigate }) {
       <div className="flex items-center gap-2">
         <span
           aria-hidden="true"
-          className="flex size-9 items-center justify-center rounded-full bg-gold text-sm font-bold text-ink"
+          className="flex size-9 items-center justify-center rounded-full bg-gold text-sm font-bold text-on-gold"
         >
           {getInitials(user.name) || 'A'}
         </span>
@@ -162,7 +162,7 @@ function Navbar() {
   const handleNavigate = () => closeMenu(false)
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-white">
+    <header className="sticky top-0 z-40 border-b border-line bg-page">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <Link
           aria-label="Adesua home"
@@ -207,7 +207,7 @@ function Navbar() {
         <div className="fixed inset-0 z-50 md:hidden" id="mobile-navigation">
           <button
             aria-label="Close navigation menu"
-            className="absolute inset-0 h-full w-full bg-ink/40"
+            className="absolute inset-0 h-full w-full bg-overlay"
             onClick={() => closeMenu()}
             tabIndex={-1}
             type="button"
@@ -215,7 +215,7 @@ function Navbar() {
           <aside
             aria-label="Navigation menu"
             aria-modal="true"
-            className="drawer-enter absolute inset-y-0 right-0 flex w-[min(86vw,24rem)] flex-col overflow-y-auto bg-white p-5 shadow-xl"
+            className="drawer-enter absolute inset-y-0 right-0 flex w-[min(86vw,24rem)] flex-col overflow-y-auto bg-card p-5 shadow-xl"
             ref={drawerRef}
             role="dialog"
           >
@@ -263,7 +263,7 @@ function CartLink({ count, className = '' }) {
       {count > 0 && (
         <span
           aria-hidden="true"
-          className="absolute right-0.5 top-0.5 flex min-w-5 items-center justify-center rounded-full bg-gold px-1 text-xs font-bold text-ink"
+          className="absolute right-0.5 top-0.5 flex min-w-5 items-center justify-center rounded-full bg-gold px-1 text-xs font-bold text-on-gold"
         >
           {count > 99 ? '99+' : count}
         </span>
