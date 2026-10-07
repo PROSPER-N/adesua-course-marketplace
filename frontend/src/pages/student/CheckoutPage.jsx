@@ -18,7 +18,7 @@ const METHOD_ICONS = { momo: Smartphone, card: CreditCard }
 function CheckoutSkeleton() {
   return (
     <div aria-hidden="true" className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
-      <div className="grid gap-4 rounded-xl border border-line bg-white p-6">
+      <div className="grid gap-4 rounded-xl border border-line bg-card p-6">
         <div className="skeleton-shimmer h-6 w-40 rounded" />
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="skeleton-shimmer h-14 rounded-lg" />
@@ -26,7 +26,7 @@ function CheckoutSkeleton() {
         </div>
         <div className="skeleton-shimmer h-11 rounded-lg" />
       </div>
-      <div className="order-first grid gap-4 rounded-xl border border-line bg-white p-6 lg:order-none">
+      <div className="order-first grid gap-4 rounded-xl border border-line bg-card p-6 lg:order-none">
         <div className="skeleton-shimmer aspect-[16/10] rounded-xl" />
         <div className="skeleton-shimmer h-5 w-3/4 rounded" />
         <div className="skeleton-shimmer h-4 w-1/2 rounded" />
@@ -120,7 +120,7 @@ function CheckoutPage() {
   } else if (paidOrder) {
     const firstLesson = course.lessons?.[0]
     content = (
-      <section className="mx-auto max-w-xl rounded-2xl border border-line bg-white p-6 text-center sm:p-10">
+      <section className="mx-auto max-w-xl rounded-2xl border border-line bg-card p-6 text-center sm:p-10">
         <CircleCheck aria-hidden="true" className="mx-auto size-12 text-brand" />
         <h2
           className="mt-4 font-display text-3xl font-extrabold text-ink outline-none"
@@ -165,7 +165,7 @@ function CheckoutPage() {
   } else {
     content = (
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start">
-        <section className="rounded-xl border border-line bg-white p-5 sm:p-6">
+        <section className="rounded-xl border border-line bg-card p-5 sm:p-6">
           <fieldset>
             <legend className="font-display text-xl font-bold text-ink">Payment method</legend>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -219,7 +219,7 @@ function CheckoutPage() {
         {/* On small screens the summary comes first, so people see what they're buying. */}
         <aside
           aria-label="Order summary"
-          className="order-first rounded-xl border border-line bg-white p-5 sm:p-6 lg:order-none"
+          className="order-first rounded-xl border border-line bg-card p-5 sm:p-6 lg:order-none"
         >
           <h2 className="font-display text-xl font-bold text-ink">Order summary</h2>
           <CourseCover
