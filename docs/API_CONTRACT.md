@@ -76,15 +76,28 @@ Base URL: `/api` (locally `http://localhost:5000/api`). Private routes need the 
 - `GET /api/admin/users`: `search` (name or email), `role`, `page`, `limit` (default 10)
 - `GET /api/admin/courses`: `search` (title), `status`, `page`, `limit` (default 10)
 
+## Sign-up body
+
+`POST /api/auth/register` takes `name`, `email`, `password` and `role` (`student`, the default, or `instructor`), plus the profile fields for that role:
+
+| Role | Field | Rule |
+|---|---|---|
+| instructor | `headline` | required, 5 to 80 characters |
+| instructor | `teachingArea` | required, the `_id` of a category |
+| student | `interests` | optional, up to 5 different category `_id`s |
+
+Fields for the other role are ignored.
+
 ## What endpoints return in "data"
 
 - register, login: `{ token, user }`. The user never includes the password.
+- A user is `{ _id, name, email, role, bio, isActive, createdAt, updatedAt }`. Instructors also have `headline` and `teachingArea` (a category `_id`), and students have `interests` (category `_id`s). Accounts made before these fields existed may not have them.
 - `GET /api/auth/me`: `{ user }`
 - `GET /api/stats`: `{ courses, instructors, learners, categories }`, where courses counts published courses, instructors counts instructors with at least one published course, learners counts student accounts, and categories counts all categories
 - `GET /api/categories`: `[ { _id, name, slug, courseCount } ]`, where `courseCount` counts published courses
 - `GET /api/courses`, each item: `{ _id, title, shortDescription, price, level, thumbnailUrl, lessonCount, totalMinutes, studentCount, createdAt, category: { _id, name, slug }, instructor: { _id, name } }`
 - `GET /api/courses/:id`: every course field, plus:
-  - `instructor { _id, name, bio }`
+  - `instructor { _id, name, bio, headline }`
   - `category`
   - `lessons: [ { _id, title, durationMinutes, order, isPreview } ]`, sorted by `order`. `videoUrl` and `content` are included only when `isPreview` is true.
 - `GET /api/instructor/courses`: my courses in any status, newest first
@@ -148,6 +161,9 @@ The `message` of each successful response. The frontend shows some of them word 
 | password | Password must be at least 8 characters and include a letter and a number. |
 | login password (empty) | Enter your password. |
 | role | Choose to learn or to teach. |
+| headline (instructors) | Add a short headline, like Web developer and teacher. |
+| teachingArea (instructors) | Choose your main teaching area. |
+| interests (students) | Choose up to 5 interests. |
 | role filter (admin users list) | Choose a valid role. |
 | category name | Category name must be between 2 and 40 characters. |
 | category name with no letter or number | Category name must include a letter or a number. |
