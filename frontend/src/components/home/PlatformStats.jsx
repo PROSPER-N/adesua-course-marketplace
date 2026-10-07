@@ -10,6 +10,7 @@ const STAT_ITEMS = [
 ]
 
 const COUNT_UP_MS = 800
+const REFRESH_MS = 30000
 
 // Fast at first, then slowing down as each number reaches its value.
 function easeOutCubic(progress) {
@@ -26,19 +27,46 @@ function PlatformStats() {
   const [progress, setProgress] = useState(countUp ? 0 : 1)
   const hasStats = result.stats !== null
 
+  // Loads the numbers now, then every 30 seconds while the tab is visible,
+  // and again as soon as a hidden tab becomes visible.
   useEffect(() => {
     let ignore = false
+    let timer = null
+    let latestRequest = 0
 
-    getPublicStats()
-      .then((stats) => {
-        if (!ignore) setResult({ loading: false, stats })
-      })
-      .catch(() => {
-        if (!ignore) setResult({ loading: false, stats: null })
-      })
+    function load() {
+      // Only the newest request may update the strip,
+      // so a slow older answer can't replace newer numbers.
+      latestRequest += 1
+      const request = latestRequest
+      getPublicStats()
+        .then((stats) => {
+          if (!ignore && request === latestRequest) setResult({ loading: false, stats })
+        })
+        .catch(() => {
+          // A failed refresh keeps the numbers already on screen.
+          if (!ignore && request === latestRequest) {
+            setResult((current) => ({ loading: false, stats: current.stats }))
+          }
+        })
+    }
+
+    function handleVisibilityChange() {
+      clearInterval(timer)
+      if (document.visibilityState === 'visible') {
+        load()
+        timer = setInterval(load, REFRESH_MS)
+      }
+    }
+
+    load()
+    if (document.visibilityState === 'visible') timer = setInterval(load, REFRESH_MS)
+    document.addEventListener('visibilitychange', handleVisibilityChange)
 
     return () => {
       ignore = true
+      clearInterval(timer)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
   }, [])
 
