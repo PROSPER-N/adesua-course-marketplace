@@ -7,6 +7,7 @@ import PlatformStats from '../../components/home/PlatformStats.jsx'
 import PopularCourses from '../../components/home/PopularCourses.jsx'
 import SkillsStrip from '../../components/home/SkillsStrip.jsx'
 import TeachBand from '../../components/home/TeachBand.jsx'
+import WhatPeopleSay from '../../components/home/WhatPeopleSay.jsx'
 
 function HomePage() {
   // Each load or retry is a new attempt. A result remembers the attempt it answers,
@@ -42,6 +43,7 @@ function HomePage() {
         onRetry={() => setAttempt((current) => current + 1)}
       />
       <PopularCourses />
+      <WhatPeopleSay />
       <HowItWorks />
       <TeachBand />
     </>
