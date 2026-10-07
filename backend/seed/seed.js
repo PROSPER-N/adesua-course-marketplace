@@ -42,8 +42,8 @@ async function seed() {
   console.log(`Cleared ${collections.length} collection(s).`);
 
   // Each seeder gets what the earlier ones created, e.g. courses need users and categories.
-  const users = await seedUsers();
   const categories = await seedCategories();
+  const users = await seedUsers({ categories });
   const courses = await seedCourses({ users, categories });
   const enrollments = await seedEnrollments({ users, categories, courses });
 
