@@ -32,6 +32,7 @@ function SkillsStrip() {
       </div>
       <div className="skills-marquee overflow-hidden">
         <div className="skills-marquee-track flex w-max">
+          {/* The copy only makes the loop seamless, so screen readers and Tab skip it. */}
           {[false, true].map((duplicate) => (
             <ul
               aria-hidden={duplicate || undefined}
@@ -42,6 +43,7 @@ function SkillsStrip() {
                 <li key={skill}>
                   <Link
                     className="inline-flex min-h-10 items-center whitespace-nowrap rounded-full border border-line bg-white px-4 text-sm font-semibold text-ink hover:border-brand hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                    tabIndex={duplicate ? -1 : undefined}
                     to={`/courses?search=${encodeURIComponent(skill)}`}
                   >
                     {skill}
