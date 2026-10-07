@@ -1,4 +1,4 @@
-import FolderOpen from 'lucide-react/dist/esm/icons/folder-open.mjs'
+import { FolderOpen } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { createCategory, getCategories } from '../../api/categories.js'

@@ -1,4 +1,4 @@
-import SearchX from 'lucide-react/dist/esm/icons/search-x.mjs'
+import { SearchX } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useSearchParams } from 'react-router'

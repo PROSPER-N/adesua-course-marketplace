@@ -1,5 +1,5 @@
 import { useId } from 'react'
-import CircleAlert from 'lucide-react/dist/esm/icons/circle-alert.mjs'
+import { CircleAlert } from 'lucide-react'
 
 function FormField({
   as: Element = 'input',

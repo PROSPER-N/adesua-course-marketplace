@@ -1,7 +1,4 @@
-import BookOpen from 'lucide-react/dist/esm/icons/book-open.mjs'
-import GraduationCap from 'lucide-react/dist/esm/icons/graduation-cap.mjs'
-import Users from 'lucide-react/dist/esm/icons/users.mjs'
-import Wallet from 'lucide-react/dist/esm/icons/wallet.mjs'
+import { BookOpen, GraduationCap, Users, Wallet } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { getAdminStats } from '../../api/admin.js'
 import { formatMoney } from '../../utils/formatMoney.js'

@@ -1,8 +1,4 @@
-import BookOpen from 'lucide-react/dist/esm/icons/book-open.mjs'
-import ChevronDown from 'lucide-react/dist/esm/icons/chevron-down.mjs'
-import Lightbulb from 'lucide-react/dist/esm/icons/lightbulb.mjs'
-import ListChecks from 'lucide-react/dist/esm/icons/list-checks.mjs'
-import Users from 'lucide-react/dist/esm/icons/users.mjs'
+import { BookOpen, ChevronDown, Lightbulb, ListChecks, Users } from 'lucide-react'
 
 const QUESTIONS = [
   {
