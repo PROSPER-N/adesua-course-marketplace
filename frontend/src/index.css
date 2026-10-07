@@ -5,14 +5,27 @@
   --color-brand-hover: #185a3e;
   --color-brand-dark: #123f2c;
   --color-brand-soft: #e4f1e9;
+  /* Fills with white text on them: solid buttons and the deep green bands. */
+  --color-brand-fill: #1e6b4a;
+  --color-brand-fill-hover: #185a3e;
+  --color-band: #123f2c;
   --color-gold: #f4b63f;
   --color-gold-soft: #fdf3dc;
+  /* Text on gold, which stays dark whatever the theme. */
+  --color-on-gold: #16211c;
   --color-ink: #16211c;
   --color-muted: #5b6760;
   --color-line: #dce3dd;
+  /* Input borders. line is too light for the edge of a field, which needs 3:1. */
+  --color-field: #7f8b84;
   --color-surface: #f4f7f3;
+  --color-page: #ffffff;
+  --color-card: #ffffff;
+  --color-overlay: rgb(22 33 28 / 0.4);
+  --color-shadow: rgb(0 0 0 / 0.08);
   --color-danger: #b42318;
   --color-danger-soft: #fcedeb;
+  --color-danger-fill: #b42318;
   --color-footer: #10231a;
   --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
   --font-sans: 'Instrument Sans', system-ui, sans-serif;
@@ -21,7 +34,7 @@
 body {
   margin: 0;
   min-width: 320px;
-  background: white;
+  background: var(--color-page);
   color: var(--color-ink);
   font-family: var(--font-sans);
 }
@@ -121,7 +134,7 @@ body {
 
 .brand-mark {
   display: inline-block;
-  background-color: var(--color-brand);
+  background-color: var(--color-brand-fill);
   background-image: repeating-linear-gradient(
     135deg,
     transparent 0 5px,
