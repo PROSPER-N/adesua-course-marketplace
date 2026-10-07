@@ -7,8 +7,8 @@ import Input from '../ui/Input.jsx'
 
 const POPULAR_SEARCHES = ['React', 'Excel', 'Bookkeeping', 'Photography']
 
-// CourseCover prints the first word of the title in big letters and cuts it to 7 letters,
-// so each example title starts with a short word that fits.
+// CourseCover prints the first word of the title in big letters and shrinks long words,
+// so each example title starts with a short word that stays big.
 const COVER_EXAMPLES = [
   { slug: 'web-development', title: 'React for beginners' },
   { slug: 'business', title: 'Excel for small businesses' },

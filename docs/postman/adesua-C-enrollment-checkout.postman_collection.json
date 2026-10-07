@@ -231,7 +231,7 @@
                 }
               ],
               "cookie": [],
-              "body": "{\n  \"success\": true,\n  \"message\": \"Logged in successfully\",\n  \"data\": {\n    \"token\": \"<token>\",\n    \"user\": {\n      \"_id\": \"6abc2807a7c8e645386593bd\",\n      \"name\": \"Kwame Asante\",\n      \"email\": \"kwame@example.com\",\n      \"role\": \"instructor\",\n      \"bio\": \"Full-stack developer who has spent ten years building websites for Ghanaian businesses.\",\n      \"isActive\": true,\n      \"createdAt\": \"2026-09-29T21:05:11.073Z\",\n      \"updatedAt\": \"2026-09-29T21:05:11.073Z\"\n    }\n  }\n}"
+              "body": "{\n  \"success\": true,\n  \"message\": \"Logged in successfully\",\n  \"data\": {\n    \"token\": \"<token>\",\n    \"user\": {\n      \"_id\": \"6abc2807a7c8e645386593bd\",\n      \"name\": \"Kwame Asante\",\n      \"email\": \"kwame@example.com\",\n      \"role\": \"instructor\",\n      \"bio\": \"Full-stack developer who has spent ten years building websites for small businesses.\",\n      \"isActive\": true,\n      \"createdAt\": \"2026-09-29T21:05:11.073Z\",\n      \"updatedAt\": \"2026-09-29T21:05:11.073Z\"\n    }\n  }\n}"
             }
           ]
         }

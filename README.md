@@ -1,6 +1,6 @@
 # Adesua
 
-Adesua is a video course marketplace, built as our TS Academy full-stack capstone project (topic 56). Instructors publish video courses. Students enroll in free courses or buy paid ones through a demo checkout, then watch the lessons and track their progress. Admins manage users and categories.
+Adesua is a video course marketplace, built as our TS Academy full-stack capstone project (topic 56). Instructors publish video courses. Students enroll in free courses or buy paid ones through a demo checkout, then watch the lessons and track their progress. Admins manage users, categories and courses.
 
 > **Status: The MVP is complete and live.** Visit the [live site](https://adesua-course-marketplace.vercel.app) or the [live API](https://adesua-api.onrender.com/api/health).
 
@@ -89,7 +89,7 @@ The app opens at http://localhost:5173.
 
 ## Test accounts
 
-`npm run seed -- --yes` creates these accounts. **Every account uses the password `Demo1234`.** The live demo's free course is enrolled by Kojo Ansah so the learning and lesson-player pages can be demonstrated.
+`npm run seed -- --yes` creates these accounts. **Every account uses the password `Demo1234`.** The seed also adds 12 published courses and 1 draft, and enrolls the students at different stages: Akosua Mensah has finished a free course and is halfway through a paid one, Kojo Ansah has started a free course and bought a paid one, and Esi Nyarko has finished a paid course.
 
 | Name | Email | Role |
 |---|---|---|
@@ -102,18 +102,17 @@ The app opens at http://localhost:5173.
 
 ## Screenshots
 
-These screenshots were captured from the live site. The demo catalog includes a free course and a paid course. The Kojo Ansah demo account is enrolled in the free course; the paid course remains locked until checkout is completed.
+These screenshots were taken on a freshly seeded development database, using the test accounts above. The lesson player, My learning and the cart show Akosua Mensah's account.
 
 | Screen | 1280px | 390px |
 |---|---|---|
 | Home | ![Home at 1280px](docs/screenshots/home-1280.png) | ![Home at 390px](docs/screenshots/home-390.png) |
-| Browse courses | ![Browse courses at 1280px](docs/screenshots/courses-1280.png) | ![Browse courses at 390px](docs/screenshots/courses-390.png) |
-| Course details | ![Course details at 1280px](docs/screenshots/course-details-1280.png) | — |
+| Browse courses | ![Browse courses at 1280px](docs/screenshots/courses-1280.png) | — |
+| Course details | ![Course details at 1280px](docs/screenshots/course-details-1280.png) | ![Course details at 390px](docs/screenshots/course-details-390.png) |
 | Lesson player | ![Lesson player at 1280px](docs/screenshots/lesson-player-1280.png) | — |
 | My learning | ![My learning at 1280px](docs/screenshots/my-learning-1280.png) | — |
+| Cart | ![Cart at 1280px](docs/screenshots/cart-1280.png) | — |
 | Instructor dashboard | ![Instructor dashboard at 1280px](docs/screenshots/instructor-dashboard-1280.png) | — |
-| Admin users | ![Admin users at 1280px](docs/screenshots/admin-users-1280.png) | — |
-| Admin categories | ![Admin categories at 1280px](docs/screenshots/admin-categories-1280.png) | — |
 | Admin courses | ![Admin courses at 1280px](docs/screenshots/admin-courses-1280.png) | — |
 
 ## Scripts

@@ -43,10 +43,8 @@ function CartPage() {
     }
   }, [enrollmentAttempt, user?._id, user?.role])
 
-  const enrollments =
-    enrollmentResult.userId === user?._id ? enrollmentResult.items : []
-  const enrollmentError =
-    enrollmentResult.userId === user?._id ? enrollmentResult.error : null
+  const enrollments = enrollmentResult.userId === user?._id ? enrollmentResult.items : []
+  const enrollmentError = enrollmentResult.userId === user?._id ? enrollmentResult.error : null
 
   async function handleFreeEnrollment(course) {
     if (!user) return
@@ -60,9 +58,7 @@ function CartPage() {
         items: [...current.items, { course: { _id: course._id } }],
       }))
       navigate(
-        course.firstLessonId
-          ? `/learn/${course._id}/${course.firstLessonId}`
-          : '/my-learning',
+        course.firstLessonId ? `/learn/${course._id}/${course.firstLessonId}` : '/my-learning',
       )
     } catch (error) {
       setActionError(getErrorMessage(error))
@@ -77,9 +73,7 @@ function CartPage() {
     <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="flex items-center gap-3">
         <ShoppingCart aria-hidden="true" className="size-7 text-brand" />
-        <h1 className="font-display text-3xl font-extrabold text-ink sm:text-4xl">
-          Your cart
-        </h1>
+        <h1 className="font-display text-3xl font-extrabold text-ink sm:text-4xl">Your cart</h1>
       </div>
       <p className="mt-2 text-muted">
         Save courses here and enroll in free courses or check out one paid course at a time.
@@ -144,9 +138,7 @@ function CartPage() {
                           {course.title}
                         </Link>
                         {course.instructor?.name && (
-                          <p className="mt-1 text-sm text-muted">
-                            By {course.instructor.name}
-                          </p>
+                          <p className="mt-1 text-sm text-muted">By {course.instructor.name}</p>
                         )}
                         <p className="mt-2 font-display text-xl font-bold text-ink">
                           {course.price === 0 ? 'Free' : formatMoney(course.price)}
@@ -175,7 +167,9 @@ function CartPage() {
                           Continue learning
                         </Button>
                       ) : authLoading ? (
-                        <Button loading size="sm">Checking account…</Button>
+                        <Button loading size="sm">
+                          Checking account…
+                        </Button>
                       ) : course.price === 0 ? (
                         user?.role === 'student' ? (
                           <Button

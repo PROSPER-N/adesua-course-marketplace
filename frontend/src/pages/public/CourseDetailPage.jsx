@@ -9,6 +9,7 @@ import Badge from '../../components/ui/Badge.jsx'
 import ErrorMessage from '../../components/ui/ErrorMessage.jsx'
 import Spinner from '../../components/ui/Spinner.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
+import { summaryRepeatsDescription } from '../../utils/courseSummary.js'
 import { formatMoney } from '../../utils/formatMoney.js'
 import { getErrorMessage } from '../../utils/getErrorMessage.js'
 
@@ -110,9 +111,12 @@ function CourseDetailPage() {
             <h1 className="mt-2 max-w-3xl font-display text-3xl font-extrabold sm:text-4xl lg:text-5xl">
               {course.title}
             </h1>
-            <p className="mt-4 max-w-3xl text-base leading-7 text-white/85 sm:text-lg">
-              {course.shortDescription}
-            </p>
+            {/* Hidden when it repeats the start of "About this course". */}
+            {!summaryRepeatsDescription(course.shortDescription, course.description) && (
+              <p className="mt-4 max-w-3xl text-base leading-7 text-white/85 sm:text-lg">
+                {course.shortDescription}
+              </p>
+            )}
             <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 text-sm text-white/85">
               <span>By {course.instructor?.name ?? 'Instructor'}</span>
               <span className="inline-flex items-center gap-1.5">

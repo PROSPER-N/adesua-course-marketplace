@@ -12,6 +12,7 @@ import Input from '../../components/ui/Input.jsx'
 import Select from '../../components/ui/Select.jsx'
 import Spinner from '../../components/ui/Spinner.jsx'
 import Textarea from '../../components/ui/Textarea.jsx'
+import { makeCourseSummary } from '../../utils/courseSummary.js'
 import { getErrorMessage, getFieldErrors } from '../../utils/getErrorMessage.js'
 
 const EMPTY_COURSE = {
@@ -31,12 +32,16 @@ const EMPTY_LESSON = {
   durationMinutes: '10',
   isPreview: false,
 }
+// The course fields in page order, so focus goes to the first one with an error.
+const COURSE_FIELDS = ['title', 'description', 'category', 'level', 'price', 'thumbnailUrl']
 
 function CourseFormPage() {
   const { id } = useParams()
   const navigate = useNavigate()
   const [savedCourseId, setSavedCourseId] = useState('')
   const createdCourseRef = useRef(false)
+  // The description and summary as last saved.
+  const lastSavedRef = useRef({ description: '', shortDescription: '' })
   const courseId = id || savedCourseId
   const editing = Boolean(courseId)
   const [attempt, setAttempt] = useState(0)
@@ -58,6 +63,9 @@ function CourseFormPage() {
   const [lessonFieldErrors, setLessonFieldErrors] = useState({})
   const [formError, setFormError] = useState('')
   const [deleting, setDeleting] = useState(false)
+  const courseFormRef = useRef(null)
+  // A new object each time, so the same field can be focused again.
+  const [invalidField, setInvalidField] = useState(null)
 
   useEffect(() => {
     if (createdCourseRef.current) {
@@ -89,6 +97,10 @@ function CourseFormPage() {
             ].slice(0, 6),
             status: courseData.status ?? 'draft',
           })
+          lastSavedRef.current = {
+            description: courseData.description ?? '',
+            shortDescription: courseData.shortDescription ?? '',
+          }
           setLessons(courseData.lessons ?? [])
         }
         setLoadResult({ key: loadKey, error: null })
@@ -100,6 +112,16 @@ function CourseFormPage() {
       active = false
     }
   }, [attempt, editing, id, loadKey])
+
+  // The course details sit above the lessons and the save buttons, so their errors can be
+  // off-screen. This runs after the error is shown, then brings the field into view.
+  useEffect(() => {
+    const element = invalidField && courseFormRef.current?.elements.namedItem(invalidField.name)
+    if (!element) return
+    element.focus({ preventScroll: true })
+    // Centered, so the sticky navbar doesn't cover it.
+    element.scrollIntoView({ block: 'center' })
+  }, [invalidField])
 
   const checks = useMemo(() => {
     const rawPrice = course.price.trim()
@@ -141,11 +163,19 @@ function CourseFormPage() {
       ),
     }))
   }
+  // An existing course keeps its saved summary, which may be hand-written,
+  // until its description changes.
+  function summaryFor(description) {
+    const saved = lastSavedRef.current
+    if (saved.shortDescription && description.trim() === saved.description.trim()) {
+      return saved.shortDescription
+    }
+    return makeCourseSummary(description)
+  }
   function payload(price) {
-    const normalizedDescription = course.description.trim().replace(/\s+/g, ' ')
     return {
       title: course.title.trim(),
-      shortDescription: normalizedDescription.slice(0, 160),
+      shortDescription: summaryFor(course.description),
       description: course.description.trim(),
       category: course.category,
       level: course.level,
@@ -160,6 +190,7 @@ function CourseFormPage() {
     const priceIsNumeric = /^(?:\d+(?:\.\d*)?|\.\d+)$/.test(rawPrice)
     if (rawPrice === '' || !priceIsNumeric) {
       setFieldErrors({ price: "Price can't be negative. Enter 0 for a free course." })
+      setInvalidField({ name: 'price' })
       return null
     }
     const price = Number(rawPrice)
@@ -170,9 +201,21 @@ function CourseFormPage() {
             ? "Price can't be negative. Enter 0 for a free course."
             : "Price can't be more than 5,000.",
       })
+      setInvalidField({ name: 'price' })
       return null
     }
     return payload(price)
+  }
+
+  // Shows a failed course save on its fields and moves focus to the first one.
+  // Returns false when no field is to blame, for example when the server can't be reached.
+  function showCourseErrors(error) {
+    const errors = getFieldErrors(error)
+    setFormError(getErrorMessage(error))
+    setFieldErrors(errors)
+    const name = COURSE_FIELDS.find((field) => errors[field])
+    if (name) setInvalidField({ name })
+    return Boolean(name)
   }
 
   async function ensureCourseSaved() {
@@ -186,13 +229,17 @@ function CourseFormPage() {
     setSaving(true)
     try {
       const saved = await createCourse(data)
+      lastSavedRef.current = {
+        description: data.description,
+        shortDescription: data.shortDescription,
+      }
       createdCourseRef.current = true
       setSavedCourseId(saved._id)
       navigate(`/instructor/courses/${saved._id}/edit`, { replace: true })
       return saved._id
     } catch (error) {
-      setFormError(getErrorMessage(error))
-      setFieldErrors(getFieldErrors(error))
+      // Without a field to focus, the message also goes next to the lesson form.
+      if (!showCourseErrors(error)) setLessonError(getErrorMessage(error))
       return ''
     } finally {
       setSaving(false)
@@ -211,9 +258,11 @@ function CourseFormPage() {
       return
     }
     try {
-      const saved = editing
-        ? await updateCourse(courseId, data)
-        : await createCourse(data)
+      const saved = editing ? await updateCourse(courseId, data) : await createCourse(data)
+      lastSavedRef.current = {
+        description: data.description,
+        shortDescription: data.shortDescription,
+      }
       if (!editing) {
         createdCourseRef.current = true
         setSavedCourseId(saved._id)
@@ -223,8 +272,7 @@ function CourseFormPage() {
       if (!editing) navigate(`/instructor/courses/${saved._id}/edit`, { replace: true })
       else if (publish) navigate('/instructor')
     } catch (error) {
-      setFormError(getErrorMessage(error))
-      setFieldErrors(getFieldErrors(error))
+      showCourseErrors(error)
     } finally {
       setBusy(false)
     }
@@ -356,6 +404,7 @@ function CourseFormPage() {
           event.preventDefault()
           saveCourse()
         }}
+        ref={courseFormRef}
       >
         <div className="min-w-0 space-y-6 rounded-2xl border border-line bg-white p-4 sm:p-6">
           <Input
@@ -369,7 +418,7 @@ function CourseFormPage() {
           />
           <Textarea
             error={fieldErrors.description}
-            hint="The opening text appears on course cards."
+            hint="The opening becomes the course summary (up to 160 characters)."
             label="Course description"
             name="description"
             onChange={updateField}
@@ -475,10 +524,7 @@ function CourseFormPage() {
         {lessons.length > 0 && (
           <ol className="divide-y divide-line rounded-xl border border-line">
             {lessons.map((item) => (
-              <li
-                className="flex flex-wrap items-center justify-between gap-3 p-4"
-                key={item._id}
-              >
+              <li className="flex flex-wrap items-center justify-between gap-3 p-4" key={item._id}>
                 <div className="min-w-0">
                   <p className="break-words font-semibold text-ink">
                     {item.order}. {item.title}
