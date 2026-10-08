@@ -35,7 +35,7 @@ function ExploreCategories() {
   let content
   if (loading) {
     content = (
-      <div aria-hidden="true" className="grid gap-x-12 md:grid-cols-2">
+      <div aria-hidden="true" className="grid gap-x-12 lg:grid-cols-2">
         {SKELETON_WIDTHS.map((width, index) => (
           <div className="border-b border-line py-6" key={index}>
             <div className={`skeleton-shimmer h-8 rounded ${width}`} />
@@ -53,7 +53,7 @@ function ExploreCategories() {
     )
   } else {
     content = (
-      <ul className="grid gap-x-12 md:grid-cols-2">
+      <ul className="grid gap-x-12 lg:grid-cols-2">
         {result.categories.map((category) => (
           <li className="border-b border-line" key={category._id}>
             <Link
