@@ -4,11 +4,11 @@ import toast from 'react-hot-toast'
 import { deleteCourse, updateCourseStatus } from '../../api/courses.js'
 import { getMyCourses } from '../../api/instructor.js'
 import InstructorStats from '../../components/instructor/InstructorStats.jsx'
-import { useCurrency } from '../../context/CurrencyContext.jsx'
 import Badge from '../../components/ui/Badge.jsx'
 import Button from '../../components/ui/Button.jsx'
 import EmptyState from '../../components/ui/EmptyState.jsx'
 import ErrorMessage from '../../components/ui/ErrorMessage.jsx'
+import { formatMoney } from '../../utils/formatMoney.js'
 import { getErrorMessage } from '../../utils/getErrorMessage.js'
 
 // "published" -> "Published", "beginner" -> "Beginner".
@@ -17,7 +17,6 @@ function capitalize(text) {
 }
 
 function InstructorDashboardPage() {
-  const { formatPrice } = useCurrency()
   const [attempt, setAttempt] = useState(0)
   const [result, setResult] = useState({ attempt: -1, courses: [], error: null })
   const [busyId, setBusyId] = useState('')
@@ -186,7 +185,7 @@ function InstructorDashboardPage() {
                           {capitalize(course.status)}
                         </Badge>
                       </td>
-                      <td className="px-4 py-4">{formatPrice(course.price)}</td>
+                      <td className="px-4 py-4">{formatMoney(course.price)}</td>
                       <td className="px-4 py-4">{course.studentCount ?? 0}</td>
                       <td className="px-4 py-4">{course.lessonCount ?? 0}</td>
                       <td className="px-4 py-4">{actionLinks(course)}</td>
@@ -213,7 +212,7 @@ function InstructorDashboardPage() {
                   <dl className="mt-4 grid grid-cols-3 gap-2 text-sm">
                     <div>
                       <dt className="text-xs text-muted">Price</dt>
-                      <dd className="mt-1 font-semibold">{formatPrice(course.price)}</dd>
+                      <dd className="mt-1 font-semibold">{formatMoney(course.price)}</dd>
                     </div>
                     <div>
                       <dt className="text-xs text-muted">Students</dt>

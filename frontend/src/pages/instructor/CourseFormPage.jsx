@@ -6,7 +6,6 @@ import { createCourse, deleteCourse, updateCourse, updateCourseStatus } from '..
 import { getCategories } from '../../api/categories.js'
 import { getMyCourse } from '../../api/instructor.js'
 import { createLesson, deleteLesson, updateLesson } from '../../api/lessons.js'
-import { BASE_CURRENCY, CURRENCIES } from '../../config/currency.js'
 import Button from '../../components/ui/Button.jsx'
 import ErrorMessage from '../../components/ui/ErrorMessage.jsx'
 import Input from '../../components/ui/Input.jsx'
@@ -457,8 +456,8 @@ function CourseFormPage() {
           <div className="grid gap-5 sm:grid-cols-2">
             <Input
               error={fieldErrors.price}
-              hint="Enter 0 for a free course; maximum 5,000. Display currency does not change this base amount."
-              label={`Course base price (${CURRENCIES[BASE_CURRENCY].symbol} ${BASE_CURRENCY})`}
+              hint="Enter 0 for a free course; maximum 5,000."
+              label="Price (USD)"
               max="5000"
               min="0"
               name="price"

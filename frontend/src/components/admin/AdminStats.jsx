@@ -1,12 +1,16 @@
 import { BookOpen, GraduationCap, Users, Wallet } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { getAdminStats } from '../../api/admin.js'
-import { useCurrency } from '../../context/CurrencyContext.jsx'
+import { formatMoney } from '../../utils/formatMoney.js'
 import { getErrorMessage } from '../../utils/getErrorMessage.js'
 import ErrorMessage from '../ui/ErrorMessage.jsx'
 
+// formatMoney(0) says "Free", which fits a price but not a total.
+function formatPayments(total) {
+  return total > 0 ? formatMoney(total) : '$0'
+}
+
 function AdminStats() {
-  const { formatAmount } = useCurrency()
   // A result remembers the attempt it answers, so the cards load until the latest attempt has one.
   const [attempt, setAttempt] = useState(0)
   const [result, setResult] = useState({ attempt: -1, stats: null, error: null })
@@ -59,7 +63,7 @@ function AdminStats() {
       icon: BookOpen,
     },
     { label: 'Enrollments', value: stats.enrollments.toLocaleString('en-US'), icon: GraduationCap },
-    { label: 'Payments', value: formatAmount(stats.totalPayments), icon: Wallet },
+    { label: 'Payments', value: formatPayments(stats.totalPayments), icon: Wallet },
   ]
 
   return (
