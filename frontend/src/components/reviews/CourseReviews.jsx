@@ -124,7 +124,7 @@ function CourseReviews({ courseId, reviewer, onChange }) {
   const summary = !loading && result.data?.summary
   return (
     <section aria-labelledby="reviews-heading" id="reviews">
-      <h2 className="font-display text-2xl font-bold text-ink" id="reviews-heading">
+      <h2 className="font-serif text-3xl font-medium text-ink" id="reviews-heading">
         Reviews
       </h2>
       <div className="mt-4 grid gap-6">

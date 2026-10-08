@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router'
 import { getCourse } from '../../api/courses.js'
 import { getMyEnrollments } from '../../api/enrollments.js'
 import AddToCartButton from '../../components/course/AddToCartButton.jsx'
+import CourseCover from '../../components/course/CourseCover.jsx'
 import EnrollButton from '../../components/course/EnrollButton.jsx'
 import CourseReviews from '../../components/reviews/CourseReviews.jsx'
 import Badge from '../../components/ui/Badge.jsx'
@@ -14,6 +15,7 @@ import { useAuth } from '../../context/AuthContext.jsx'
 import { summaryRepeatsDescription } from '../../utils/courseSummary.js'
 import { formatMoney } from '../../utils/formatMoney.js'
 import { getErrorMessage } from '../../utils/getErrorMessage.js'
+import { getInitials } from '../../utils/getInitials.js'
 
 function CourseDetailPage() {
   const { id } = useParams()
@@ -129,24 +131,75 @@ function CourseDetailPage() {
 
   return (
     <div className="pb-24 lg:pb-12">
-      <header className="bg-band text-white">
-        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
-          <div>
-            <Link className="text-sm font-semibold text-white/80 hover:text-white" to="/courses">
+      {/* On the dark page the night colour is close to the page colour, so a hairline marks the edge. */}
+      <header className="bg-night text-white dark:border-b dark:border-white/10">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-8 sm:px-6 sm:py-12 md:grid-cols-[minmax(0,1fr)_minmax(0,18rem)] md:items-center md:gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,30rem)] lg:gap-14 lg:px-8 lg:py-16">
+          {/* First on phones, beside the text from md. The only eager cover: it's at the top of the page. */}
+          <div className="md:order-2">
+            <CourseCover
+              category={course.category}
+              fetchPriority="high"
+              loading="eager"
+              thumbnailUrl={course.thumbnailUrl}
+              title={course.title}
+            />
+          </div>
+          <div className="min-w-0 md:order-1">
+            <Link
+              className="rounded-sm text-sm font-semibold text-white/80 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+              to="/courses"
+            >
               ← Back to courses
             </Link>
-            <p className="mt-6 text-sm text-white/75">{course.category?.name ?? 'Course'}</p>
-            <h1 className="mt-2 max-w-3xl font-display text-3xl font-extrabold sm:text-4xl lg:text-5xl">
-              {course.title}
-            </h1>
+            <p className="mt-6 text-xs font-semibold tracking-[0.12em] text-gold uppercase">
+              {course.category?.name ?? 'Course'}
+            </p>
+            <h1 className="mt-2 font-serif text-headline font-semibold">{course.title}</h1>
             {/* Hidden when it repeats the start of "About this course". */}
             {!summaryRepeatsDescription(course.shortDescription, course.description) && (
-              <p className="mt-4 max-w-3xl text-base leading-7 text-white/85 sm:text-lg">
+              <p className="mt-4 max-w-2xl text-base leading-7 text-white/85 sm:text-lg">
                 {course.shortDescription}
               </p>
             )}
+            {/* Ratings show only once there's at least one review, like on Home. */}
+            {course.rating?.count > 0 && (
+              <p className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-white/85">
+                <StarRating value={course.rating.average} valueClassName="text-white" />
+                <span>
+                  ({course.rating.count} {course.rating.count === 1 ? 'review' : 'reviews'})
+                </span>
+              </p>
+            )}
+            <div className="mt-6 flex items-center gap-3">
+              <span
+                aria-hidden="true"
+                className="flex size-12 shrink-0 items-center justify-center rounded-full bg-brand-soft font-serif text-lg font-semibold text-brand-dark"
+              >
+                {getInitials(course.instructor?.name) || 'A'}
+              </span>
+              <div className="min-w-0 text-sm">
+                <p className="font-semibold text-white">
+                  <span className="sr-only">Taught by </span>
+                  {course.instructor?.name ?? 'Instructor'}
+                </p>
+                {course.instructor?.headline && (
+                  <p className="text-white/75">{course.instructor.headline}</p>
+                )}
+                {course.instructor?.rating?.count > 0 && (
+                  <p className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-white/75">
+                    <StarRating
+                      value={course.instructor.rating.average}
+                      valueClassName="text-white"
+                    />
+                    <span>
+                      instructor rating · {course.instructor.rating.count}{' '}
+                      {course.instructor.rating.count === 1 ? 'review' : 'reviews'}
+                    </span>
+                  </p>
+                )}
+              </div>
+            </div>
             <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 text-sm text-white/85">
-              <span>By {course.instructor?.name ?? 'Instructor'}</span>
               <span className="inline-flex items-center gap-1.5">
                 <BookOpen aria-hidden="true" className="size-4" />
                 {course.lessonCount ?? lessons.length} lessons
@@ -169,7 +222,7 @@ function CourseDetailPage() {
         <div className="min-w-0 space-y-10">
           {course.whatYouWillLearn?.length > 0 && (
             <section>
-              <h2 className="font-display text-2xl font-bold text-ink">What you’ll learn</h2>
+              <h2 className="font-serif text-3xl font-medium text-ink">What you’ll learn</h2>
               <ul className="mt-4 grid gap-3 sm:grid-cols-2">
                 {course.whatYouWillLearn.map((item, index) => (
                   <li
@@ -186,7 +239,7 @@ function CourseDetailPage() {
             </section>
           )}
           <section>
-            <h2 className="font-display text-2xl font-bold text-ink">Course lessons</h2>
+            <h2 className="font-serif text-3xl font-medium text-ink">Course lessons</h2>
             <ol className="mt-4 divide-y divide-line overflow-hidden rounded-xl border border-line bg-card">
               {lessons.map((lesson, index) => (
                 <li
@@ -235,11 +288,11 @@ function CourseDetailPage() {
             </ol>
           </section>
           <section>
-            <h2 className="font-display text-2xl font-bold text-ink">About this course</h2>
+            <h2 className="font-serif text-3xl font-medium text-ink">About this course</h2>
             <p className="mt-4 whitespace-pre-line leading-7 text-muted">{course.description}</p>
           </section>
           <section>
-            <h2 className="font-display text-2xl font-bold text-ink">Your instructor</h2>
+            <h2 className="font-serif text-3xl font-medium text-ink">Your instructor</h2>
             <div className="mt-4 rounded-xl border border-line bg-card p-5">
               <p className="font-semibold text-ink">{course.instructor?.name ?? 'Instructor'}</p>
               {course.instructor?.headline && (
