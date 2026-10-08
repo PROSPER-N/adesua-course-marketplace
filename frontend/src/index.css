@@ -208,6 +208,11 @@ body {
   animation-play-state: paused;
 }
 
+/* Set by the strip's Pause button. */
+.skills-marquee[data-paused] .skills-marquee-track {
+  animation-play-state: paused;
+}
+
 @keyframes drawer-enter {
   from {
     transform: translateX(100%);
@@ -248,10 +253,15 @@ body {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    row-gap: 0.75rem;
     width: auto;
-    padding-right: 0;
+    padding-inline: 1rem;
   }
   .skills-marquee-row[aria-hidden='true'] {
+    display: none;
+  }
+  /* The dots only separate names, so the wrapped list doesn't end with one. */
+  .skills-marquee-row li:last-child .skills-dot {
     display: none;
   }
 }
