@@ -77,7 +77,12 @@ function AccountActions({ user, logout, mobile = false, onNavigate }) {
         >
           {getInitials(user.name) || 'A'}
         </span>
-        <span className="text-sm font-semibold text-ink">{firstName}</span>
+        {/* Below 1024px the bar has no room for the name, so only screen readers get it there. */}
+        <span
+          className={`text-sm font-semibold text-ink ${mobile ? '' : 'sr-only lg:not-sr-only'}`}
+        >
+          {firstName}
+        </span>
       </div>
       <Button
         onClick={async () => {
@@ -175,7 +180,11 @@ function Navbar() {
           </span>
         </Link>
 
-        <nav aria-label="Main navigation" className="hidden items-center gap-5 md:flex">
+        {/* Tighter gaps below 1024px keep the links and the currency selector on one line at 768px. */}
+        <nav
+          aria-label="Main navigation"
+          className="hidden items-center gap-2 whitespace-nowrap md:flex lg:gap-5"
+        >
           <NavigationLinks links={links} pathname={pathname} />
           <CurrencySelector />
           <ThemeToggle />
