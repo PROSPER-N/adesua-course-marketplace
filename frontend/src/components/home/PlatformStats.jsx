@@ -1,12 +1,11 @@
-import { BookOpen, GraduationCap, Tags, UsersRound } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { getPublicStats } from '../../api/stats.js'
 
 const STAT_ITEMS = [
-  { label: 'Courses', key: 'courses', icon: BookOpen },
-  { label: 'Instructors', key: 'instructors', icon: UsersRound },
-  { label: 'Learners', key: 'learners', icon: GraduationCap },
-  { label: 'Categories', key: 'categories', icon: Tags },
+  { label: 'Courses', key: 'courses' },
+  { label: 'Instructors', key: 'instructors' },
+  { label: 'Learners', key: 'learners' },
+  { label: 'Categories', key: 'categories' },
 ]
 
 const COUNT_UP_MS = 800
@@ -105,33 +104,39 @@ function PlatformStats() {
   if (!result.loading && !result.stats) return null
 
   return (
-    <section aria-label="Live platform statistics" className="bg-surface" ref={sectionRef}>
-      <div
-        aria-busy={result.loading}
-        className="mx-auto grid max-w-7xl grid-cols-2 gap-4 px-4 py-6 sm:grid-cols-4 sm:px-6 lg:px-8"
-      >
-        {result.loading
-          ? STAT_ITEMS.map(({ label }) => (
-              <div aria-hidden="true" className="skeleton-shimmer h-16 rounded-xl" key={label} />
-            ))
-          : STAT_ITEMS.map(({ label, key, icon: Icon }) => {
-              const value = result.stats[key]
-              const shown = Math.round(value * easeOutCubic(progress))
+    <section aria-label="Live platform statistics" className="bg-band text-white" ref={sectionRef}>
+      <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-5 sm:flex-row sm:items-center sm:gap-8 sm:px-6 lg:px-8">
+        <p className="text-xs font-semibold tracking-[0.12em] text-gold uppercase sm:w-24 sm:shrink-0">
+          Live on Adesua
+        </p>
+        <div
+          aria-busy={result.loading}
+          className="grid flex-1 grid-cols-2 gap-y-4 sm:grid-cols-4 sm:divide-x sm:divide-white/15"
+        >
+          {result.loading
+            ? STAT_ITEMS.map(({ label }) => (
+                <div
+                  aria-hidden="true"
+                  className="h-14 rounded bg-white/10 motion-safe:animate-pulse sm:mx-6 sm:first:ml-0"
+                  key={label}
+                />
+              ))
+            : STAT_ITEMS.map(({ label, key }) => {
+                const value = result.stats[key]
+                const shown = Math.round(value * easeOutCubic(progress))
 
-              return (
-                <div className="flex items-center gap-3 rounded-xl bg-white px-4 py-3" key={key}>
-                  <Icon aria-hidden="true" className="size-5 shrink-0 text-brand" />
-                  <div>
-                    <p className="font-display text-xl font-extrabold leading-tight tabular-nums text-ink">
+                return (
+                  <div className="sm:px-6 sm:first:pl-0" key={key}>
+                    <p className="font-serif text-4xl leading-none font-semibold tabular-nums">
                       {/* Screen readers get the real number, not every step of the count. */}
                       <span aria-hidden="true">{shown.toLocaleString('en-US')}</span>
                       <span className="sr-only">{value.toLocaleString('en-US')}</span>
                     </p>
-                    <p className="text-sm text-muted">{label}</p>
+                    <p className="mt-1.5 text-sm text-white/75">{label}</p>
                   </div>
-                </div>
-              )
-            })}
+                )
+              })}
+        </div>
       </div>
     </section>
   )

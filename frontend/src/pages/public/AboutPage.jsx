@@ -1,8 +1,4 @@
-import BookOpen from 'lucide-react/dist/esm/icons/book-open.mjs'
-import ChevronDown from 'lucide-react/dist/esm/icons/chevron-down.mjs'
-import Lightbulb from 'lucide-react/dist/esm/icons/lightbulb.mjs'
-import ListChecks from 'lucide-react/dist/esm/icons/list-checks.mjs'
-import Users from 'lucide-react/dist/esm/icons/users.mjs'
+import { BookOpen, ChevronDown, Lightbulb, ListChecks, Users } from 'lucide-react'
 
 const QUESTIONS = [
   {
@@ -103,7 +99,7 @@ function AboutPage() {
 
       <div className="mt-8 grid gap-4 md:grid-cols-2">
         {QUESTIONS.map(({ icon: Icon, question, answer }) => (
-          <section className="rounded-xl border border-line bg-white p-6" key={question}>
+          <section className="rounded-xl border border-line bg-card p-6" key={question}>
             <span className="flex size-10 items-center justify-center rounded-lg bg-brand-soft text-brand">
               <Icon aria-hidden="true" className="size-5" />
             </span>
@@ -122,7 +118,7 @@ function AboutPage() {
             <li className="rounded-xl border border-line bg-surface p-5" key={name}>
               <span
                 aria-hidden="true"
-                className="flex size-11 items-center justify-center rounded-full bg-gold font-bold text-ink"
+                className="flex size-11 items-center justify-center rounded-full bg-gold font-bold text-on-gold"
               >
                 {initials}
               </span>
@@ -138,7 +134,7 @@ function AboutPage() {
         <h2 className="font-display text-2xl font-extrabold text-ink" id="faq-heading">
           Frequently asked questions
         </h2>
-        <div className="mt-5 divide-y divide-line overflow-hidden rounded-xl border border-line bg-white">
+        <div className="mt-5 divide-y divide-line overflow-hidden rounded-xl border border-line bg-card">
           {FAQS.map(({ question, answer }) => (
             <details className="group" key={question}>
               {/* Hide the browser's own triangle, since the chevron replaces it. */}

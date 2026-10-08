@@ -55,7 +55,7 @@ function UsersList({ users, currentUserId, pendingId, onToggleStatus }) {
 
   return (
     <>
-      <div className="hidden overflow-x-auto rounded-xl border border-line bg-white md:block">
+      <div className="hidden overflow-x-auto rounded-xl border border-line bg-card md:block">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-line bg-surface text-xs tracking-wide text-muted uppercase">
             <tr>
@@ -109,7 +109,7 @@ function UsersList({ users, currentUserId, pendingId, onToggleStatus }) {
 
       <ul className="grid gap-3 md:hidden">
         {users.map((user) => (
-          <li className="rounded-xl border border-line bg-white p-4" key={user._id}>
+          <li className="rounded-xl border border-line bg-card p-4" key={user._id}>
             <div className="flex items-center gap-3">
               <Avatar name={user.name} />
               <div className="min-w-0">

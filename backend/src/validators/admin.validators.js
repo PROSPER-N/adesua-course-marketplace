@@ -1,7 +1,9 @@
-const { body, query } = require("express-validator");
+const { body, param, query } = require("express-validator");
 
 const ROLES = ["student", "instructor", "admin"];
 const STATUSES = ["draft", "published"];
+const REVIEW_TYPES = ["course", "site"];
+const REVIEW_TYPE_MSG = "Type must be course or site.";
 
 // Returns a new chain each time, so a change to one list's rule can't change the other's.
 function pageAndLimitRule() {
@@ -35,4 +37,26 @@ const userStatusRules = [
   body("isActive", "isActive must be true or false.").isBoolean({ strict: true }),
 ];
 
-module.exports = { listUsersRules, userStatusRules, listCoursesRules, pageAndLimitRule };
+// GET /api/admin/reviews
+const listReviewsRules = [
+  // An empty ?type= shows course reviews, and a repeated one is rejected.
+  query("type", REVIEW_TYPE_MSG)
+    .optional({ values: "falsy" })
+    .custom((value) => REVIEW_TYPES.includes(value)),
+  pageAndLimitRule(),
+];
+
+// PATCH /api/admin/reviews/:type/:id/visibility
+const reviewVisibilityRules = [
+  param("type", REVIEW_TYPE_MSG).custom((value) => REVIEW_TYPES.includes(value)),
+  body("isHidden", "isHidden must be true or false.").isBoolean({ strict: true }),
+];
+
+module.exports = {
+  listUsersRules,
+  userStatusRules,
+  listCoursesRules,
+  listReviewsRules,
+  reviewVisibilityRules,
+  pageAndLimitRule,
+};

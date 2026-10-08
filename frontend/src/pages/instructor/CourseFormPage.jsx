@@ -407,7 +407,7 @@ function CourseFormPage() {
         }}
         ref={courseFormRef}
       >
-        <div className="min-w-0 space-y-6 rounded-2xl border border-line bg-white p-4 sm:p-6">
+        <div className="min-w-0 space-y-6 rounded-2xl border border-line bg-card p-4 sm:p-6">
           <Input
             error={fieldErrors.title}
             label="Course title"
@@ -493,7 +493,7 @@ function CourseFormPage() {
             ))}
           </fieldset>
         </div>
-        <aside className="h-fit rounded-2xl border border-line bg-white p-5">
+        <aside className="h-fit rounded-2xl border border-line bg-card p-5">
           <h2 className="font-display text-lg font-bold text-ink">Publish checklist</h2>
           <ul className="mt-4 space-y-3">
             {checks.map((item) => (
@@ -514,7 +514,7 @@ function CourseFormPage() {
           </p>
         </aside>
       </form>
-      <section className="space-y-5 rounded-2xl border border-line bg-white p-4 sm:p-6">
+      <section className="space-y-5 rounded-2xl border border-line bg-card p-4 sm:p-6">
         <div>
           <h2 className="font-display text-2xl font-bold text-ink">Lessons</h2>
           <p className="mt-1 text-sm text-muted">

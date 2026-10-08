@@ -1,4 +1,4 @@
-import SearchX from 'lucide-react/dist/esm/icons/search-x.mjs'
+import { SearchX } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useSearchParams } from 'react-router'
@@ -114,7 +114,7 @@ function UsersTab() {
   let content
   if (loading) {
     content = (
-      <div className="rounded-xl border border-line bg-white px-4">
+      <div className="rounded-xl border border-line bg-card px-4">
         {Array.from({ length: 5 }, (_, index) => (
           <SkeletonRow key={index} />
         ))}
