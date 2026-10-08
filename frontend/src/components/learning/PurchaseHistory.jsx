@@ -33,7 +33,9 @@ function courseTitle(order) {
 
 // A table from md up; below that the same orders as stacked cards.
 function OrdersList({ orders }) {
-  const { formatAmount } = useCurrency()
+  // Orders are saved in US dollars, the amount checkout charged, so they show that amount
+  // whatever display currency is chosen.
+  const { formatBaseAmount } = useCurrency()
   return (
     <>
       <div className="hidden overflow-x-auto rounded-xl border border-line bg-card md:block">
@@ -72,7 +74,7 @@ function OrdersList({ orders }) {
                   {paymentMethodLabel(order.paymentMethod)}
                 </td>
                 <td className="px-4 py-3 text-right whitespace-nowrap font-semibold text-ink">
-                  {formatAmount(order.amount)}
+                  {formatBaseAmount(order.amount)}
                 </td>
                 <td className="px-4 py-3">
                   <StatusBadge status={order.status} />
@@ -89,7 +91,7 @@ function OrdersList({ orders }) {
             <div className="flex items-start justify-between gap-3">
               <p className="font-semibold text-ink">{courseTitle(order)}</p>
               <p className="font-semibold whitespace-nowrap text-ink">
-                {formatAmount(order.amount)}
+                {formatBaseAmount(order.amount)}
               </p>
             </div>
             <p className="mt-1 text-sm text-muted">
