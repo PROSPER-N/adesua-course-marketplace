@@ -6,7 +6,7 @@ import { getAdminCourses } from '../../api/admin.js'
 import { deleteCourse, updateCourseStatus } from '../../api/courses.js'
 import { formatDate } from '../../utils/formatDate.js'
 import { getErrorMessage } from '../../utils/getErrorMessage.js'
-import { formatMoney } from '../../utils/formatMoney.js'
+import { useCurrency } from '../../context/CurrencyContext.jsx'
 import Badge from '../ui/Badge.jsx'
 import Button from '../ui/Button.jsx'
 import EmptyState from '../ui/EmptyState.jsx'
@@ -78,6 +78,7 @@ function CourseActions({ course, pendingAction, onUnpublish, onDelete }) {
 }
 
 function CourseCards({ courses, actionProps }) {
+  const { formatPrice } = useCurrency()
   return (
     <ul className="grid gap-3 md:hidden">
       {courses.map((course) => (
@@ -104,7 +105,7 @@ function CourseCards({ courses, actionProps }) {
             </div>
             <div>
               <dt className="text-muted">Price</dt>
-              <dd className="font-medium text-ink">{formatMoney(course.price)}</dd>
+              <dd className="font-medium text-ink">{formatPrice(course.price)}</dd>
             </div>
             <div>
               <dt className="text-muted">Created</dt>
@@ -121,6 +122,7 @@ function CourseCards({ courses, actionProps }) {
 }
 
 function CourseTable({ courses, actionProps }) {
+  const { formatPrice } = useCurrency()
   return (
     <div className="hidden overflow-x-auto rounded-xl border border-line bg-white md:block">
       <table className="w-full text-left text-sm">
@@ -151,7 +153,7 @@ function CourseTable({ courses, actionProps }) {
               </td>
               <td className="px-4 py-3 text-muted">{course.studentCount}</td>
               <td className="px-4 py-3 whitespace-nowrap text-muted">
-                {formatMoney(course.price)}
+                {formatPrice(course.price)}
               </td>
               <td className="px-4 py-3 whitespace-nowrap text-muted">
                 {formatDate(course.createdAt)}

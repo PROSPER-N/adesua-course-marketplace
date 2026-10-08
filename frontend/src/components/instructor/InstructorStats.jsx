@@ -1,16 +1,12 @@
 import { BookCheck, FilePenLine, Users, Wallet } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { getInstructorStats } from '../../api/instructor.js'
-import { formatMoney } from '../../utils/formatMoney.js'
+import { useCurrency } from '../../context/CurrencyContext.jsx'
 import { getErrorMessage } from '../../utils/getErrorMessage.js'
 import ErrorMessage from '../ui/ErrorMessage.jsx'
 
-// formatMoney(0) says "Free", which fits a price but not a total.
-function formatEarnings(total) {
-  return total > 0 ? formatMoney(total) : '$0'
-}
-
 function InstructorStats() {
+  const { formatAmount } = useCurrency()
   // A result remembers the attempt it answers, so the cards load until the latest attempt has one.
   const [attempt, setAttempt] = useState(0)
   const [result, setResult] = useState({ attempt: -1, stats: null, error: null })
@@ -58,7 +54,7 @@ function InstructorStats() {
   const { stats } = result
   const cards = [
     { label: 'Students', value: stats.totalStudents.toLocaleString('en-US'), icon: Users },
-    { label: 'Earnings', value: formatEarnings(stats.totalEarnings), icon: Wallet },
+    { label: 'Earnings', value: formatAmount(stats.totalEarnings), icon: Wallet },
     { label: 'Published', value: stats.publishedCount.toLocaleString('en-US'), icon: BookCheck },
     { label: 'Drafts', value: stats.draftCount.toLocaleString('en-US'), icon: FilePenLine },
   ]
