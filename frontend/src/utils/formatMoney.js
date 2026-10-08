@@ -1,13 +1,22 @@
-// 0 -> "Free", 180 -> "$180", and with { decimals: true } -> "$180.00".
-export function formatMoney(amount, { decimals = false } = {}) {
+import { BASE_CURRENCY, CURRENCIES, isSupportedCurrency } from '../config/currency.js'
+
+// Course prices default to "Free" at zero. Totals can opt out with freeForZero: false.
+export function formatMoney(
+  amount,
+  { currency = BASE_CURRENCY, decimals = false, freeForZero = true } = {},
+) {
   const value = Number(amount)
 
-  if (value === 0) return 'Free'
   if (!Number.isFinite(value)) return ''
+  if (!isSupportedCurrency(currency)) currency = BASE_CURRENCY
+  if (value === 0 && freeForZero) return 'Free'
 
-  const formatted = value.toLocaleString('en-US', {
-    minimumFractionDigits: decimals ? 2 : 0,
-    maximumFractionDigits: 2,
+  const { locale, fractionDigits } = CURRENCIES[currency]
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: decimals ? fractionDigits : 0,
+    maximumFractionDigits: fractionDigits,
   })
-  return `$${formatted}`
+    .format(value)
 }

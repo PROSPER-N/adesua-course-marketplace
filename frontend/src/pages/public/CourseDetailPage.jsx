@@ -9,13 +9,14 @@ import Badge from '../../components/ui/Badge.jsx'
 import ErrorMessage from '../../components/ui/ErrorMessage.jsx'
 import Spinner from '../../components/ui/Spinner.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
+import { useCurrency } from '../../context/CurrencyContext.jsx'
 import { summaryRepeatsDescription } from '../../utils/courseSummary.js'
-import { formatMoney } from '../../utils/formatMoney.js'
 import { getErrorMessage } from '../../utils/getErrorMessage.js'
 
 function CourseDetailPage() {
   const { id } = useParams()
   const { user, loading: authLoading } = useAuth()
+  const { formatPrice } = useCurrency()
   const [attempt, setAttempt] = useState(0)
   const [result, setResult] = useState({ key: '', course: null, error: null })
   const key = `${id}:${attempt}`
@@ -228,7 +229,7 @@ function CourseDetailPage() {
         <aside className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-white p-3 shadow-[0_-4px_16px_rgba(0,0,0,0.08)] lg:sticky lg:top-24 lg:inset-x-auto lg:bottom-auto lg:z-auto lg:h-fit lg:rounded-2xl lg:border lg:border-line lg:p-5 lg:shadow-sm">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 lg:block">
             <p className="shrink-0 font-display text-xl font-bold text-ink lg:text-3xl">
-              {formatMoney(course.price)}
+              {formatPrice(course.price)}
             </p>
             <div className="lg:mt-4">
               <EnrollButton course={course} />

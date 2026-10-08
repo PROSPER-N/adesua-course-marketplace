@@ -1,9 +1,10 @@
 import { Link } from 'react-router'
-import { formatMoney } from '../../utils/formatMoney.js'
+import { useCurrency } from '../../context/CurrencyContext.jsx'
 import CourseCover from './CourseCover.jsx'
 
 // course is one item from GET /api/courses.
 function CourseCard({ course }) {
+  const { formatPrice } = useCurrency()
   const {
     _id,
     title,
@@ -41,7 +42,7 @@ function CourseCard({ course }) {
         </p>
 
         <div className="flex items-center justify-between pt-1">
-          <span className="font-semibold text-ink">{formatMoney(price)}</span>
+          <span className="font-semibold text-ink">{formatPrice(price)}</span>
 
           <span className="text-sm text-muted">
             {studentCount} {studentCount === 1 ? 'student' : 'students'}

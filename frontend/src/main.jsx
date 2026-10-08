@@ -4,15 +4,18 @@ import { BrowserRouter } from 'react-router'
 import { Toaster } from 'react-hot-toast'
 import './index.css'
 import { AuthProvider } from './context/AuthContext.jsx'
+import { CurrencyProvider } from './context/CurrencyContext.jsx'
 import App from './App.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-      <AuthProvider>
-        <App />
-        <Toaster position="top-right" />
-      </AuthProvider>
+      <CurrencyProvider>
+        <AuthProvider>
+          <App />
+          <Toaster position="top-right" />
+        </AuthProvider>
+      </CurrencyProvider>
     </BrowserRouter>
   </StrictMode>,
 )

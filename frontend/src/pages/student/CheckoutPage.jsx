@@ -8,7 +8,7 @@ import CourseCover from '../../components/course/CourseCover.jsx'
 import Button from '../../components/ui/Button.jsx'
 import EmptyState from '../../components/ui/EmptyState.jsx'
 import ErrorMessage from '../../components/ui/ErrorMessage.jsx'
-import { formatMoney } from '../../utils/formatMoney.js'
+import { useCurrency } from '../../context/CurrencyContext.jsx'
 import { getErrorMessage } from '../../utils/getErrorMessage.js'
 import { PAYMENT_METHODS } from '../../utils/paymentMethods.js'
 import { removeCartItem } from '../../utils/cart.js'
@@ -37,6 +37,7 @@ function CheckoutSkeleton() {
 
 function CheckoutPage() {
   const { courseId } = useParams()
+  const { baseCurrency, currencyInfo, formatBaseAmount, formatPrice } = useCurrency()
   const [searchParams] = useSearchParams()
 
   // A result remembers the request it answers, so the page loads until the latest one has one.
@@ -196,7 +197,8 @@ function CheckoutPage() {
 
           <p className="mt-5 flex items-start gap-2 rounded-lg bg-gold-soft p-3 text-sm text-ink">
             <Info aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
-            Checkout runs in demo mode. No real money is charged.
+            Checkout runs in demo mode. No real money is charged. The order amount remains in the
+            configured base currency ({baseCurrency}).
           </p>
 
           {payError && (
@@ -212,7 +214,7 @@ function CheckoutPage() {
             loadingText="Processing payment…"
             onClick={handlePay}
           >
-            Pay {formatMoney(course.price)}
+            Pay {formatBaseAmount(course.price)}
           </Button>
         </section>
 
@@ -233,11 +235,15 @@ function CheckoutPage() {
             <p className="mt-1 text-sm text-muted">By {course.instructor.name}</p>
           )}
           <dl className="mt-4 flex items-baseline justify-between border-t border-line pt-4">
-            <dt className="font-semibold text-ink">Total</dt>
+            <dt className="font-semibold text-ink">Total ({currencyInfo.code}, display only)</dt>
             <dd className="font-display text-2xl font-extrabold text-ink">
-              {formatMoney(course.price)}
+              {formatPrice(course.price)}
             </dd>
           </dl>
+          <p className="mt-3 text-sm text-muted">
+            Demo order amount ({baseCurrency}): {formatBaseAmount(course.price)}. Display currency
+            does not change the order amount.
+          </p>
         </aside>
       </div>
     )

@@ -1,8 +1,8 @@
 import { Receipt } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { getMyOrders } from '../../api/orders.js'
+import { useCurrency } from '../../context/CurrencyContext.jsx'
 import { formatDate } from '../../utils/formatDate.js'
-import { formatMoney } from '../../utils/formatMoney.js'
 import { getErrorMessage } from '../../utils/getErrorMessage.js'
 import { paymentMethodLabel } from '../../utils/paymentMethods.js'
 import Badge from '../ui/Badge.jsx'
@@ -33,6 +33,7 @@ function courseTitle(order) {
 
 // A table from md up; below that the same orders as stacked cards.
 function OrdersList({ orders }) {
+  const { formatAmount } = useCurrency()
   return (
     <>
       <div className="hidden overflow-x-auto rounded-xl border border-line bg-white md:block">
@@ -71,7 +72,7 @@ function OrdersList({ orders }) {
                   {paymentMethodLabel(order.paymentMethod)}
                 </td>
                 <td className="px-4 py-3 text-right whitespace-nowrap font-semibold text-ink">
-                  {formatMoney(order.amount)}
+                  {formatAmount(order.amount)}
                 </td>
                 <td className="px-4 py-3">
                   <StatusBadge status={order.status} />
@@ -88,7 +89,7 @@ function OrdersList({ orders }) {
             <div className="flex items-start justify-between gap-3">
               <p className="font-semibold text-ink">{courseTitle(order)}</p>
               <p className="font-semibold whitespace-nowrap text-ink">
-                {formatMoney(order.amount)}
+                {formatAmount(order.amount)}
               </p>
             </div>
             <p className="mt-1 text-sm text-muted">

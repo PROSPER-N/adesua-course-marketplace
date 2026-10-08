@@ -7,6 +7,7 @@ import { useAuth } from '../../context/AuthContext.jsx'
 import { useCart } from '../../hooks/useCart.js'
 import { getInitials } from '../../utils/getInitials.js'
 import Button from '../ui/Button.jsx'
+import CurrencySelector from './CurrencySelector.jsx'
 
 function getLinks(user) {
   if (!user) {
@@ -136,7 +137,7 @@ function Navbar() {
 
       if (event.key !== 'Tab' || !drawerRef.current) return
       const focusableItems = drawerRef.current.querySelectorAll(
-        'a[href]:not([tabindex="-1"]), button:not([disabled]):not([tabindex="-1"])',
+        'a[href]:not([tabindex="-1"]), button:not([disabled]):not([tabindex="-1"]), select:not([disabled]):not([tabindex="-1"])',
       )
       const firstItem = focusableItems[0]
       const lastItem = focusableItems[focusableItems.length - 1]
@@ -177,6 +178,7 @@ function Navbar() {
 
         <nav aria-label="Main navigation" className="hidden items-center gap-5 md:flex">
           <NavigationLinks links={links} pathname={pathname} />
+          <CurrencySelector />
           <CartLink count={items.length} />
           <AccountActions logout={logout} user={user} />
         </nav>
@@ -240,6 +242,10 @@ function Navbar() {
                 pathname={pathname}
               />
             </nav>
+
+            <div className="border-t border-line py-4">
+              <CurrencySelector mobile />
+            </div>
 
             <div className="mt-auto border-t border-line pt-5">
               <AccountActions logout={logout} mobile onNavigate={handleNavigate} user={user} />

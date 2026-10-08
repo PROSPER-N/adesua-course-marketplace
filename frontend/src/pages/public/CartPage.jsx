@@ -7,12 +7,13 @@ import Button from '../../components/ui/Button.jsx'
 import EmptyState from '../../components/ui/EmptyState.jsx'
 import ErrorMessage from '../../components/ui/ErrorMessage.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
+import { useCurrency } from '../../context/CurrencyContext.jsx'
 import { useCart } from '../../hooks/useCart.js'
-import { formatMoney } from '../../utils/formatMoney.js'
 import { getErrorMessage } from '../../utils/getErrorMessage.js'
 import { removeCartItem } from '../../utils/cart.js'
 
 function CartPage() {
+  const { formatPrice, formatAmount } = useCurrency()
   const { items } = useCart()
   const { user, loading: authLoading } = useAuth()
   const location = useLocation()
@@ -141,7 +142,7 @@ function CartPage() {
                           <p className="mt-1 text-sm text-muted">By {course.instructor.name}</p>
                         )}
                         <p className="mt-2 font-display text-xl font-bold text-ink">
-                          {course.price === 0 ? 'Free' : formatMoney(course.price)}
+                          {formatPrice(course.price)}
                         </p>
                       </div>
                       <button
@@ -225,7 +226,7 @@ function CartPage() {
             <dl className="mt-5 flex items-baseline justify-between border-t border-line pt-4">
               <dt className="font-semibold text-ink">Total</dt>
               <dd className="font-display text-2xl font-extrabold text-ink">
-                {formatMoney(total)}
+                {formatAmount(total)}
               </dd>
             </dl>
             <p className="mt-3 flex items-start gap-2 text-sm text-muted">
