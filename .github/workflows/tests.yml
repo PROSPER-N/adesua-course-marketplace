@@ -67,6 +67,9 @@ jobs:
       - name: Lint
         if: hashFiles('frontend/package.json') != ''
         run: npm run lint
+      - name: Currency tests
+        if: hashFiles('frontend/package.json') != ''
+        run: npm run test:currency
       # Prettier isn't a dependency, so the version is pinned here. A new release can't fail the check.
       # It uses the frontend override in the root .prettierrc.
       - name: Check formatting

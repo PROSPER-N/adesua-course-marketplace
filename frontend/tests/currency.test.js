@@ -1,11 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import {
-  BASE_CURRENCY,
-  CURRENCIES,
-  SUPPORTED_CURRENCIES,
-  isSupportedCurrency,
-} from '../src/config/currency.js'
+import { BASE_CURRENCY, SUPPORTED_CURRENCIES, isSupportedCurrency } from '../src/config/currency.js'
 import { convertFromBase } from '../src/utils/currencyPricing.js'
 import { formatMoney } from '../src/utils/formatMoney.js'
 import {
@@ -57,26 +52,15 @@ test('persists only supported manual currencies', () => {
 
 test('formats free course prices and monetary zero differently', () => {
   assert.equal(formatMoney(0, { currency: 'NGN' }), 'Free')
-  assert.equal(
-    formatMoney(0, { currency: 'NGN', freeForZero: false }),
-    new Intl.NumberFormat(CURRENCIES.NGN.locale, {
-      style: 'currency',
-      currency: 'NGN',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: CURRENCIES.NGN.fractionDigits,
-    }).format(0),
-  )
+  assert.equal(formatMoney(0, { currency: 'NGN', freeForZero: false }), '₦0')
   assert.equal(formatMoney(Number.NaN, { currency: 'USD' }), '')
 })
 
 test('uses the selected currency locale and fraction digits', () => {
-  const expected = new Intl.NumberFormat(CURRENCIES.INR.locale, {
-    style: 'currency',
-    currency: 'INR',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: CURRENCIES.INR.fractionDigits,
-  }).format(1234.5)
-  assert.equal(formatMoney(1234.5, { currency: 'INR' }), expected)
+  // en-IN groups by lakh, so this fails if the currency's own locale isn't used.
+  assert.equal(formatMoney(1234567, { currency: 'INR' }), '₹12,34,567')
+  assert.equal(formatMoney(90.91, { currency: 'GBP' }), '£90.91')
+  assert.equal(formatMoney(107.32, { currency: 'EUR' }), '€107.32')
 })
 
 test('preserves the legacy USD formatting for an unqualified course price', () => {
