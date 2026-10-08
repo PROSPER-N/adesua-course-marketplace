@@ -21,3 +21,9 @@ The course photos are loaded from each site's image CDN, cropped to 800×500. Th
 | Content Planning for Beginners | A woman pinning a note to a wall of weekly plans | Hanna Pad | [Pexels](https://www.pexels.com/photo/woman-in-blue-long-sleeve-shirt-writing-on-white-board-7550893/) | Pexels License |
 | Composition and Visual Storytelling | A camera screen framing a portrait in Istanbul | Eyüpcan Timur | [Pexels](https://www.pexels.com/photo/capturing-portrait-photography-in-istanbul-33919783/) | Pexels License |
 | A Practical Reset for Busy People | A man planning at a studio desk | Ron Lach | [Pexels](https://www.pexels.com/photo/man-with-task-planner-on-desk-9903254/) | Pexels License |
+
+## Home page video
+
+| Files | What it shows | Creator | Source | Licence |
+|---|---|---|---|---|
+| `frontend/public/media/hero.mp4`, `hero.webm`, `hero-poster.jpg` | A woman writing in a notebook beside a laptop. We use the first 11.5 seconds, cropped to 1280×720; the poster is the first frame. | Tima Miroshnichenko | [Pexels](https://www.pexels.com/video/woman-writing-while-using-a-laptop-6860756/) | Pexels License |
