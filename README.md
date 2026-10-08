@@ -7,28 +7,36 @@ Adesua is a video course marketplace, built as our TS Academy full-stack capston
 ## Features by role
 
 - **Visitors**
-  - See popular courses, live platform totals and skill shortcuts on Home
+  - See Home: a short video, live platform totals that refresh every 30 seconds, popular courses, categories, the instructors with their ratings, and recent reviews
+  - Switch between light, dark and system themes (this works for everyone)
   - Save courses to a browser cart before signing in
   - Browse published courses, search by title, filter by category, level and price (free or paid), and sort by newest, most popular or price
-  - Open a course to see its details, its lesson outline and any free preview lessons
+  - Open a course to see its photo, details, instructor, ratings, reviews, lesson outline and any free preview lessons
+  - Read every platform review on the Reviews page
 - **Students**
-  - Sign up and log in
+  - Sign up and log in, and pick up to five interests when signing up
   - Enroll in free courses, or buy paid courses through the demo checkout
   - Watch lessons, mark them complete and track progress in My learning
+  - Rate and review the courses they're enrolled in, with one rating for the course and one for the instructor
+  - Write a review of Adesua
   - See their purchase history
 - **Instructors**
+  - Sign up with a headline and a teaching area, which show in the instructors section on Home
   - Create courses (they start as drafts), and add, edit and delete lessons with a YouTube video, notes, or both
   - Publish or unpublish their courses
   - See their students and earnings
+  - Write a review of Adesua
 - **Admins**
   - See platform totals
   - Search users, filter them by role, and deactivate or reactivate accounts
   - Create, rename and delete categories
   - Search and filter all courses, including drafts; unpublish published courses and delete courses with no students
+  - Hide or show course and platform reviews
 
 ## Tech stack
 
 - React with Vite for the frontend (in `frontend/`)
+- Tailwind CSS 4, React Router, Axios, lucide-react icons and react-hot-toast in the frontend, checked with oxlint
 - Node.js, Express 5 and MongoDB Atlas with Mongoose 9 for the backend
 - JSON Web Tokens (jsonwebtoken) for login, and bcryptjs for password hashing
 - helmet, cors, express-rate-limit and express-validator for security and validation
@@ -89,13 +97,16 @@ The app opens at http://localhost:5173.
 
 ## Test accounts
 
-`npm run seed -- --yes` creates these accounts. **Every account uses the password `Demo1234`.** The seed also adds 12 published courses and 1 draft, and enrolls the students at different stages: Akosua Mensah has finished a free course and is halfway through a paid one, Kojo Ansah has started a free course and bought a paid one, and Esi Nyarko has finished a paid course.
+`npm run seed -- --yes` creates these accounts. **Every account uses the password `Demo1234`.** The seed also adds 12 published courses and 1 draft, and enrolls the students at different stages: Akosua Mensah has finished a free course and is halfway through a paid one, Kojo Ansah has started a free course and bought a paid one, and Esi Nyarko has finished a paid course. It also adds 7 reviews: 4 course reviews from the students and 3 platform reviews.
 
 | Name | Email | Role |
 |---|---|---|
 | Admin User | admin@example.com | admin |
 | Kwame Asante | kwame@example.com | instructor |
 | Ama Owusu | ama@example.com | instructor |
+| Chiamaka Obi | chiamaka@example.com | instructor |
+| Tomás Ortega | tomas@example.com | instructor |
+| Meera Pillai | meera@example.com | instructor |
 | Akosua Mensah | akosua@example.com | student |
 | Kojo Ansah | kojo@example.com | student |
 | Esi Nyarko | esi@example.com | student |
@@ -123,11 +134,20 @@ Run these inside `backend/`:
 |---|---|
 | `npm run dev` | Starts the API and restarts it when you save a file (nodemon) |
 | `npm start` | Starts the API without restarting |
+| `npm run seed` | Shows which database the seed would reset, then stops without changing anything |
 | `npm run seed -- --yes` | Deletes everything in your dev database and adds the demo data |
 | `npm run seed:production -- --yes` | Resets the production database to the demo data. Read [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) first |
 | `npm test` | Runs the Jest tests against your test database |
 
-Frontend scripts are in `frontend/package.json` (`npm run dev` starts the app).
+Run these inside `frontend/`:
+
+| Command | What it does |
+|---|---|
+| `npm run dev` | Starts the app at http://localhost:5173 |
+| `npm run lint` | Checks the code with oxlint |
+| `npm run build` | Builds the app into `dist/` |
+| `npm run preview` | Serves the built app locally |
+| `npx --yes prettier@3.9.9 --check "src/**/*.{js,jsx,css}" index.html vite.config.js package.json .oxlintrc.json vercel.json` | Checks the formatting, the same way the CI does |
 
 ## Project structure
 
@@ -149,15 +169,43 @@ Adesua/
 │   ├── tests/               Jest tests and helpers
 │   └── .env.example
 ├── frontend/                React app
+│   └── public/media/        the Home page video and its poster
 ├── docs/
 │   ├── API_CONTRACT.md      every endpoint, response and message
 │   ├── CONVENTIONS.md       how we work together
-│   └── DEPLOYMENT.md        how the API goes live on Render and the site on Vercel
+│   ├── CREDITS.md           where every photo and video comes from
+│   ├── DEPLOYMENT.md        how the API goes live on Render and the site on Vercel
+│   ├── postman/             Postman collections and environments
+│   └── screenshots/         the screenshots in this README
 └── .github/
     ├── workflows/
     │   └── tests.yml        runs the tests on every pull request
     └── pull_request_template.md
 ```
+
+## API overview
+
+The main endpoints. [docs/API_CONTRACT.md](docs/API_CONTRACT.md) lists all of them, with who can use each one, the request bodies, the responses and the messages.
+
+| Method | Path | Purpose |
+|---|---|---|
+| GET | `/api/health` | API is running |
+| GET | `/api/stats` | Published courses, instructors, learners and categories, for Home |
+| GET | `/api/instructors` | Active instructors with published courses, with their ratings |
+| POST | `/api/auth/register` | Create a student or instructor account |
+| POST | `/api/auth/login` | Log in |
+| GET | `/api/auth/me` | The logged-in user |
+| GET | `/api/categories` | Categories with published-course counts |
+| GET | `/api/courses` | Published courses with search, filters, sort and pages |
+| GET | `/api/courses/:id` | One published course with its lesson outline |
+| GET | `/api/courses/:id/reviews` | A course's visible reviews, with a summary |
+| GET | `/api/reviews` | Visible platform reviews, with a summary |
+| POST | `/api/courses` | Create a course (it starts as a draft) |
+| POST | `/api/enrollments` | Enroll in a free course |
+| POST | `/api/orders` | Start the demo checkout for a paid course |
+| GET | `/api/courses/:id/lessons` | Full lessons and progress, for enrolled students |
+| GET | `/api/instructor/stats` | An instructor's students and earnings |
+| GET | `/api/admin/stats` | Platform totals for admins |
 
 ## API docs
 
@@ -165,6 +213,10 @@ Adesua/
 - Postman: in Postman choose **Import** and pick the files in [docs/postman/](docs/postman/), select the **Adesua local** environment, then run **Auth > Log in** first.
 - Live API: https://adesua-api.onrender.com/api/health
 - Live site: https://adesua-course-marketplace.vercel.app
+
+## Credits
+
+The photos and the Home page video come from Unsplash and Pexels under their free licences. [docs/CREDITS.md](docs/CREDITS.md) lists each one with its creator and source.
 
 ## Team
 
