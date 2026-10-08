@@ -6,7 +6,7 @@ import {
   isSupportedCurrency,
 } from '../config/currency.js'
 import { readCurrencyPreference, writeCurrencyPreference } from '../utils/currencyPreference.js'
-import { convertFromBase } from '../utils/currencyPricing.js'
+import { convertFromBase, convertTotal } from '../utils/currencyPricing.js'
 import { formatMoney } from '../utils/formatMoney.js'
 
 const CurrencyContext = createContext(null)
@@ -38,6 +38,11 @@ export function CurrencyProvider({ children }) {
       }),
     [],
   )
+  // Adds up the converted prices, so the total matches the lines shown above it.
+  const formatTotal = useCallback(
+    (amounts) => formatMoney(convertTotal(amounts, currency), { currency, freeForZero: false }),
+    [currency],
+  )
 
   const value = useMemo(
     () => ({
@@ -50,9 +55,18 @@ export function CurrencyProvider({ children }) {
       formatPrice,
       formatAmount,
       formatBaseAmount,
+      formatTotal,
       setCurrency,
     }),
-    [currency, convertAmount, formatPrice, formatAmount, formatBaseAmount, setCurrency],
+    [
+      currency,
+      convertAmount,
+      formatPrice,
+      formatAmount,
+      formatBaseAmount,
+      formatTotal,
+      setCurrency,
+    ],
   )
 
   return <CurrencyContext.Provider value={value}>{children}</CurrencyContext.Provider>

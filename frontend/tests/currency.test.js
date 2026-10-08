@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { BASE_CURRENCY, SUPPORTED_CURRENCIES, isSupportedCurrency } from '../src/config/currency.js'
-import { convertFromBase } from '../src/utils/currencyPricing.js'
+import { convertFromBase, convertTotal } from '../src/utils/currencyPricing.js'
 import { formatMoney } from '../src/utils/formatMoney.js'
 import {
   CURRENCY_PREFERENCE_KEY,
@@ -74,4 +74,22 @@ test('converts from base without mutating its raw amount and preserves ordering'
   assert.ok(converted > 0)
   assert.ok(convertFromBase(1000, 'GBP') <= convertFromBase(2000, 'GBP'))
   assert.equal(convertFromBase(1200, BASE_CURRENCY), 1200)
+})
+
+test('shows both decimals whenever an amount has cents', () => {
+  assert.equal(formatMoney(252940.9, { currency: 'NGN' }), '₦252,940.90')
+  assert.equal(formatMoney(120.5), '$120.50')
+  assert.equal(formatMoney(120), '$120')
+})
+
+test('adds the converted prices, so a cart total matches its lines', () => {
+  assert.deepEqual(
+    [convertFromBase(120, 'NGN'), convertFromBase(150, 'NGN')],
+    [159752.15, 199690.19],
+  )
+  assert.equal(convertTotal([120, 150], 'NGN'), 359442.34)
+  assert.equal(
+    formatMoney(convertTotal([120, 150], 'NGN'), { currency: 'NGN', freeForZero: false }),
+    '₦359,442.34',
+  )
 })

@@ -15,7 +15,8 @@ export function formatMoney(
   return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency,
-    minimumFractionDigits: decimals ? fractionDigits : 0,
+    // An amount with cents shows both digits, so ₦252,940.90 never appears as ₦252,940.9.
+    minimumFractionDigits: decimals || !Number.isInteger(value) ? fractionDigits : 0,
     maximumFractionDigits: fractionDigits,
   }).format(value)
 }

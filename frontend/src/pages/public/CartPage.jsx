@@ -14,7 +14,7 @@ import { getErrorMessage } from '../../utils/getErrorMessage.js'
 import { removeCartItem } from '../../utils/cart.js'
 
 function CartPage() {
-  const { formatPrice, formatAmount } = useCurrency()
+  const { formatPrice, formatTotal } = useCurrency()
   const { items } = useCart()
   const { user, loading: authLoading } = useAuth()
   const location = useLocation()
@@ -68,8 +68,6 @@ function CartPage() {
       setBusyCourseId('')
     }
   }
-
-  const total = items.reduce((sum, course) => sum + course.price, 0)
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
@@ -227,7 +225,7 @@ function CartPage() {
             <dl className="mt-5 flex items-baseline justify-between border-t border-line pt-4">
               <dt className="font-semibold text-ink">Total</dt>
               <dd className="font-display text-2xl font-extrabold text-ink">
-                {formatAmount(total)}
+                {formatTotal(items.map((course) => course.price))}
               </dd>
             </dl>
             <CurrencyNote className="mt-3 text-sm" />
