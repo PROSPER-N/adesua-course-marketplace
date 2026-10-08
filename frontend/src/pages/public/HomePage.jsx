@@ -33,7 +33,7 @@ function HomePage() {
 
   return (
     <>
-      <HomeHero categories={result.categories} loading={loading} />
+      <HomeHero />
       <PlatformStats />
       <SkillsStrip />
       <CategoryChips
