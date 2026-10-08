@@ -9,7 +9,14 @@ const STARS = [1, 2, 3, 4, 5]
 
 // Five stars filled up to the rating, so 4.5 fills four and a half, with the number beside them.
 // Screen readers hear one label, like "Rated 4.5 out of 5".
-function StarRating({ value = 0, size = 'sm', showValue = true, className = '' }) {
+// valueClassName colours the number, for example text-white on a dark header.
+function StarRating({
+  value = 0,
+  size = 'sm',
+  showValue = true,
+  className = '',
+  valueClassName = 'text-ink',
+}) {
   const rating = Math.round(value * 10) / 10
   const filled = Math.min(100, Math.max(0, (rating / 5) * 100))
   const iconClass = `${SIZES[size] ?? SIZES.sm} shrink-0`
@@ -37,7 +44,7 @@ function StarRating({ value = 0, size = 'sm', showValue = true, className = '' }
         </span>
       </span>
       {showValue && (
-        <span aria-hidden="true" className="font-semibold text-ink">
+        <span aria-hidden="true" className={`font-semibold ${valueClassName}`}>
           {rating.toFixed(1)}
         </span>
       )}

@@ -183,6 +183,113 @@
       ]
     },
     {
+      "name": "Instructors",
+      "item": [
+        {
+          "name": "Public instructors",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/instructors?limit=6",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "instructors"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "6",
+                  "description": "Optional. How many instructors to return (default 4, max 50)."
+                }
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Purpose: List active instructors with at least one published course, for the Home page.\n\nAccess: Public.\n\nBody: none.\n\nParameters: limit (optional, default 4, max 50). There are no pages.\n\nEach item has the name, headline, teaching area, instructor rating (from visible reviews of their published courses) and the number of published courses. The most reviewed come first, then the best rated, then those with the most courses, then by name."
+          },
+          "response": [
+            {
+              "name": "Instructors (200)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/instructors?limit=6",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "instructors"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "6",
+                      "description": "Optional. How many instructors to return (default 4, max 50)."
+                    }
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Instructors fetched successfully\",\n  \"data\": [\n    {\n      \"_id\": \"6ac7308f1fd2123c590bb9d7\",\n      \"name\": \"Kwame Asante\",\n      \"headline\": \"Full-stack developer and teacher\",\n      \"teachingArea\": {\n        \"_id\": \"6ac7308f1fd2123c590bb9cf\",\n        \"name\": \"Web development\",\n        \"slug\": \"web-development\"\n      },\n      \"rating\": {\n        \"average\": 4.7,\n        \"count\": 3\n      },\n      \"courseCount\": 4\n    },\n    {\n      \"_id\": \"6ac7308f1fd2123c590bb9d8\",\n      \"name\": \"Ama Owusu\",\n      \"headline\": \"Product designer and marketer\",\n      \"teachingArea\": {\n        \"_id\": \"6ac7308f1fd2123c590bb9d2\",\n        \"name\": \"Design\",\n        \"slug\": \"design\"\n      },\n      \"rating\": {\n        \"average\": 4,\n        \"count\": 1\n      },\n      \"courseCount\": 2\n    },\n    {\n      \"_id\": \"6ac7308f1fd2123c590bb9d9\",\n      \"name\": \"Chiamaka Obi\",\n      \"headline\": \"Social media manager and content planner\",\n      \"teachingArea\": {\n        \"_id\": \"6ac7308f1fd2123c590bb9d3\",\n        \"name\": \"Marketing\",\n        \"slug\": \"marketing\"\n      },\n      \"rating\": {\n        \"average\": 0,\n        \"count\": 0\n      },\n      \"courseCount\": 2\n    },\n    {\n      \"_id\": \"6ac7308f1fd2123c590bb9db\",\n      \"name\": \"Meera Pillai\",\n      \"headline\": \"Small business adviser and coach\",\n      \"teachingArea\": {\n        \"_id\": \"6ac7308f1fd2123c590bb9d1\",\n        \"name\": \"Business\",\n        \"slug\": \"business\"\n      },\n      \"rating\": {\n        \"average\": 0,\n        \"count\": 0\n      },\n      \"courseCount\": 2\n    },\n    {\n      \"_id\": \"6ac7308f1fd2123c590bb9da\",\n      \"name\": \"Tomás Ortega\",\n      \"headline\": \"Documentary photographer\",\n      \"teachingArea\": {\n        \"_id\": \"6ac7308f1fd2123c590bb9d4\",\n        \"name\": \"Photography\",\n        \"slug\": \"photography\"\n      },\n      \"rating\": {\n        \"average\": 0,\n        \"count\": 0\n      },\n      \"courseCount\": 2\n    }\n  ]\n}"
+            },
+            {
+              "name": "Bad limit (400)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/instructors?limit=abc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "instructors"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "abc"
+                    }
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Please fix the highlighted fields\",\n  \"data\": null,\n  \"errors\": [\n    {\n      \"field\": \"limit\",\n      \"message\": \"Page and limit must be positive numbers.\"\n    }\n  ]\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "Auth",
       "item": [
         {

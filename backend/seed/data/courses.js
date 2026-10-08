@@ -17,10 +17,19 @@ const YOUTUBE_URLS = [
   "https://www.youtube.com/watch?v=F8nPv7Alrw4",
 ];
 
+// Course photos from Unsplash and Pexels (credits in docs/CREDITS.md), cropped to 800x500 by each CDN.
+const unsplash = (id) => `https://images.unsplash.com/${id}?w=800&h=500&fit=crop&q=70&auto=format`;
+// The Pexels CDN has no quality setting. auto=compress is how it shrinks the file.
+const pexels = (id) =>
+  `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=800&h=500&fit=crop`;
+
 async function seedCourses({ users, categories }) {
   const instructors = {
     kwame: users.find((user) => user.email === "kwame@example.com"),
     ama: users.find((user) => user.email === "ama@example.com"),
+    chiamaka: users.find((user) => user.email === "chiamaka@example.com"),
+    tomas: users.find((user) => user.email === "tomas@example.com"),
+    meera: users.find((user) => user.email === "meera@example.com"),
   };
 
   const categoryMap = new Map(categories.map((category) => [category.name, category]));
@@ -42,6 +51,7 @@ async function seedCourses({ users, categories }) {
       category: categoryMap.get("Web development")._id,
       price: 0,
       level: "beginner",
+      thumbnailUrl: unsplash("photo-1675250719891-37d4747c9e3d"),
     },
     {
       title: "JavaScript Foundations for Beginners",
@@ -55,10 +65,11 @@ async function seedCourses({ users, categories }) {
         "Work with arrays and objects",
         "Understand basic DOM interaction",
       ],
-      instructor: instructors.ama._id,
+      instructor: instructors.kwame._id,
       category: categoryMap.get("Programming")._id,
       price: 120,
       level: "beginner",
+      thumbnailUrl: unsplash("photo-1534665482403-a909d0d97c67"),
     },
     {
       title: "Starting a Small Business",
@@ -72,10 +83,11 @@ async function seedCourses({ users, categories }) {
         "Create simple pricing",
         "Plan your first sales activities",
       ],
-      instructor: instructors.kwame._id,
+      instructor: instructors.meera._id,
       category: categoryMap.get("Business")._id,
       price: 85,
       level: "beginner",
+      thumbnailUrl: pexels(3933017),
     },
     {
       title: "Design Principles for Everyday Creatives",
@@ -93,6 +105,7 @@ async function seedCourses({ users, categories }) {
       category: categoryMap.get("Design")._id,
       price: 0,
       level: "beginner",
+      thumbnailUrl: pexels(9492918),
     },
     {
       title: "Social Media Marketing Basics",
@@ -106,10 +119,11 @@ async function seedCourses({ users, categories }) {
         "Understand basic metrics",
         "Build a simple content routine",
       ],
-      instructor: instructors.kwame._id,
+      instructor: instructors.chiamaka._id,
       category: categoryMap.get("Marketing")._id,
       price: 150,
       level: "intermediate",
+      thumbnailUrl: pexels(7243115),
     },
     {
       title: "Photography With Your Phone",
@@ -123,10 +137,11 @@ async function seedCourses({ users, categories }) {
         "Frame stronger photographs",
         "Edit photos simply",
       ],
-      instructor: instructors.ama._id,
+      instructor: instructors.tomas._id,
       category: categoryMap.get("Photography")._id,
       price: 60,
       level: "beginner",
+      thumbnailUrl: pexels(8117810),
     },
     {
       title: "Building Better Personal Habits",
@@ -140,10 +155,11 @@ async function seedCourses({ users, categories }) {
         "Reduce common distractions",
         "Review progress effectively",
       ],
-      instructor: instructors.kwame._id,
+      instructor: instructors.meera._id,
       category: categoryMap.get("Personal growth")._id,
       price: 0,
       level: "beginner",
+      thumbnailUrl: unsplash("photo-1517971129774-8a2b38fa128e"),
     },
     {
       title: "Responsive Websites With CSS",
@@ -157,10 +173,11 @@ async function seedCourses({ users, categories }) {
         "Use media queries",
         "Design for smaller screens",
       ],
-      instructor: instructors.ama._id,
+      instructor: instructors.kwame._id,
       category: categoryMap.get("Web development")._id,
       price: 200,
       level: "intermediate",
+      thumbnailUrl: unsplash("photo-1603969409447-ba86143a03f6"),
     },
     {
       title: "Programming Logic Made Simple",
@@ -178,6 +195,7 @@ async function seedCourses({ users, categories }) {
       category: categoryMap.get("Programming")._id,
       price: 75,
       level: "beginner",
+      thumbnailUrl: unsplash("photo-1581092575198-f8970a271aa0"),
     },
     {
       title: "Branding Basics for Small Businesses",
@@ -195,6 +213,7 @@ async function seedCourses({ users, categories }) {
       category: categoryMap.get("Business")._id,
       price: 175,
       level: "intermediate",
+      thumbnailUrl: pexels(8902305),
     },
     {
       title: "Content Planning for Beginners",
@@ -208,10 +227,11 @@ async function seedCourses({ users, categories }) {
         "Create repeatable workflows",
         "Measure basic content results",
       ],
-      instructor: instructors.kwame._id,
+      instructor: instructors.chiamaka._id,
       category: categoryMap.get("Marketing")._id,
       price: 95,
       level: "beginner",
+      thumbnailUrl: pexels(7550893),
     },
     {
       title: "Composition and Visual Storytelling",
@@ -225,10 +245,11 @@ async function seedCourses({ users, categories }) {
         "Experiment with perspective",
         "Select images intentionally",
       ],
-      instructor: instructors.ama._id,
+      instructor: instructors.tomas._id,
       category: categoryMap.get("Photography")._id,
       price: 190,
       level: "advanced",
+      thumbnailUrl: pexels(33919783),
     },
     {
       title: "A Practical Reset for Busy People",
@@ -242,10 +263,11 @@ async function seedCourses({ users, categories }) {
         "Create manageable routines",
         "Plan your next steps",
       ],
-      instructor: instructors.ama._id,
+      instructor: instructors.meera._id,
       category: categoryMap.get("Personal growth")._id,
       price: 0,
       level: "intermediate",
+      thumbnailUrl: pexels(9903254),
       status: "draft",
     },
   ];
@@ -256,7 +278,6 @@ async function seedCourses({ users, categories }) {
     const course = await Course.create({
       ...courseInfo,
       status: courseInfo.status || "published",
-      thumbnailUrl: "",
       lessonCount: 0,
       totalMinutes: 0,
       studentCount: 0,

@@ -28,6 +28,8 @@ function WhatPeopleSay() {
 
   if (!result.loading && result.reviews.length === 0) return null
 
+  const [featured, ...others] = result.reviews
+
   return (
     <section
       aria-labelledby="what-people-say-heading"
@@ -35,49 +37,80 @@ function WhatPeopleSay() {
     >
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-sm font-semibold tracking-wide text-brand-dark uppercase">Reviews</p>
+          <p className="text-xs font-semibold tracking-[0.12em] text-brand uppercase">Reviews</p>
           <h2
-            className="mt-2 font-display text-2xl font-extrabold text-ink sm:text-3xl"
+            className="mt-2 font-serif text-display font-medium text-ink"
             id="what-people-say-heading"
           >
             What people say
           </h2>
         </div>
         <Link
-          className="font-semibold text-brand-dark hover:text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+          className="font-semibold text-brand-dark underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
           to="/reviews"
         >
           Read all reviews
         </Link>
       </div>
 
-      <ul className="mt-6 grid gap-5 md:grid-cols-3">
-        {result.loading
-          ? Array.from({ length: REVIEW_LIMIT }, (_, index) => (
-              <li aria-hidden="true" className="skeleton-shimmer h-48 rounded-xl" key={index} />
-            ))
-          : result.reviews.map((review) => (
-              <li className="rounded-xl border border-line bg-card p-5" key={review._id}>
-                <figure className="flex h-full flex-col">
-                  <StarRating value={review.rating} />
-                  {/* Long reviews are cut short here; the Reviews page shows them in full. */}
-                  <blockquote className="mt-3 flex-1 leading-7 text-ink">
-                    <p className="line-clamp-5">{review.comment}</p>
-                  </blockquote>
-                  <figcaption className="mt-4 text-sm">
-                    <span className="font-semibold text-ink">
-                      {review.user?.name ?? 'Adesua member'}
-                    </span>
-                    <span className="text-muted">
-                      {' '}
-                      · {review.user?.role === 'instructor' ? 'Instructor' : 'Learner'}
-                    </span>
-                  </figcaption>
-                </figure>
-              </li>
-            ))}
-      </ul>
+      {result.loading ? (
+        <div aria-hidden="true" className="mt-10 grid gap-4">
+          <div className="skeleton-shimmer h-8 w-11/12 rounded" />
+          <div className="skeleton-shimmer h-8 w-4/5 rounded" />
+          <div className="skeleton-shimmer h-8 w-2/3 rounded" />
+          <div className="skeleton-shimmer mt-2 h-4 w-48 rounded" />
+        </div>
+      ) : (
+        <>
+          {/* The newest review as a large quote, the next ones smaller underneath. */}
+          <figure className="mt-10 max-w-4xl">
+            <blockquote className="font-serif text-quote text-ink">
+              <p className="line-clamp-6">
+                <span aria-hidden="true" className="text-brand">
+                  “
+                </span>
+                {featured.comment}
+                <span aria-hidden="true" className="text-brand">
+                  ”
+                </span>
+              </p>
+            </blockquote>
+            <Byline review={featured} />
+          </figure>
+
+          {others.length > 0 && (
+            <ul className="mt-12 grid gap-10 border-t border-line pt-8 md:grid-cols-2">
+              {others.map((review) => (
+                <li key={review._id}>
+                  <figure>
+                    {/* Long reviews are cut short here; the Reviews page shows them in full. */}
+                    <blockquote className="font-serif text-xl leading-snug text-ink">
+                      <p className="line-clamp-4">{review.comment}</p>
+                    </blockquote>
+                    <Byline review={review} />
+                  </figure>
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
+      )}
     </section>
+  )
+}
+
+function Byline({ review }) {
+  return (
+    <figcaption className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+      <span>
+        <span className="font-semibold text-ink">{review.user?.name ?? 'Adesua member'}</span>
+        <span className="text-muted">
+          {' '}
+          · {review.user?.role === 'instructor' ? 'Instructor' : 'Learner'}
+        </span>
+      </span>
+      <StarRating value={review.rating} />
+    </figcaption>
   )
 }
 

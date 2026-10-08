@@ -130,7 +130,7 @@ function CoursesPage() {
     content = (
       <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
         {Array.from({ length: 6 }, (_, index) => (
-          <SkeletonCard key={index} />
+          <SkeletonCard framed={false} key={index} />
         ))}
       </div>
     )
@@ -187,10 +187,8 @@ function CoursesPage() {
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <header>
-        <p className="text-sm font-semibold uppercase tracking-wide text-brand">Learn</p>
-        <h1 className="mt-2 font-display text-3xl font-extrabold text-ink sm:text-4xl">
-          Browse courses
-        </h1>
+        <p className="text-xs font-semibold tracking-[0.12em] text-brand uppercase">Learn</p>
+        <h1 className="mt-2 font-serif text-display font-medium text-ink">Browse courses</h1>
         <p className="mt-2 max-w-2xl text-muted">
           Find practical courses to build useful skills at your own pace.
         </p>
