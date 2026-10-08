@@ -10,7 +10,16 @@ const categoryStyles = {
   'personal-growth': { background: '#9A5E16', accent: '#FCE3B0', pattern: 'crosshatch' },
 }
 
-function CourseCover({ title = '', category, thumbnailUrl, className = '' }) {
+// Photos load lazily. A cover at the top of a page passes loading="eager" and
+// fetchPriority="high", so it starts loading straight away.
+function CourseCover({
+  title = '',
+  category,
+  thumbnailUrl,
+  className = '',
+  loading = 'lazy',
+  fetchPriority,
+}) {
   // The photo that failed to load, so a broken link shows the pattern and a new link is tried again.
   const [failedUrl, setFailedUrl] = useState('')
 
@@ -22,8 +31,9 @@ function CourseCover({ title = '', category, thumbnailUrl, className = '' }) {
         alt=""
         className={`aspect-[16/10] w-full rounded-xl object-cover ${className}`}
         decoding="async"
+        fetchPriority={fetchPriority}
         height={500}
-        loading="lazy"
+        loading={loading}
         onError={() => setFailedUrl(thumbnailUrl)}
         src={thumbnailUrl}
         width={800}
