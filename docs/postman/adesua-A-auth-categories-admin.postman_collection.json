@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "005db817-eb82-402e-b65a-2589df42e6ca",
     "name": "Adesua - Member A (health, auth, categories, admin)",
-    "description": "Requests for every endpoint Member A owns, matching docs/API_CONTRACT.md. Each request has saved example responses (success and errors) under it.\n\n**Environments**\nThere are two environment files in docs/postman/:\n- **Adesua local** (`adesua-local.postman_environment.json`): the backend on your computer.\n- **Adesua production** (`adesua-production.postman_environment.json`): the live API on Render (see docs/DEPLOYMENT.md). The first request after a quiet period can take up to a minute. Requests that create, rename, delete or deactivate change the live data.\n\n**How to use**\n1. Import this file and the environment you need, then choose that environment (top right).\n2. For **Adesua local**, start the backend: in `backend/`, run `npm run dev` (and `npm run seed -- --yes` once, to add the test accounts).\n3. Run **Auth > Log in** first. It saves the token as `{{token}}`, and the other requests send it automatically.\n4. Run **Create a category** before Rename and Delete, and **List users** before Deactivate or reactivate a user. They save the IDs those requests need.\n\nMembers B and C keep their own collection files in docs/postman/, so nobody edits the same file.",
+    "description": "Requests for every endpoint Member A owns, matching docs/API_CONTRACT.md. Each request has saved example responses (success and errors) under it.\n\n**Environments**\nThere are two environment files in docs/postman/:\n- **Adesua local** (`adesua-local.postman_environment.json`): the backend on your computer.\n- **Adesua production** (`adesua-production.postman_environment.json`): the live API on Render (see docs/DEPLOYMENT.md). The first request after a quiet period can take up to a minute. Requests that create, rename, delete, hide or deactivate change the live data.\n\n**How to use**\n1. Import this file and the environment you need, then choose that environment (top right).\n2. For **Adesua local**, start the backend: in `backend/`, run `npm run dev` (and `npm run seed -- --yes` once, to add the test accounts).\n3. Run **Auth > Log in** first. It saves the token as `{{token}}`, and the other requests send it automatically.\n4. Run **Create a category** before Rename and Delete, and **List users** before Deactivate or reactivate a user. They save the IDs those requests need.\n5. For **Reviews**, set the collection variable `{{courseId}}` to a published course's `_id` (from GET /api/courses), and log in as the student, instructor or admin each request needs. Run **List reviews (admin)** before Hide or show a review.\n\nMembers B and C keep their own collection files in docs/postman/, so nobody edits the same file.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {
@@ -23,6 +23,16 @@
     },
     {
       "key": "userId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "courseId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "reviewId",
       "value": "",
       "type": "string"
     }
@@ -167,6 +177,113 @@
               ],
               "cookie": [],
               "body": "{\n  \"success\": true,\n  \"message\": \"Stats fetched successfully\",\n  \"data\": {\n    \"courses\": 12,\n    \"instructors\": 2,\n    \"learners\": 3,\n    \"categories\": 7\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Instructors",
+      "item": [
+        {
+          "name": "Public instructors",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/instructors?limit=6",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "instructors"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "6",
+                  "description": "Optional. How many instructors to return (default 4, max 50)."
+                }
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Purpose: List active instructors with at least one published course, for the Home page.\n\nAccess: Public.\n\nBody: none.\n\nParameters: limit (optional, default 4, max 50). There are no pages.\n\nEach item has the name, headline, teaching area, instructor rating (from visible reviews of their published courses) and the number of published courses. The most reviewed come first, then the best rated, then those with the most courses, then by name."
+          },
+          "response": [
+            {
+              "name": "Instructors (200)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/instructors?limit=6",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "instructors"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "6",
+                      "description": "Optional. How many instructors to return (default 4, max 50)."
+                    }
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Instructors fetched successfully\",\n  \"data\": [\n    {\n      \"_id\": \"6ac7308f1fd2123c590bb9d7\",\n      \"name\": \"Kwame Asante\",\n      \"headline\": \"Full-stack developer and teacher\",\n      \"teachingArea\": {\n        \"_id\": \"6ac7308f1fd2123c590bb9cf\",\n        \"name\": \"Web development\",\n        \"slug\": \"web-development\"\n      },\n      \"rating\": {\n        \"average\": 4.7,\n        \"count\": 3\n      },\n      \"courseCount\": 4\n    },\n    {\n      \"_id\": \"6ac7308f1fd2123c590bb9d8\",\n      \"name\": \"Ama Owusu\",\n      \"headline\": \"Product designer and marketer\",\n      \"teachingArea\": {\n        \"_id\": \"6ac7308f1fd2123c590bb9d2\",\n        \"name\": \"Design\",\n        \"slug\": \"design\"\n      },\n      \"rating\": {\n        \"average\": 4,\n        \"count\": 1\n      },\n      \"courseCount\": 2\n    },\n    {\n      \"_id\": \"6ac7308f1fd2123c590bb9d9\",\n      \"name\": \"Chiamaka Obi\",\n      \"headline\": \"Social media manager and content planner\",\n      \"teachingArea\": {\n        \"_id\": \"6ac7308f1fd2123c590bb9d3\",\n        \"name\": \"Marketing\",\n        \"slug\": \"marketing\"\n      },\n      \"rating\": {\n        \"average\": 0,\n        \"count\": 0\n      },\n      \"courseCount\": 2\n    },\n    {\n      \"_id\": \"6ac7308f1fd2123c590bb9db\",\n      \"name\": \"Meera Pillai\",\n      \"headline\": \"Small business adviser and coach\",\n      \"teachingArea\": {\n        \"_id\": \"6ac7308f1fd2123c590bb9d1\",\n        \"name\": \"Business\",\n        \"slug\": \"business\"\n      },\n      \"rating\": {\n        \"average\": 0,\n        \"count\": 0\n      },\n      \"courseCount\": 2\n    },\n    {\n      \"_id\": \"6ac7308f1fd2123c590bb9da\",\n      \"name\": \"Tomás Ortega\",\n      \"headline\": \"Documentary photographer\",\n      \"teachingArea\": {\n        \"_id\": \"6ac7308f1fd2123c590bb9d4\",\n        \"name\": \"Photography\",\n        \"slug\": \"photography\"\n      },\n      \"rating\": {\n        \"average\": 0,\n        \"count\": 0\n      },\n      \"courseCount\": 2\n    }\n  ]\n}"
+            },
+            {
+              "name": "Bad limit (400)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/instructors?limit=abc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "instructors"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "abc"
+                    }
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Please fix the highlighted fields\",\n  \"data\": null,\n  \"errors\": [\n    {\n      \"field\": \"limit\",\n      \"message\": \"Page and limit must be positive numbers.\"\n    }\n  ]\n}"
             }
           ]
         }
@@ -2017,6 +2134,1456 @@
               ],
               "cookie": [],
               "body": "{\n  \"success\": false,\n  \"message\": \"Please fix the highlighted fields\",\n  \"data\": null,\n  \"errors\": [\n    {\n      \"field\": \"status\",\n      \"message\": \"Status must be draft or published.\"\n    }\n  ]\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "item": [
+        {
+          "name": "List course reviews",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/courses/{{courseId}}/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses",
+                "{{courseId}}",
+                "reviews"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Default 1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Default 10, max 50",
+                  "disabled": true
+                }
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Purpose: List a published course's visible reviews, newest first, with a summary: the average, the count, and how many reviews gave each number of stars.\n\nAccess: Public.\n\nBody: none.\n\nParameters:\n- `:id` in the path: a published course's `_id`. Uses `{{courseId}}`. Set it to a course `_id` from GET /api/courses.\n- `page` (query): default 1\n- `limit` (query): default 10, max 50\n\nTick a parameter in the Params tab to use it."
+          },
+          "response": [
+            {
+              "name": "Reviews (200)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/courses/{{courseId}}/reviews",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "{{courseId}}",
+                    "reviews"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": "Default 1",
+                      "disabled": true
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10",
+                      "description": "Default 10, max 50",
+                      "disabled": true
+                    }
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Reviews fetched successfully\",\n  \"data\": {\n    \"items\": [\n      {\n        \"_id\": \"6ac640db248410b455f6ab8a\",\n        \"user\": {\n          \"_id\": \"6ac640d0248410b455f6ab1e\",\n          \"name\": \"Esi Nyarko\"\n        },\n        \"courseRating\": 3,\n        \"instructorRating\": 4,\n        \"comment\": \"A solid start, but the second half moves fast. I had to rewatch the lessons on arrays twice before the exercises worked.\",\n        \"createdAt\": \"2026-10-07T12:53:47.526Z\",\n        \"updatedAt\": \"2026-10-07T12:53:47.526Z\"\n      },\n      {\n        \"_id\": \"6ac640db248410b455f6ab88\",\n        \"user\": {\n          \"_id\": \"6ac640d0248410b455f6ab1c\",\n          \"name\": \"Akosua Mensah\"\n        },\n        \"courseRating\": 4,\n        \"instructorRating\": 5,\n        \"comment\": \"The lessons on functions finally made things click for me. I'm halfway through and would like a few more practice exercises between lessons.\",\n        \"createdAt\": \"2026-10-07T12:53:47.357Z\",\n        \"updatedAt\": \"2026-10-07T12:53:47.357Z\"\n      }\n    ],\n    \"pagination\": {\n      \"page\": 1,\n      \"limit\": 10,\n      \"total\": 2,\n      \"totalPages\": 1\n    },\n    \"summary\": {\n      \"average\": 3.5,\n      \"count\": 2,\n      \"breakdown\": {\n        \"1\": 0,\n        \"2\": 0,\n        \"3\": 1,\n        \"4\": 1,\n        \"5\": 0\n      }\n    }\n  }\n}"
+            },
+            {
+              "name": "Draft or unknown course (404)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/courses/{{courseId}}/reviews",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "{{courseId}}",
+                    "reviews"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": "Default 1",
+                      "disabled": true
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10",
+                      "description": "Default 10, max 50",
+                      "disabled": true
+                    }
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Course not found\",\n  \"data\": null\n}"
+            },
+            {
+              "name": "Invalid ID (400)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/courses/abc/reviews",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "abc",
+                    "reviews"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": "Default 1",
+                      "disabled": true
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10",
+                      "description": "Default 10, max 50",
+                      "disabled": true
+                    }
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Invalid ID\",\n  \"data\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "My course review",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/courses/{{courseId}}/reviews/mine",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses",
+                "{{courseId}}",
+                "reviews",
+                "mine"
+              ]
+            },
+            "description": "Purpose: Get my review of a course, or `null` if I haven't reviewed it. It includes `isHidden`, so I can see when an admin has hidden it.\n\nAccess: Student (log in as akosua@example.com, for example).\n\nBody: none.\n\nParameters:\n- `:id` in the path: the course's `_id`. Uses `{{courseId}}`."
+          },
+          "response": [
+            {
+              "name": "My review (200)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/courses/{{courseId}}/reviews/mine",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "{{courseId}}",
+                    "reviews",
+                    "mine"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Review fetched successfully\",\n  \"data\": {\n    \"_id\": \"6ac640db248410b455f6ab88\",\n    \"user\": \"6ac640d0248410b455f6ab1c\",\n    \"course\": \"6ac640d1248410b455f6ab25\",\n    \"courseRating\": 4,\n    \"instructorRating\": 5,\n    \"comment\": \"The lessons on functions finally made things click for me. I'm halfway through and would like a few more practice exercises between lessons.\",\n    \"isHidden\": false,\n    \"createdAt\": \"2026-10-07T12:53:47.357Z\",\n    \"updatedAt\": \"2026-10-07T12:53:47.357Z\"\n  }\n}"
+            },
+            {
+              "name": "No review yet (200)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/courses/{{courseId}}/reviews/mine",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "{{courseId}}",
+                    "reviews",
+                    "mine"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Review fetched successfully\",\n  \"data\": null\n}"
+            },
+            {
+              "name": "Not a student (403)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/courses/{{courseId}}/reviews/mine",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "{{courseId}}",
+                    "reviews",
+                    "mine"
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"You don't have permission to do that\",\n  \"data\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "Save my course review",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Save the review's ID so \"Hide or show a review\" can use {{reviewId}}.",
+                  "const body = pm.response.json();",
+                  "if (body.success && body.data) {",
+                  "  pm.collectionVariables.set(\"reviewId\", body.data._id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/courses/{{courseId}}/reviews/mine",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses",
+                "{{courseId}}",
+                "reviews",
+                "mine"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"courseRating\": 5,\n  \"instructorRating\": 5,\n  \"comment\": \"Finished the course now. The last lessons on objects pulled everything together, and the practice project was worth it.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Purpose: Create my review of a course, or update it if I already have one. The course's rating is recalculated straight away.\n\nAccess: A student who is enrolled in the course. Other students get 403 \"Enroll in this course to review it.\"\n\nBody (JSON):\n- `courseRating` (required): a whole number from 1 to 5\n- `instructorRating` (required): a whole number from 1 to 5\n- `comment` (required): 10 to 1000 characters\n\nParameters:\n- `:id` in the path: the course's `_id`. Uses `{{courseId}}`.\n\nReturns 201 when the review is created and 200 when it's updated. Editing a review that an admin hid keeps it hidden.\n\nThis request saves the review's `_id` as `{{reviewId}}`."
+          },
+          "response": [
+            {
+              "name": "Review created (201)",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/courses/{{courseId}}/reviews/mine",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "{{courseId}}",
+                    "reviews",
+                    "mine"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"courseRating\": 4,\n  \"instructorRating\": 5,\n  \"comment\": \"The first lesson on planning costs was clear and practical. I'm looking forward to the rest.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Review created successfully\",\n  \"data\": {\n    \"user\": \"6ac640d0248410b455f6ab1d\",\n    \"course\": \"6ac640d2248410b455f6ab2c\",\n    \"courseRating\": 4,\n    \"instructorRating\": 5,\n    \"comment\": \"The first lesson on planning costs was clear and practical. I'm looking forward to the rest.\",\n    \"isHidden\": false,\n    \"_id\": \"6ac641e059cf38488013f707\",\n    \"createdAt\": \"2026-10-07T12:58:08.177Z\",\n    \"updatedAt\": \"2026-10-07T12:58:08.177Z\"\n  }\n}"
+            },
+            {
+              "name": "Review updated (200)",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/courses/{{courseId}}/reviews/mine",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "{{courseId}}",
+                    "reviews",
+                    "mine"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"courseRating\": 5,\n  \"instructorRating\": 5,\n  \"comment\": \"Finished the course now. The last lessons on objects pulled everything together, and the practice project was worth it.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Review updated successfully\",\n  \"data\": {\n    \"user\": \"6ac640d0248410b455f6ab1c\",\n    \"course\": \"6ac640d1248410b455f6ab25\",\n    \"courseRating\": 5,\n    \"instructorRating\": 5,\n    \"comment\": \"Finished the course now. The last lessons on objects pulled everything together, and the practice project was worth it.\",\n    \"isHidden\": false,\n    \"_id\": \"6ac640db248410b455f6ab88\",\n    \"createdAt\": \"2026-10-07T12:53:47.357Z\",\n    \"updatedAt\": \"2026-10-07T12:58:08.741Z\"\n  }\n}"
+            },
+            {
+              "name": "Invalid fields (400)",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/courses/{{courseId}}/reviews/mine",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "{{courseId}}",
+                    "reviews",
+                    "mine"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"courseRating\": 6,\n  \"instructorRating\": 5,\n  \"comment\": \"Too short\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Please fix the highlighted fields\",\n  \"data\": null,\n  \"errors\": [\n    {\n      \"field\": \"courseRating\",\n      \"message\": \"Choose a rating from 1 to 5.\"\n    },\n    {\n      \"field\": \"comment\",\n      \"message\": \"Write between 10 and 1000 characters.\"\n    }\n  ]\n}"
+            },
+            {
+              "name": "Not enrolled (403)",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/courses/{{courseId}}/reviews/mine",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "{{courseId}}",
+                    "reviews",
+                    "mine"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"courseRating\": 4,\n  \"instructorRating\": 5,\n  \"comment\": \"The first lesson on planning costs was clear and practical. I'm looking forward to the rest.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Enroll in this course to review it.\",\n  \"data\": null\n}"
+            },
+            {
+              "name": "Not logged in (401)",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/courses/{{courseId}}/reviews/mine",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "{{courseId}}",
+                    "reviews",
+                    "mine"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"courseRating\": 5,\n  \"instructorRating\": 5,\n  \"comment\": \"Finished the course now. The last lessons on objects pulled everything together, and the practice project was worth it.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Please log in to continue\",\n  \"data\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete my course review",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/courses/{{courseId}}/reviews/mine",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses",
+                "{{courseId}}",
+                "reviews",
+                "mine"
+              ]
+            },
+            "description": "Purpose: Delete my review of a course. The course's rating is recalculated straight away.\n\nAccess: Student.\n\nBody: none.\n\nParameters:\n- `:id` in the path: the course's `_id`. Uses `{{courseId}}`."
+          },
+          "response": [
+            {
+              "name": "Review deleted (200)",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/courses/{{courseId}}/reviews/mine",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "{{courseId}}",
+                    "reviews",
+                    "mine"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Review deleted successfully\",\n  \"data\": null\n}"
+            },
+            {
+              "name": "No review to delete (404)",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/courses/{{courseId}}/reviews/mine",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "courses",
+                    "{{courseId}}",
+                    "reviews",
+                    "mine"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Review not found\",\n  \"data\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "List platform reviews",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reviews"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Default 1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Default 10, max 50",
+                  "disabled": true
+                }
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Purpose: List the visible reviews of Adesua itself, newest first, with the same summary as course reviews. Each reviewer's `role` shows whether a learner or an instructor wrote it.\n\nAccess: Public.\n\nBody: none.\n\nParameters (query):\n- `page`: default 1\n- `limit`: default 10, max 50\n\nTick a parameter in the Params tab to use it."
+          },
+          "response": [
+            {
+              "name": "Reviews (200)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/reviews",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reviews"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": "Default 1",
+                      "disabled": true
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10",
+                      "description": "Default 10, max 50",
+                      "disabled": true
+                    }
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Reviews fetched successfully\",\n  \"data\": {\n    \"items\": [\n      {\n        \"_id\": \"6ac640db248410b455f6ab8d\",\n        \"user\": {\n          \"_id\": \"6ac640d0248410b455f6ab1a\",\n          \"name\": \"Kwame Asante\",\n          \"role\": \"instructor\"\n        },\n        \"rating\": 5,\n        \"comment\": \"Publishing a course was straightforward. I add lessons as I record them, and I can see how many students joined each one.\",\n        \"createdAt\": \"2026-10-07T12:53:47.791Z\",\n        \"updatedAt\": \"2026-10-07T12:53:47.791Z\"\n      },\n      {\n        \"_id\": \"6ac640db248410b455f6ab8c\",\n        \"user\": {\n          \"_id\": \"6ac640d0248410b455f6ab1e\",\n          \"name\": \"Esi Nyarko\",\n          \"role\": \"student\"\n        },\n        \"rating\": 4,\n        \"comment\": \"The lessons are short enough to finish on a lunch break. I'd love to see more advanced programming courses.\",\n        \"createdAt\": \"2026-10-07T12:53:47.684Z\",\n        \"updatedAt\": \"2026-10-07T12:53:47.684Z\"\n      },\n      {\n        \"_id\": \"6ac640db248410b455f6ab8b\",\n        \"user\": {\n          \"_id\": \"6ac640d0248410b455f6ab1c\",\n          \"name\": \"Akosua Mensah\",\n          \"role\": \"student\"\n        },\n        \"rating\": 5,\n        \"comment\": \"I signed up, found a course and started the first lesson in a few minutes. Picking up where I stopped on my phone works really well.\",\n        \"createdAt\": \"2026-10-07T12:53:47.605Z\",\n        \"updatedAt\": \"2026-10-07T12:53:47.605Z\"\n      }\n    ],\n    \"pagination\": {\n      \"page\": 1,\n      \"limit\": 10,\n      \"total\": 3,\n      \"totalPages\": 1\n    },\n    \"summary\": {\n      \"average\": 4.7,\n      \"count\": 3,\n      \"breakdown\": {\n        \"1\": 0,\n        \"2\": 0,\n        \"3\": 0,\n        \"4\": 1,\n        \"5\": 2\n      }\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "My platform review",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reviews/mine",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reviews",
+                "mine"
+              ]
+            },
+            "description": "Purpose: Get my review of Adesua, or `null` if I haven't written one. It includes `isHidden`.\n\nAccess: Student or instructor. Admins get 403, because they moderate reviews.\n\nBody: none.\n\nParameters: none."
+          },
+          "response": [
+            {
+              "name": "My review (200)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/reviews/mine",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reviews",
+                    "mine"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Review fetched successfully\",\n  \"data\": {\n    \"_id\": \"6ac640db248410b455f6ab8b\",\n    \"user\": \"6ac640d0248410b455f6ab1c\",\n    \"rating\": 5,\n    \"comment\": \"I signed up, found a course and started the first lesson in a few minutes. Picking up where I stopped on my phone works really well.\",\n    \"isHidden\": false,\n    \"createdAt\": \"2026-10-07T12:53:47.605Z\",\n    \"updatedAt\": \"2026-10-07T12:53:47.605Z\"\n  }\n}"
+            },
+            {
+              "name": "Admins can't review (403)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/reviews/mine",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reviews",
+                    "mine"
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"You don't have permission to do that\",\n  \"data\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "Save my platform review",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/reviews/mine",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reviews",
+                "mine"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5,\n  \"comment\": \"Still the first place I look when I want to learn something new. The lessons stay short and practical.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Purpose: Create my review of Adesua, or update it if I already have one.\n\nAccess: Student or instructor. Admins get 403.\n\nBody (JSON):\n- `rating` (required): a whole number from 1 to 5\n- `comment` (required): 10 to 1000 characters\n\nParameters: none.\n\nReturns 201 when the review is created and 200 when it's updated. Editing a review that an admin hid keeps it hidden."
+          },
+          "response": [
+            {
+              "name": "Review created (201)",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/reviews/mine",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reviews",
+                    "mine"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"rating\": 4,\n  \"comment\": \"Finding courses for my shop was easy, and the lessons work well on my phone.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Review created successfully\",\n  \"data\": {\n    \"user\": \"6ac640d0248410b455f6ab1d\",\n    \"rating\": 4,\n    \"comment\": \"Finding courses for my shop was easy, and the lessons work well on my phone.\",\n    \"isHidden\": false,\n    \"_id\": \"6ac641e259cf38488013f708\",\n    \"createdAt\": \"2026-10-07T12:58:10.895Z\",\n    \"updatedAt\": \"2026-10-07T12:58:10.895Z\"\n  }\n}"
+            },
+            {
+              "name": "Review updated (200)",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/reviews/mine",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reviews",
+                    "mine"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"rating\": 5,\n  \"comment\": \"Still the first place I look when I want to learn something new. The lessons stay short and practical.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Review updated successfully\",\n  \"data\": {\n    \"user\": \"6ac640d0248410b455f6ab1c\",\n    \"rating\": 5,\n    \"comment\": \"Still the first place I look when I want to learn something new. The lessons stay short and practical.\",\n    \"isHidden\": false,\n    \"_id\": \"6ac640db248410b455f6ab8b\",\n    \"createdAt\": \"2026-10-07T12:53:47.605Z\",\n    \"updatedAt\": \"2026-10-07T12:58:11.131Z\"\n  }\n}"
+            },
+            {
+              "name": "Invalid fields (400)",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/reviews/mine",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reviews",
+                    "mine"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"rating\": 0,\n  \"comment\": \"\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Please fix the highlighted fields\",\n  \"data\": null,\n  \"errors\": [\n    {\n      \"field\": \"rating\",\n      \"message\": \"Choose a rating from 1 to 5.\"\n    },\n    {\n      \"field\": \"comment\",\n      \"message\": \"Write between 10 and 1000 characters.\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete my platform review",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reviews/mine",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reviews",
+                "mine"
+              ]
+            },
+            "description": "Purpose: Delete my review of Adesua.\n\nAccess: Student or instructor.\n\nBody: none.\n\nParameters: none."
+          },
+          "response": [
+            {
+              "name": "Review deleted (200)",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/reviews/mine",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reviews",
+                    "mine"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Review deleted successfully\",\n  \"data\": null\n}"
+            },
+            {
+              "name": "No review to delete (404)",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/reviews/mine",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reviews",
+                    "mine"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Review not found\",\n  \"data\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "List reviews (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Save the first review's ID so \"Hide or show a review\" can use {{reviewId}}.",
+                  "const body = pm.response.json();",
+                  "if (body.success && body.data.items.length > 0) {",
+                  "  pm.collectionVariables.set(\"reviewId\", body.data.items[0]._id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/reviews?type=course",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "reviews"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "course",
+                  "description": "course (the default) or site"
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Default 1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Default 10, max 50",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Purpose: List course or platform reviews for moderation, newest first. Hidden reviews are included. Each review has the reviewer's name and email, and course reviews also have the course's title.\n\nAccess: Admin.\n\nBody: none.\n\nParameters (query):\n- `type`: `course` (the default) or `site`\n- `page`: default 1\n- `limit`: default 10, max 50\n\nThis request saves the first review's `_id` as `{{reviewId}}`, which Hide or show a review uses."
+          },
+          "response": [
+            {
+              "name": "Course reviews (200)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/admin/reviews?type=course",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "reviews"
+                  ],
+                  "query": [
+                    {
+                      "key": "type",
+                      "value": "course",
+                      "description": "course (the default) or site"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": "Default 1",
+                      "disabled": true
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10",
+                      "description": "Default 10, max 50",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Reviews fetched successfully\",\n  \"data\": {\n    \"items\": [\n      {\n        \"_id\": \"6ac640db248410b455f6ab8a\",\n        \"user\": {\n          \"_id\": \"6ac640d0248410b455f6ab1e\",\n          \"name\": \"Esi Nyarko\",\n          \"email\": \"esi@example.com\"\n        },\n        \"course\": {\n          \"_id\": \"6ac640d1248410b455f6ab25\",\n          \"title\": \"JavaScript Foundations for Beginners\"\n        },\n        \"courseRating\": 3,\n        \"instructorRating\": 4,\n        \"comment\": \"A solid start, but the second half moves fast. I had to rewatch the lessons on arrays twice before the exercises worked.\",\n        \"isHidden\": false,\n        \"createdAt\": \"2026-10-07T12:53:47.526Z\",\n        \"updatedAt\": \"2026-10-07T12:53:47.526Z\"\n      },\n      {\n        \"_id\": \"6ac640db248410b455f6ab89\",\n        \"user\": {\n          \"_id\": \"6ac640d0248410b455f6ab1d\",\n          \"name\": \"Kojo Ansah\",\n          \"email\": \"kojo@example.com\"\n        },\n        \"course\": {\n          \"_id\": \"6ac640d2248410b455f6ab34\",\n          \"title\": \"Design Principles for Everyday Creatives\"\n        },\n        \"courseRating\": 4,\n        \"instructorRating\": 4,\n        \"comment\": \"Short, clear lessons. The part on spacing and contrast already changed how I lay out the flyers for my shop.\",\n        \"isHidden\": false,\n        \"createdAt\": \"2026-10-07T12:53:47.436Z\",\n        \"updatedAt\": \"2026-10-07T12:53:47.436Z\"\n      },\n      {\n        \"_id\": \"6ac640db248410b455f6ab88\",\n        \"user\": {\n          \"_id\": \"6ac640d0248410b455f6ab1c\",\n          \"name\": \"Akosua Mensah\",\n          \"email\": \"akosua@example.com\"\n        },\n        \"course\": {\n          \"_id\": \"6ac640d1248410b455f6ab25\",\n          \"title\": \"JavaScript Foundations for Beginners\"\n        },\n        \"courseRating\": 5,\n        \"instructorRating\": 5,\n        \"comment\": \"Finished the course now. The last lessons on objects pulled everything together, and the practice project was worth it.\",\n        \"isHidden\": false,\n        \"createdAt\": \"2026-10-07T12:53:47.357Z\",\n        \"updatedAt\": \"2026-10-07T12:58:08.741Z\"\n      },\n      {\n        \"_id\": \"6ac640db248410b455f6ab87\",\n        \"user\": {\n          \"_id\": \"6ac640d0248410b455f6ab1c\",\n          \"name\": \"Akosua Mensah\",\n          \"email\": \"akosua@example.com\"\n        },\n        \"course\": {\n          \"_id\": \"6ac640d1248410b455f6ab1f\",\n          \"title\": \"Build Your First Web Page\"\n        },\n        \"courseRating\": 5,\n        \"instructorRating\": 5,\n        \"comment\": \"I had never written HTML before this course. By the last lesson I had a simple page for my side business online, and every step made sense.\",\n        \"isHidden\": false,\n        \"createdAt\": \"2026-10-07T12:53:47.279Z\",\n        \"updatedAt\": \"2026-10-07T12:53:47.279Z\"\n      }\n    ],\n    \"pagination\": {\n      \"page\": 1,\n      \"limit\": 10,\n      \"total\": 4,\n      \"totalPages\": 1\n    }\n  }\n}"
+            },
+            {
+              "name": "Platform reviews (200)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/admin/reviews?type=site",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "reviews"
+                  ],
+                  "query": [
+                    {
+                      "key": "type",
+                      "value": "site",
+                      "description": "course (the default) or site"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": "Default 1",
+                      "disabled": true
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10",
+                      "description": "Default 10, max 50",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Reviews fetched successfully\",\n  \"data\": {\n    \"items\": [\n      {\n        \"_id\": \"6ac640db248410b455f6ab8d\",\n        \"user\": {\n          \"_id\": \"6ac640d0248410b455f6ab1a\",\n          \"name\": \"Kwame Asante\",\n          \"email\": \"kwame@example.com\"\n        },\n        \"rating\": 5,\n        \"comment\": \"Publishing a course was straightforward. I add lessons as I record them, and I can see how many students joined each one.\",\n        \"isHidden\": false,\n        \"createdAt\": \"2026-10-07T12:53:47.791Z\",\n        \"updatedAt\": \"2026-10-07T12:53:47.791Z\"\n      },\n      {\n        \"_id\": \"6ac640db248410b455f6ab8c\",\n        \"user\": {\n          \"_id\": \"6ac640d0248410b455f6ab1e\",\n          \"name\": \"Esi Nyarko\",\n          \"email\": \"esi@example.com\"\n        },\n        \"rating\": 4,\n        \"comment\": \"The lessons are short enough to finish on a lunch break. I'd love to see more advanced programming courses.\",\n        \"isHidden\": false,\n        \"createdAt\": \"2026-10-07T12:53:47.684Z\",\n        \"updatedAt\": \"2026-10-07T12:53:47.684Z\"\n      },\n      {\n        \"_id\": \"6ac640db248410b455f6ab8b\",\n        \"user\": {\n          \"_id\": \"6ac640d0248410b455f6ab1c\",\n          \"name\": \"Akosua Mensah\",\n          \"email\": \"akosua@example.com\"\n        },\n        \"rating\": 5,\n        \"comment\": \"Still the first place I look when I want to learn something new. The lessons stay short and practical.\",\n        \"isHidden\": false,\n        \"createdAt\": \"2026-10-07T12:53:47.605Z\",\n        \"updatedAt\": \"2026-10-07T12:58:11.131Z\"\n      }\n    ],\n    \"pagination\": {\n      \"page\": 1,\n      \"limit\": 10,\n      \"total\": 3,\n      \"totalPages\": 1\n    }\n  }\n}"
+            },
+            {
+              "name": "Invalid type (400)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/admin/reviews?type=lesson",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "reviews"
+                  ],
+                  "query": [
+                    {
+                      "key": "type",
+                      "value": "lesson",
+                      "description": "course (the default) or site"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": "Default 1",
+                      "disabled": true
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10",
+                      "description": "Default 10, max 50",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Please fix the highlighted fields\",\n  \"data\": null,\n  \"errors\": [\n    {\n      \"field\": \"type\",\n      \"message\": \"Type must be course or site.\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Hide or show a review (admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/reviews/course/{{reviewId}}/visibility",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "reviews",
+                "course",
+                "{{reviewId}}",
+                "visibility"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isHidden\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Purpose: Hide a review from the public, or show it again. Hiding or showing a course review recalculates that course's rating.\n\nAccess: Admin.\n\nBody (JSON):\n- `isHidden` (required): `true` or `false`. It must be a real true or false, not text like `\"yes\"`.\n\nParameters:\n- `:type` in the path: `course` or `site`\n- `:id` in the path: the review's `_id`. Uses `{{reviewId}}` from List reviews (admin).\n\nThis request hides a course review. Send `false` to show it again, and change `course` to `site` for a platform review."
+          },
+          "response": [
+            {
+              "name": "Review hidden (200)",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/admin/reviews/course/{{reviewId}}/visibility",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "reviews",
+                    "course",
+                    "{{reviewId}}",
+                    "visibility"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"isHidden\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Review hidden\",\n  \"data\": {\n    \"_id\": \"6ac640db248410b455f6ab8a\",\n    \"user\": \"6ac640d0248410b455f6ab1e\",\n    \"course\": \"6ac640d1248410b455f6ab25\",\n    \"courseRating\": 3,\n    \"instructorRating\": 4,\n    \"comment\": \"A solid start, but the second half moves fast. I had to rewatch the lessons on arrays twice before the exercises worked.\",\n    \"isHidden\": true,\n    \"createdAt\": \"2026-10-07T12:53:47.526Z\",\n    \"updatedAt\": \"2026-10-07T12:58:12.321Z\"\n  }\n}"
+            },
+            {
+              "name": "Review shown (200)",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/admin/reviews/course/{{reviewId}}/visibility",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "reviews",
+                    "course",
+                    "{{reviewId}}",
+                    "visibility"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"isHidden\": false\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Review shown\",\n  \"data\": {\n    \"_id\": \"6ac640db248410b455f6ab8a\",\n    \"user\": \"6ac640d0248410b455f6ab1e\",\n    \"course\": \"6ac640d1248410b455f6ab25\",\n    \"courseRating\": 3,\n    \"instructorRating\": 4,\n    \"comment\": \"A solid start, but the second half moves fast. I had to rewatch the lessons on arrays twice before the exercises worked.\",\n    \"isHidden\": false,\n    \"createdAt\": \"2026-10-07T12:53:47.526Z\",\n    \"updatedAt\": \"2026-10-07T12:58:12.715Z\"\n  }\n}"
+            },
+            {
+              "name": "isHidden isn't true or false (400)",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/admin/reviews/course/{{reviewId}}/visibility",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "reviews",
+                    "course",
+                    "{{reviewId}}",
+                    "visibility"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"isHidden\": \"yes\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Please fix the highlighted fields\",\n  \"data\": null,\n  \"errors\": [\n    {\n      \"field\": \"isHidden\",\n      \"message\": \"isHidden must be true or false.\"\n    }\n  ]\n}"
+            },
+            {
+              "name": "Unknown review (404)",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/admin/reviews/course/{{reviewId}}/visibility",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "reviews",
+                    "course",
+                    "{{reviewId}}",
+                    "visibility"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"isHidden\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Review not found\",\n  \"data\": null\n}"
             }
           ]
         }

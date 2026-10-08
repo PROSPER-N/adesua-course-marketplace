@@ -36,7 +36,7 @@ function OrdersList({ orders }) {
   const { formatAmount } = useCurrency()
   return (
     <>
-      <div className="hidden overflow-x-auto rounded-xl border border-line bg-white md:block">
+      <div className="hidden overflow-x-auto rounded-xl border border-line bg-card md:block">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-line bg-surface text-xs tracking-wide text-muted uppercase">
             <tr>
@@ -85,7 +85,7 @@ function OrdersList({ orders }) {
 
       <ul className="grid gap-3 md:hidden">
         {orders.map((order) => (
-          <li className="rounded-xl border border-line bg-white p-4" key={order._id}>
+          <li className="rounded-xl border border-line bg-card p-4" key={order._id}>
             <div className="flex items-start justify-between gap-3">
               <p className="font-semibold text-ink">{courseTitle(order)}</p>
               <p className="font-semibold whitespace-nowrap text-ink">
@@ -130,7 +130,7 @@ function PurchaseHistory() {
   let content
   if (loading) {
     content = (
-      <div className="rounded-xl border border-line bg-white px-4">
+      <div className="rounded-xl border border-line bg-card px-4">
         {Array.from({ length: 3 }, (_, index) => (
           <SkeletonRow columns={5} key={index} />
         ))}

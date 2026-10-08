@@ -40,7 +40,7 @@ function InterestPicker({ categories, loading, loadError, onRetry, selected, onT
 
           return (
             <label
-              className={`inline-flex min-h-10 items-center gap-1.5 rounded-full border px-4 text-sm font-semibold has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-brand ${checked ? 'border-brand bg-brand-soft text-brand-dark' : 'border-line bg-white text-ink'} ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:border-brand'}`}
+              className={`inline-flex min-h-10 items-center gap-1.5 rounded-full border px-4 text-sm font-semibold has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-brand ${checked ? 'border-brand bg-brand-soft text-brand-dark' : 'border-line bg-card text-ink'} ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:border-brand'}`}
               key={category._id}
             >
               <input

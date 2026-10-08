@@ -1,5 +1,5 @@
 import { useId } from 'react'
-import CircleAlert from 'lucide-react/dist/esm/icons/circle-alert.mjs'
+import { CircleAlert } from 'lucide-react'
 
 function FormField({
   as: Element = 'input',
@@ -16,7 +16,7 @@ function FormField({
   const hintId = hint ? `${fieldId}-hint` : undefined
   const errorId = error ? `${fieldId}-error` : undefined
   const describedBy = [hintId, errorId].filter(Boolean).join(' ') || undefined
-  const baseClassName = `w-full rounded-lg border bg-white px-3 py-2.5 text-ink placeholder:text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${error ? 'border-danger' : 'border-line'} ${className}`
+  const baseClassName = `w-full rounded-lg border bg-card px-3 py-2.5 text-ink placeholder:text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${error ? 'border-danger' : 'border-field'} ${className}`
 
   return (
     <div className="grid gap-1.5">

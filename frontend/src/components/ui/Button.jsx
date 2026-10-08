@@ -2,11 +2,11 @@ import { Link } from 'react-router'
 import Spinner from './Spinner.jsx'
 
 const variants = {
-  primary: 'bg-brand text-white hover:bg-brand-hover',
-  outline: 'border border-line bg-white text-ink hover:bg-surface',
+  primary: 'bg-brand-fill text-white hover:bg-brand-fill-hover',
+  outline: 'border border-line bg-card text-ink hover:bg-surface',
   ghost: 'text-ink hover:bg-surface',
-  danger: 'bg-danger text-white hover:bg-danger/90',
-  gold: 'bg-gold text-ink hover:brightness-95',
+  danger: 'bg-danger-fill text-white hover:bg-danger-fill/90',
+  gold: 'bg-gold text-on-gold hover:brightness-95',
 }
 
 const sizes = {

@@ -1,15 +1,30 @@
 const User = require("../models/User");
 const Course = require("../models/Course");
+const CourseReview = require("../models/CourseReview");
+const SiteReview = require("../models/SiteReview");
 const AppError = require("../utils/AppError");
 const asyncHandler = require("../utils/asyncHandler");
 const escapeRegex = require("../utils/escapeRegex");
 const { sendSuccess } = require("../utils/apiResponse");
 const { getPagination, buildPagination } = require("../utils/pagination");
 const { getPlatformTotals } = require("../services/stats.service");
+const { recalculateCourseRating } = require("../services/review.service");
 
 // The fields of each item in GET /api/admin/courses, as listed in docs/API_CONTRACT.md.
 const ADMIN_COURSE_FIELDS =
   "title status price level lessonCount studentCount createdAt thumbnailUrl category instructor";
+
+// The two kinds of review an admin moderates, with the fields of each item in GET /api/admin/reviews.
+const REVIEW_TYPES = {
+  course: {
+    Model: CourseReview,
+    fields: "user course courseRating instructorRating comment isHidden createdAt updatedAt",
+  },
+  site: {
+    Model: SiteReview,
+    fields: "user rating comment isHidden createdAt updatedAt",
+  },
+};
 
 // GET /api/admin/stats
 const getStats = asyncHandler(async (req, res) => {
@@ -112,4 +127,60 @@ const listCourses = asyncHandler(async (req, res) => {
   });
 });
 
-module.exports = { getStats, listUsers, updateUserStatus, listCourses };
+// GET /api/admin/reviews?type=course|site&page=&limit=
+const listReviews = asyncHandler(async (req, res) => {
+  // listReviewsRules has already checked the type. Course reviews are the default.
+  const type = req.query.type || "course";
+  const { Model, fields } = REVIEW_TYPES[type];
+  const { page, limit, skip } = getPagination(req.query, 10);
+
+  // No isHidden filter: admins see hidden reviews too, so they can show them again.
+  let reviews = Model.find()
+    .select(fields)
+    .populate("user", "name email")
+    // _id breaks ties between reviews saved in the same millisecond, so pages never overlap
+    .sort({ createdAt: -1, _id: -1 })
+    .skip(skip)
+    .limit(limit)
+    .lean();
+  if (type === "course") {
+    reviews = reviews.populate("course", "title");
+  }
+
+  const [items, total] = await Promise.all([reviews, Model.countDocuments()]);
+
+  sendSuccess(res, {
+    message: "Reviews fetched successfully",
+    data: { items, pagination: buildPagination(page, limit, total) },
+  });
+});
+
+// PATCH /api/admin/reviews/:type/:id/visibility
+const updateReviewVisibility = asyncHandler(async (req, res) => {
+  const { type, id } = req.params;
+  const review = await REVIEW_TYPES[type].Model.findById(id);
+  if (!review) {
+    throw new AppError("Review not found", 404);
+  }
+
+  review.isHidden = req.body.isHidden;
+  await review.save();
+  // A hidden course review stops counting towards its course's rating, and a shown one counts again.
+  if (type === "course") {
+    await recalculateCourseRating(review.course);
+  }
+
+  sendSuccess(res, {
+    message: review.isHidden ? "Review hidden" : "Review shown",
+    data: review,
+  });
+});
+
+module.exports = {
+  getStats,
+  listUsers,
+  updateUserStatus,
+  listCourses,
+  listReviews,
+  updateReviewVisibility,
+};

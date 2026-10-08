@@ -31,7 +31,7 @@ function InstructorStats() {
     return (
       <div aria-hidden="true" className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {Array.from({ length: 4 }, (_, index) => (
-          <div className="rounded-xl border border-line bg-white p-5" key={index}>
+          <div className="rounded-xl border border-line bg-card p-5" key={index}>
             <div className="skeleton-shimmer h-4 w-24 rounded" />
             <div className="skeleton-shimmer mt-4 h-8 w-16 rounded" />
           </div>
@@ -63,7 +63,7 @@ function InstructorStats() {
     <dl className="grid grid-cols-2 gap-4 lg:grid-cols-4">
       {cards.map(({ label, value, icon: Icon }) => (
         <div
-          className="flex flex-col justify-between gap-3 rounded-xl border border-line bg-white p-5"
+          className="flex flex-col justify-between gap-3 rounded-xl border border-line bg-card p-5"
           key={label}
         >
           <div className="flex items-start justify-between gap-2">

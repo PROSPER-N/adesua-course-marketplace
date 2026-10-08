@@ -32,6 +32,7 @@ Base URL: `/api` (locally `http://localhost:5000/api`). Private routes need the 
 |---|---|---|---|---|---|
 | GET | `/api/health` | Public | API is running | A | `health.routes.js` |
 | GET | `/api/stats` | Public | Published courses, eligible instructors, learners and categories | A | `stats.routes.js` |
+| GET | `/api/instructors` | Public | Active instructors with published courses, with their ratings | A | `instructors.routes.js` |
 | POST | `/api/auth/register` | Public | Create a student or instructor account | A | `auth.routes.js` |
 | POST | `/api/auth/login` | Public | Log in | A | `auth.routes.js` |
 | GET | `/api/auth/me` | Logged in | Current user | A | `auth.routes.js` |
@@ -43,6 +44,16 @@ Base URL: `/api` (locally `http://localhost:5000/api`). Private routes need the 
 | GET | `/api/admin/users` | Admin | Users with search, role filter, pagination | A | `admin.routes.js` |
 | PATCH | `/api/admin/users/:id/status` | Admin | Deactivate or reactivate `{ isActive }` | A | `admin.routes.js` |
 | GET | `/api/admin/courses` | Admin | All courses including drafts | A | `admin.routes.js` |
+| GET | `/api/admin/reviews` | Admin | Course or platform reviews, hidden ones included | A | `admin.routes.js` |
+| PATCH | `/api/admin/reviews/:type/:id/visibility` | Admin | Hide or show a review `{ isHidden }` | A | `admin.routes.js` |
+| GET | `/api/courses/:id/reviews` | Public | Visible reviews of a published course, with a summary | A | `courseReviews.routes.js` |
+| GET | `/api/courses/:id/reviews/mine` | Student | My review of the course, or `null` | A | `courseReviews.routes.js` |
+| PUT | `/api/courses/:id/reviews/mine` | Enrolled student | Create or update my review `{ courseRating, instructorRating, comment }` | A | `courseReviews.routes.js` |
+| DELETE | `/api/courses/:id/reviews/mine` | Student | Delete my review | A | `courseReviews.routes.js` |
+| GET | `/api/reviews` | Public | Visible platform reviews, with a summary | A | `siteReviews.routes.js` |
+| GET | `/api/reviews/mine` | Student or instructor | My platform review, or `null` | A | `siteReviews.routes.js` |
+| PUT | `/api/reviews/mine` | Student or instructor | Create or update my platform review `{ rating, comment }` | A | `siteReviews.routes.js` |
+| DELETE | `/api/reviews/mine` | Student or instructor | Delete my platform review | A | `siteReviews.routes.js` |
 | GET | `/api/courses` | Public | Published courses with search, filters, sort, pagination | B | `courses.routes.js` |
 | GET | `/api/courses/:id` | Public | One published course with lesson outline | B | `courses.routes.js` |
 | POST | `/api/courses` | Instructor | Create a course (starts as a draft) | B | `courses.routes.js` |
@@ -73,8 +84,11 @@ Base URL: `/api` (locally `http://localhost:5000/api`). Private routes need the 
   - `sort`: `newest`, `popular`, `price_asc` or `price_desc` (default `newest`)
   - `page`: default 1
   - `limit`: default 9, max 50
+- `GET /api/instructors`: `limit` (default 4, max 50). There are no pages.
 - `GET /api/admin/users`: `search` (name or email), `role`, `page`, `limit` (default 10)
 - `GET /api/admin/courses`: `search` (title), `status`, `page`, `limit` (default 10)
+- `GET /api/courses/:id/reviews` and `GET /api/reviews`: `page`, `limit` (default 10), newest first
+- `GET /api/admin/reviews`: `type` (`course`, the default, or `site`), `page`, `limit` (default 10)
 
 ## Sign-up body
 
@@ -94,10 +108,15 @@ Fields for the other role are ignored.
 - A user is `{ _id, name, email, role, bio, isActive, createdAt, updatedAt }`. Instructors also have `headline` and `teachingArea` (a category `_id`), and students have `interests` (category `_id`s). Accounts made before these fields existed may not have them.
 - `GET /api/auth/me`: `{ user }`
 - `GET /api/stats`: `{ courses, instructors, learners, categories }`, where courses counts published courses, instructors counts instructors with at least one published course, learners counts student accounts, and categories counts all categories
+- `GET /api/instructors`: `[ { _id, name, headline, teachingArea: { _id, name, slug }, rating: { average, count }, courseCount } ]`, for active instructors with at least one published course.
+  - `rating` is the average `instructorRating` of the visible reviews on all their published courses, the same as `instructor.rating` on a course, and `courseCount` counts their published courses.
+  - `headline` is `""` and `teachingArea` is `null` for accounts made before those fields existed.
+  - Sorted by review count, then average rating, then course count (all highest first), then name.
 - `GET /api/categories`: `[ { _id, name, slug, courseCount } ]`, where `courseCount` counts published courses
-- `GET /api/courses`, each item: `{ _id, title, shortDescription, price, level, thumbnailUrl, lessonCount, totalMinutes, studentCount, createdAt, category: { _id, name, slug }, instructor: { _id, name } }`
+- `GET /api/courses`, each item: `{ _id, title, shortDescription, price, level, thumbnailUrl, lessonCount, totalMinutes, studentCount, rating: { average, count }, createdAt, category: { _id, name, slug }, instructor: { _id, name } }`
 - `GET /api/courses/:id`: every course field, plus:
-  - `instructor { _id, name, bio, headline }`
+  - `rating: { average, count }`. In course lists and details, this replaces the stored `ratingAverage` and `ratingCount`.
+  - `instructor { _id, name, bio, headline, rating: { average, count } }`
   - `category`
   - `lessons: [ { _id, title, durationMinutes, order, isPreview } ]`, sorted by `order`. `videoUrl` and `content` are included only when `isPreview` is true.
 - `GET /api/instructor/courses`: my courses in any status, newest first
@@ -112,6 +131,15 @@ Fields for the other role are ignored.
 - `GET /api/instructor/stats`: `{ totalStudents, totalEarnings, publishedCount, draftCount, courses: [ { courseId, title, studentCount, earnings } ] }`
 - `GET /api/admin/stats`: `{ users, publishedCourses, enrollments, totalPayments }`
 - `GET /api/admin/courses` (any status, newest first), each item: `{ _id, title, status, price, level, lessonCount, studentCount, createdAt, thumbnailUrl, category: { _id, name, slug }, instructor: { _id, name } }`
+- A review summary is `{ average, count, breakdown: { 5, 4, 3, 2, 1 } }`, where `breakdown` counts the reviews with each number of stars. It counts visible reviews only, and `average` is rounded to 1 decimal (0 with no reviews).
+- `GET /api/courses/:id/reviews`: `{ items: [ { _id, user: { _id, name }, courseRating, instructorRating, comment, createdAt, updatedAt } ], pagination, summary }`, where the summary uses `courseRating`
+- `GET /api/reviews`: `{ items: [ { _id, user: { _id, name, role }, rating, comment, createdAt, updatedAt } ], pagination, summary }`
+- `GET /api/courses/:id/reviews/mine` and `GET /api/reviews/mine`: my review, including `isHidden`, or `null`
+- `PUT /api/courses/:id/reviews/mine` and `PUT /api/reviews/mine`: the saved review (201 when created, 200 when updated)
+- `GET /api/admin/reviews` (hidden ones included, newest first):
+  - course reviews: `{ _id, user: { _id, name, email }, course: { _id, title }, courseRating, instructorRating, comment, isHidden, createdAt, updatedAt }`
+  - platform reviews: `{ _id, user: { _id, name, email }, rating, comment, isHidden, createdAt, updatedAt }`
+- `PATCH /api/admin/reviews/:type/:id/visibility`: the review
 
 ## Success messages
 
@@ -121,6 +149,7 @@ The `message` of each successful response. The frontend shows some of them word 
 |---|---|---|
 | GET | `/api/health` | API is running |
 | GET | `/api/stats` | Stats fetched successfully |
+| GET | `/api/instructors` | Instructors fetched successfully |
 | POST | `/api/auth/register` | Account created successfully |
 | POST | `/api/auth/login` | Logged in successfully |
 | GET | `/api/auth/me` | Current user |
@@ -132,6 +161,16 @@ The `message` of each successful response. The frontend shows some of them word 
 | GET | `/api/admin/users` | Users fetched successfully |
 | PATCH | `/api/admin/users/:id/status` | User deactivated, or User reactivated |
 | GET | `/api/admin/courses` | Courses fetched successfully |
+| GET | `/api/admin/reviews` | Reviews fetched successfully |
+| PATCH | `/api/admin/reviews/:type/:id/visibility` | Review hidden, or Review shown |
+| GET | `/api/courses/:id/reviews` | Reviews fetched successfully |
+| GET | `/api/courses/:id/reviews/mine` | Review fetched successfully |
+| PUT | `/api/courses/:id/reviews/mine` | Review created successfully (201), or Review updated successfully (200) |
+| DELETE | `/api/courses/:id/reviews/mine` | Review deleted successfully |
+| GET | `/api/reviews` | Reviews fetched successfully |
+| GET | `/api/reviews/mine` | Review fetched successfully |
+| PUT | `/api/reviews/mine` | Review created successfully (201), or Review updated successfully (200) |
+| DELETE | `/api/reviews/mine` | Review deleted successfully |
 | GET | `/api/courses` | Courses fetched successfully |
 | GET | `/api/courses/:id` | Course fetched successfully |
 | POST | `/api/courses` | Course created successfully |
@@ -183,6 +222,10 @@ The `message` of each successful response. The frontend shows some of them word 
 | paymentMethod (`momo` or `card`) | Choose a payment method. |
 | status | Status must be draft or published. |
 | isActive | isActive must be true or false. |
+| isHidden (reviews) | isHidden must be true or false. |
+| courseRating, instructorRating and rating (reviews) | Choose a rating from 1 to 5. |
+| review comment | Write between 10 and 1000 characters. |
+| review type (admin reviews) | Type must be course or site. |
 | any `:id`, and `courseId` in a request body | Invalid ID |
 | page and limit | Page and limit must be positive numbers. |
 | request body that isn't valid JSON (400) | The request body isn't valid JSON. |
@@ -217,4 +260,13 @@ The `message` of each successful response. The frontend shows some of them word 
 - Admins can't deactivate themselves: 400 "You can't deactivate your own account."
 - An unknown user returns 404 "User not found".
 - Deactivated users get 403 at login and on every request.
+- Reviews:
+  - Only students enrolled in a course can review it. Anyone else gets 403 "Enroll in this course to review it."
+  - Each student has at most one review per course, and each account at most one platform review. `PUT .../mine` creates the review (201) or updates it (200).
+  - Admins can't write platform reviews (403).
+  - Ratings are whole numbers from 1 to 5.
+  - Hidden reviews are left out of public lists, summaries and every average. Editing a hidden review keeps it hidden.
+  - A course's `rating` comes from its visible reviews. It's recalculated whenever one of them is created, updated, deleted, hidden or shown, and the average is rounded to 1 decimal.
+  - `instructor.rating` is the average `instructorRating` of the visible reviews on all the instructor's published courses.
+  - An unknown review, or deleting a review you don't have, returns 404 "Review not found".
 - Sign-up can never create an admin.

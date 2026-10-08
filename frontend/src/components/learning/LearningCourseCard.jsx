@@ -37,7 +37,7 @@ function LearningCourseCard({ enrollment }) {
   }
 
   return (
-    <article className="flex h-full flex-col rounded-xl border border-line bg-white p-3">
+    <article className="flex h-full flex-col rounded-xl border border-line bg-card p-3">
       <CourseCover
         category={course.category}
         thumbnailUrl={course.thumbnailUrl}

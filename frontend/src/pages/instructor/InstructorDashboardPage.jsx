@@ -158,7 +158,7 @@ function InstructorDashboardPage() {
         )}
         {!loading && !result.error && result.courses.length > 0 && (
           <>
-            <div className="hidden overflow-x-auto rounded-xl border border-line bg-white md:block">
+            <div className="hidden overflow-x-auto rounded-xl border border-line bg-card md:block">
               <table className="w-full min-w-[760px] text-left text-sm">
                 <thead className="bg-surface text-muted">
                   <tr>
@@ -197,7 +197,7 @@ function InstructorDashboardPage() {
             </div>
             <div className="grid gap-4 md:hidden">
               {result.courses.map((course) => (
-                <article className="rounded-xl border border-line bg-white p-4" key={course._id}>
+                <article className="rounded-xl border border-line bg-card p-4" key={course._id}>
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <h3 className="break-words font-semibold text-ink">{course.title}</h3>

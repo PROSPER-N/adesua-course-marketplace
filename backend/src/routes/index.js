@@ -5,29 +5,34 @@ const express = require("express");
 
 const healthRoutes = require("./health.routes");
 const statsRoutes = require("./stats.routes");
+const instructorsRoutes = require("./instructors.routes");
 const authRoutes = require("./auth.routes");
 const categoriesRoutes = require("./categories.routes");
 const adminRoutes = require("./admin.routes");
 const coursesRoutes = require("./courses.routes");
 const learningRoutes = require("./learning.routes");
+const courseReviewsRoutes = require("./courseReviews.routes");
 const lessonsRoutes = require("./lessons.routes");
 const instructorCoursesRoutes = require("./instructorCourses.routes");
 const instructorStatsRoutes = require("./instructorStats.routes");
 const enrollmentsRoutes = require("./enrollments.routes");
 const ordersRoutes = require("./orders.routes");
+const siteReviewsRoutes = require("./siteReviews.routes");
 
 const router = express.Router();
 
 router.use("/health", healthRoutes); // Member A
 router.use("/stats", statsRoutes); // Member A
+router.use("/instructors", instructorsRoutes); // Member A
 router.use("/auth", authRoutes); // Member A
 router.use("/categories", categoriesRoutes); // Member A
 router.use("/admin", adminRoutes); // Member A
 
-// Two files share /api/courses. Express tries them in this order,
-// so learning.routes.js (GET /:id/lessons only) goes after courses.routes.js.
+// Three files share /api/courses. Express tries them in this order, so learning.routes.js
+// (GET /:id/lessons only) and courseReviews.routes.js (/:id/reviews only) go after courses.routes.js.
 router.use("/courses", coursesRoutes); // Member B
 router.use("/courses", learningRoutes); // Member C
+router.use("/courses", courseReviewsRoutes); // Member A
 
 router.use("/lessons", lessonsRoutes); // Member B
 
@@ -37,5 +42,7 @@ router.use("/instructor", instructorStatsRoutes); // Member C
 
 router.use("/enrollments", enrollmentsRoutes); // Member C
 router.use("/orders", ordersRoutes); // Member C
+
+router.use("/reviews", siteReviewsRoutes); // Member A
 
 module.exports = router;
