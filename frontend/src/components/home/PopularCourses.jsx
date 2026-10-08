@@ -107,9 +107,10 @@ function PopularCourses() {
           </div>
         </div>
 
-        {/* scroll-px matches px, or snapping would pull the first card to the screen edge. */}
+        {/* scroll-px matches px, or snapping would pull the first card to the screen edge.
+            relative keeps the cards' screen-reader text inside the row, so it can't widen the page. */}
         <ul
-          className="-mx-4 mt-8 flex snap-x snap-mandatory scroll-px-4 gap-5 overflow-x-auto scroll-smooth px-4 pb-4 [scrollbar-width:thin] motion-reduce:scroll-auto sm:-mx-6 sm:scroll-px-6 sm:px-6 lg:-mx-8 lg:scroll-px-8 lg:px-8"
+          className="relative -mx-4 mt-8 flex snap-x snap-mandatory scroll-px-4 gap-5 overflow-x-auto scroll-smooth px-4 pb-4 [scrollbar-width:thin] motion-reduce:scroll-auto sm:-mx-6 sm:scroll-px-6 sm:px-6 lg:-mx-8 lg:scroll-px-8 lg:px-8"
           onScroll={updateEdges}
           ref={rowRef}
         >
