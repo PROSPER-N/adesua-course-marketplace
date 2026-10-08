@@ -9,6 +9,7 @@ Adesua is a video course marketplace, built as our TS Academy full-stack capston
 - **Visitors**
   - See Home: a short video, live platform totals that refresh every 30 seconds, popular courses, categories, the instructors with their ratings, and recent reviews
   - Switch between light, dark and system themes (this works for everyone)
+  - Show prices in US dollars, Nigerian naira, British pounds, euros, Ghanaian cedis, South African rand or Indian rupees. Prices in other currencies are estimates, using fixed rates from 7 October 2026. Checkout charges in US dollars, and it's a demo with no real payment.
   - Save courses to a browser cart before signing in
   - Browse published courses, search by title, filter by category, level and price (free or paid), and sort by newest, most popular or price
   - Open a course to see its photo, details, instructor, ratings, reviews, lesson outline and any free preview lessons
