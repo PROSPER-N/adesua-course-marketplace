@@ -1,4 +1,5 @@
 import ExploreCategories from '../../components/home/ExploreCategories.jsx'
+import FeaturedInstructors from '../../components/home/FeaturedInstructors.jsx'
 import HomeHero from '../../components/home/HomeHero.jsx'
 import HowItWorks from '../../components/home/HowItWorks.jsx'
 import PlatformStats from '../../components/home/PlatformStats.jsx'
@@ -16,6 +17,7 @@ function HomePage() {
       <SkillsStrip />
       <PopularCourses />
       <ExploreCategories />
+      <FeaturedInstructors />
       <HowItWorks />
       <WhatPeopleSay />
       <TeachBand />
