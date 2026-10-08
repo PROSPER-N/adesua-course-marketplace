@@ -74,9 +74,7 @@ function CourseCard({ course }) {
           {studentCount === 1 ? 'student' : 'students'}
         </p>
 
-        <span className="mt-3 block font-semibold text-ink">
-          {formatPrice(price)}
-        </span>
+        <span className="mt-3 block font-semibold text-ink">{formatPrice(price)}</span>
       </div>
     </Link>
   )

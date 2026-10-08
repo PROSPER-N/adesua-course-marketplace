@@ -1,7 +1,12 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react'
-import { BASE_CURRENCY, CURRENCIES, SUPPORTED_CURRENCIES, isSupportedCurrency } from '../config/currency.js'
+import {
+  BASE_CURRENCY,
+  CURRENCIES,
+  SUPPORTED_CURRENCIES,
+  isSupportedCurrency,
+} from '../config/currency.js'
 import { readCurrencyPreference, writeCurrencyPreference } from '../utils/currencyPreference.js'
-import { convertFromBase } from '../utils/currencyPricing.js'
+import { convertFromBase, convertTotal } from '../utils/currencyPricing.js'
 import { formatMoney } from '../utils/formatMoney.js'
 
 const CurrencyContext = createContext(null)
@@ -20,14 +25,17 @@ export function CurrencyProvider({ children }) {
     (amount) => convertFromBase(amount, currency),
     [currency],
   )
+
   const formatPrice = useCallback(
     (amount) => formatMoney(convertFromBase(amount, currency), { currency }),
     [currency],
   )
+
   const formatAmount = useCallback(
     (amount) => formatMoney(convertFromBase(amount, currency), { currency, freeForZero: false }),
     [currency],
   )
+
   const formatBaseAmount = useCallback(
     (amount) =>
       formatMoney(amount, {
@@ -35,6 +43,12 @@ export function CurrencyProvider({ children }) {
         freeForZero: false,
       }),
     [],
+  )
+
+  // Adds up the converted prices, so the total matches the lines shown above it.
+  const formatTotal = useCallback(
+    (amounts) => formatMoney(convertTotal(amounts, currency), { currency, freeForZero: false }),
+    [currency],
   )
 
   const value = useMemo(
@@ -48,9 +62,18 @@ export function CurrencyProvider({ children }) {
       formatPrice,
       formatAmount,
       formatBaseAmount,
+      formatTotal,
       setCurrency,
     }),
-    [currency, convertAmount, formatPrice, formatAmount, formatBaseAmount, setCurrency],
+    [
+      currency,
+      convertAmount,
+      formatPrice,
+      formatAmount,
+      formatBaseAmount,
+      formatTotal,
+      setCurrency,
+    ],
   )
 
   return <CurrencyContext.Provider value={value}>{children}</CurrencyContext.Provider>

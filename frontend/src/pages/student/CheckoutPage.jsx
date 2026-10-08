@@ -5,6 +5,7 @@ import { getCourse } from '../../api/courses.js'
 import { getMyEnrollments } from '../../api/enrollments.js'
 import { createOrder, payOrder } from '../../api/orders.js'
 import CourseCover from '../../components/course/CourseCover.jsx'
+import CurrencyNote from '../../components/layout/CurrencyNote.jsx'
 import Button from '../../components/ui/Button.jsx'
 import EmptyState from '../../components/ui/EmptyState.jsx'
 import ErrorMessage from '../../components/ui/ErrorMessage.jsx'
@@ -49,6 +50,7 @@ function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState('momo')
   const [paying, setPaying] = useState(false)
   const [payError, setPayError] = useState('')
+
   // An order from an earlier try that wasn't paid. Retrying pays it instead of making another.
   const [unpaidOrder, setUnpaidOrder] = useState(null)
   const [paidOrder, setPaidOrder] = useState(null)
@@ -57,13 +59,31 @@ function CheckoutPage() {
 
   useEffect(() => {
     let ignore = false
+
     Promise.all([getCourse(courseId), getMyEnrollments()])
       .then(([course, enrollments]) => {
-        const enrolled = enrollments.some((enrollment) => enrollment.course?._id === course._id)
-        if (!ignore) setResult({ key: requestKey, course, enrolled, error: null })
+        const enrolled = enrollments.some(
+          (enrollment) => enrollment.course?._id === course._id,
+        )
+
+        if (!ignore) {
+          setResult({
+            key: requestKey,
+            course,
+            enrolled,
+            error: null,
+          })
+        }
       })
       .catch((error) => {
-        if (!ignore) setResult({ key: requestKey, course: null, enrolled: false, error })
+        if (!ignore) {
+          setResult({
+            key: requestKey,
+            course: null,
+            enrolled: false,
+            error,
+          })
+        }
       })
 
     return () => {
@@ -79,18 +99,28 @@ function CheckoutPage() {
   async function handlePay() {
     setPaying(true)
     setPayError('')
+
     try {
       let order = unpaidOrder
+
       if (!order || order.paymentMethod !== paymentMethod) {
         order = await createOrder({ courseId, paymentMethod })
         setUnpaidOrder(order)
       }
+
       const paid = await payOrder(order._id)
-      if (searchParams.get('from') === 'cart') removeCartItem(courseId)
+
+      if (searchParams.get('from') === 'cart') {
+        removeCartItem(courseId)
+      }
+
       setPaidOrder(paid.order)
     } catch (error) {
-      if (error.response?.status === 409) setEnrolledWhilePaying(true)
-      else setPayError(getErrorMessage(error))
+      if (error.response?.status === 409) {
+        setEnrolledWhilePaying(true)
+      } else {
+        setPayError(getErrorMessage(error))
+      }
     } finally {
       setPaying(false)
     }
@@ -120,9 +150,11 @@ function CheckoutPage() {
     )
   } else if (paidOrder) {
     const firstLesson = course.lessons?.[0]
+
     content = (
       <section className="mx-auto max-w-xl rounded-2xl border border-line bg-card p-6 text-center sm:p-10">
         <CircleCheck aria-hidden="true" className="mx-auto size-12 text-brand" />
+
         <h2
           className="mt-4 font-display text-3xl font-extrabold text-ink outline-none"
           ref={successHeadingRef}
@@ -130,15 +162,20 @@ function CheckoutPage() {
         >
           Payment successful
         </h2>
+
         <p className="mt-2 text-muted">You're now enrolled in {course.title}.</p>
+
         <p className="mt-6 text-sm text-muted">Order reference</p>
+
         <p className="mt-1 font-mono text-lg font-semibold tracking-wide text-ink">
           {paidOrder.reference}
         </p>
+
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Button to={firstLesson ? `/learn/${course._id}/${firstLesson._id}` : '/my-learning'}>
             Start learning
           </Button>
+
           <Button to="/my-learning" variant="outline">
             Go to my learning
           </Button>
@@ -169,13 +206,19 @@ function CheckoutPage() {
         <section className="rounded-xl border border-line bg-card p-5 sm:p-6">
           <fieldset>
             <legend className="font-display text-xl font-bold text-ink">Payment method</legend>
+
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               {PAYMENT_METHODS.map(({ value, label }) => {
                 const Icon = METHOD_ICONS[value]
                 const selected = paymentMethod === value
+
                 return (
                   <label
-                    className={`flex min-h-14 cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 transition-colors ${selected ? 'border-brand bg-brand-soft' : 'border-line hover:bg-surface'}`}
+                    className={`flex min-h-14 cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 transition-colors ${
+                      selected
+                        ? 'border-brand bg-brand-soft'
+                        : 'border-line hover:bg-surface'
+                    }`}
                     key={value}
                   >
                     <input
@@ -187,7 +230,9 @@ function CheckoutPage() {
                       type="radio"
                       value={value}
                     />
+
                     <Icon aria-hidden="true" className="size-5 shrink-0 text-brand" />
+
                     <span className="font-semibold text-ink">{label}</span>
                   </label>
                 )
@@ -211,7 +256,7 @@ function CheckoutPage() {
             className="mt-5"
             fullWidth
             loading={paying}
-            loadingText="Processing payment…"
+            loadingText="Processing paymentâ€¦"
             onClick={handlePay}
           >
             Pay {formatBaseAmount(course.price)}
@@ -224,26 +269,31 @@ function CheckoutPage() {
           className="order-first rounded-xl border border-line bg-card p-5 sm:p-6 lg:order-none"
         >
           <h2 className="font-display text-xl font-bold text-ink">Order summary</h2>
+
           <CourseCover
             category={course.category}
             className="mt-4"
             thumbnailUrl={course.thumbnailUrl}
             title={course.title}
           />
+
           <p className="mt-4 font-semibold text-ink">{course.title}</p>
+
           {course.instructor?.name && (
             <p className="mt-1 text-sm text-muted">By {course.instructor.name}</p>
           )}
+
           <dl className="mt-4 flex items-baseline justify-between border-t border-line pt-4">
-            <dt className="font-semibold text-ink">Total ({currencyInfo.code}, display only)</dt>
+            <dt className="font-semibold text-ink">
+              Total ({currencyInfo.code}, display only)
+            </dt>
+
             <dd className="font-display text-2xl font-extrabold text-ink">
               {formatPrice(course.price)}
             </dd>
           </dl>
-          <p className="mt-3 text-sm text-muted">
-            Demo order amount ({baseCurrency}): {formatBaseAmount(course.price)}. Display currency
-            does not change the order amount.
-          </p>
+
+          <CurrencyNote className="mt-3 text-sm" />
         </aside>
       </div>
     )

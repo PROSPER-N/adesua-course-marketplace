@@ -9,9 +9,7 @@ import { Toaster } from 'react-hot-toast'
 import './index.css'
 
 import { AuthProvider } from './context/AuthContext.jsx'
-
 import { CurrencyProvider } from './context/CurrencyContext.jsx'
-
 import { startTheme } from './utils/theme.js'
 
 import App from './App.jsx'

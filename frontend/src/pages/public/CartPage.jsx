@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
 import { enrollFree, getMyEnrollments } from '../../api/enrollments.js'
 import CourseCover from '../../components/course/CourseCover.jsx'
+import CurrencyNote from '../../components/layout/CurrencyNote.jsx'
 import Button from '../../components/ui/Button.jsx'
 import EmptyState from '../../components/ui/EmptyState.jsx'
 import ErrorMessage from '../../components/ui/ErrorMessage.jsx'
@@ -13,7 +14,7 @@ import { getErrorMessage } from '../../utils/getErrorMessage.js'
 import { removeCartItem } from '../../utils/cart.js'
 
 function CartPage() {
-  const { formatPrice, formatAmount } = useCurrency()
+  const { formatPrice, formatTotal } = useCurrency()
   const { items } = useCart()
   const { user, loading: authLoading } = useAuth()
   const location = useLocation()
@@ -67,8 +68,6 @@ function CartPage() {
       setBusyCourseId('')
     }
   }
-
-  const total = items.reduce((sum, course) => sum + course.price, 0)
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
@@ -226,9 +225,10 @@ function CartPage() {
             <dl className="mt-5 flex items-baseline justify-between border-t border-line pt-4">
               <dt className="font-semibold text-ink">Total</dt>
               <dd className="font-display text-2xl font-extrabold text-ink">
-                {formatAmount(total)}
+                {formatTotal(items.map((course) => course.price))}
               </dd>
             </dl>
+            <CurrencyNote className="mt-3 text-sm" />
             <p className="mt-3 flex items-start gap-2 text-sm text-muted">
               <BookOpen aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-brand" />
               Each course has its own enrollment or checkout.
