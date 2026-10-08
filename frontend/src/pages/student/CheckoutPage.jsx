@@ -5,6 +5,7 @@ import { getCourse } from '../../api/courses.js'
 import { getMyEnrollments } from '../../api/enrollments.js'
 import { createOrder, payOrder } from '../../api/orders.js'
 import CourseCover from '../../components/course/CourseCover.jsx'
+import CurrencyNote from '../../components/layout/CurrencyNote.jsx'
 import Button from '../../components/ui/Button.jsx'
 import EmptyState from '../../components/ui/EmptyState.jsx'
 import ErrorMessage from '../../components/ui/ErrorMessage.jsx'
@@ -37,7 +38,7 @@ function CheckoutSkeleton() {
 
 function CheckoutPage() {
   const { courseId } = useParams()
-  const { baseCurrency, currencyInfo, formatBaseAmount, formatPrice } = useCurrency()
+  const { formatBaseAmount, formatPrice } = useCurrency()
   const [searchParams] = useSearchParams()
 
   // A result remembers the request it answers, so the page loads until the latest one has one.
@@ -197,8 +198,7 @@ function CheckoutPage() {
 
           <p className="mt-5 flex items-start gap-2 rounded-lg bg-gold-soft p-3 text-sm text-ink">
             <Info aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
-            Checkout runs in demo mode. No real money is charged. The order amount remains in the
-            configured base currency ({baseCurrency}).
+            Checkout runs in demo mode. No real money is charged.
           </p>
 
           {payError && (
@@ -235,15 +235,12 @@ function CheckoutPage() {
             <p className="mt-1 text-sm text-muted">By {course.instructor.name}</p>
           )}
           <dl className="mt-4 flex items-baseline justify-between border-t border-line pt-4">
-            <dt className="font-semibold text-ink">Total ({currencyInfo.code}, display only)</dt>
+            <dt className="font-semibold text-ink">Total</dt>
             <dd className="font-display text-2xl font-extrabold text-ink">
               {formatPrice(course.price)}
             </dd>
           </dl>
-          <p className="mt-3 text-sm text-muted">
-            Demo order amount ({baseCurrency}): {formatBaseAmount(course.price)}. Display currency
-            does not change the order amount.
-          </p>
+          <CurrencyNote className="mt-3 text-sm" />
         </aside>
       </div>
     )
