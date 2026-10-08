@@ -12,7 +12,7 @@ function CurrencySelector({ mobile = false }) {
       </label>
       <select
         aria-label="Display currency"
-        className={`rounded-lg border border-line bg-white text-sm font-semibold text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${mobile ? 'w-full px-3 py-2.5' : 'max-w-24 px-2 py-2'}`}
+        className={`rounded-lg border border-field bg-card text-sm font-semibold text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${mobile ? 'w-full px-3 py-2.5' : 'max-w-24 px-2 py-2'}`}
         id={id}
         onChange={(event) => setCurrency(event.target.value)}
         value={currency}
