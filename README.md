@@ -113,18 +113,18 @@ The app opens at http://localhost:5173.
 
 ## Screenshots
 
-These screenshots were taken on a freshly seeded development database, using the test accounts above. The lesson player, My learning and the cart show Akosua Mensah's account.
+These screenshots were taken on a freshly seeded development database, using the test accounts above. The lesson player, My learning and the cart show Akosua Mensah's account, and the instructor dashboard shows Kwame Asante's.
 
-| Screen | 1280px | 390px |
-|---|---|---|
-| Home | ![Home at 1280px](docs/screenshots/home-1280.png) | ![Home at 390px](docs/screenshots/home-390.png) |
-| Browse courses | ![Browse courses at 1280px](docs/screenshots/courses-1280.png) | — |
-| Course details | ![Course details at 1280px](docs/screenshots/course-details-1280.png) | ![Course details at 390px](docs/screenshots/course-details-390.png) |
-| Lesson player | ![Lesson player at 1280px](docs/screenshots/lesson-player-1280.png) | — |
-| My learning | ![My learning at 1280px](docs/screenshots/my-learning-1280.png) | — |
-| Cart | ![Cart at 1280px](docs/screenshots/cart-1280.png) | — |
-| Instructor dashboard | ![Instructor dashboard at 1280px](docs/screenshots/instructor-dashboard-1280.png) | — |
-| Admin courses | ![Admin courses at 1280px](docs/screenshots/admin-courses-1280.png) | — |
+![Home at 1280px in the light theme, the whole page](docs/screenshots/home-1280-light.webp)
+*Home at 1280px, light theme*
+
+| | |
+|---|---|
+| ![Home at 1280px in the dark theme](docs/screenshots/home-1280-dark.webp)<br>Home, dark theme | ![Browse courses at 1280px](docs/screenshots/courses-1280.webp)<br>Browse courses |
+| ![A course page at 1280px](docs/screenshots/course-details-1280.webp)<br>Course page | ![The lesson player at 1280px](docs/screenshots/lesson-player-1280.webp)<br>Lesson player |
+| ![My learning at 1280px](docs/screenshots/my-learning-1280.webp)<br>My learning | ![The cart at 1280px](docs/screenshots/cart-1280.webp)<br>Cart |
+| ![The instructor dashboard at 1280px](docs/screenshots/instructor-dashboard-1280.webp)<br>Instructor dashboard | ![The admin courses tab at 1280px](docs/screenshots/admin-courses-1280.webp)<br>Admin: courses |
+| ![Home at 390px](docs/screenshots/home-390-light.webp)<br>Home on a phone | ![A course page at 390px](docs/screenshots/course-details-390.webp)<br>Course page on a phone |
 
 ## Scripts
 
