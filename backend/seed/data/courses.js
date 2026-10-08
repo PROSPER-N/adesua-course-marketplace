@@ -84,7 +84,7 @@ async function seedCourses({ users, categories }) {
       category: categoryMap.get("Business")._id,
       price: 85,
       level: "beginner",
-      thumbnailUrl: unsplash("photo-1687422808191-93810cd07ab0"),
+      thumbnailUrl: pexels(3933017),
     },
     {
       title: "Design Principles for Everyday Creatives",

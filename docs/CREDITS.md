@@ -10,7 +10,7 @@ The course photos are loaded from each site's image CDN, cropped to 800×500. Th
 |---|---|---|---|---|
 | Build Your First Web Page | A woman coding on a laptop at a tech event | Akinyemi Gbadamosi | [Unsplash](https://unsplash.com/photos/a-woman-sitting-in-front-of-a-laptop-computer-T_CkxezKRTA) | Unsplash License |
 | JavaScript Foundations for Beginners | A man writing code on a laptop | Danial Igdery | [Unsplash](https://unsplash.com/photos/man-programming-using-laptop-FCHlYvR5gJI) | Unsplash License |
-| Starting a Small Business | A shop owner standing outside his shop | Ali Mkumbwa | [Unsplash](https://unsplash.com/photos/a-man-standing-outside-of-a-store-with-his-arms-crossed-r0kv1S72CPw) | Unsplash License |
+| Starting a Small Business | A florist standing at the entrance of her shop | Andrea Piacquadio | [Pexels](https://www.pexels.com/photo/positive-florist-standing-at-entrance-of-shop-3933017/) | Pexels License |
 | Design Principles for Everyday Creatives | A woman at a table covered in colour palettes | Helena Lopes | [Pexels](https://www.pexels.com/photo/a-woman-sitting-at-a-wooden-table-with-color-palette-samples-9492918/) | Pexels License |
 | Social Media Marketing Basics | A woman setting up her phone on a tripod in the street | Blue Bird | [Pexels](https://www.pexels.com/photo/focused-ethnic-blogger-with-smartphone-in-town-7243115/) | Pexels License |
 | Photography With Your Phone | A phone screen framing a woman against a brick wall | Ivan S | [Pexels](https://www.pexels.com/photo/person-taking-photo-using-smartphone-8117810/) | Pexels License |
