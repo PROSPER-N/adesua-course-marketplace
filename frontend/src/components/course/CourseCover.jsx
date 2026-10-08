@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 const categoryStyles = {
   'web-development': { background: '#1E6B4A', accent: '#F4B63F', pattern: 'stripes' },
   programming: { background: '#23395B', accent: '#9CC3E6', pattern: 'dots' },
@@ -9,12 +11,22 @@ const categoryStyles = {
 }
 
 function CourseCover({ title = '', category, thumbnailUrl, className = '' }) {
-  if (thumbnailUrl) {
+  // The photo that failed to load, so a broken link shows the pattern and a new link is tried again.
+  const [failedUrl, setFailedUrl] = useState('')
+
+  if (thumbnailUrl && thumbnailUrl !== failedUrl) {
+    // The title is always shown next to the cover, so the photo is decorative. width and height
+    // reserve its 16:10 space before it loads.
     return (
       <img
         alt=""
         className={`aspect-[16/10] w-full rounded-xl object-cover ${className}`}
+        decoding="async"
+        height={500}
+        loading="lazy"
+        onError={() => setFailedUrl(thumbnailUrl)}
         src={thumbnailUrl}
+        width={800}
       />
     )
   }
