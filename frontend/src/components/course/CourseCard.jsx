@@ -26,19 +26,32 @@ function CourseCard({ course }) {
   return (
     <Link
       to={`/courses/${_id}`}
-      className="group block overflow-hidden rounded-xl border border-line bg-card transition-shadow hover:shadow-md"
+      className="group block rounded-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand"
     >
-      <CourseCover title={title} category={category} thumbnailUrl={thumbnailUrl} />
+      {/* The frame keeps the rounded corners while the photo zooms in on hover. */}
+      <div className="overflow-hidden rounded-xl">
+        <CourseCover
+          category={category}
+          className="transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+          thumbnailUrl={thumbnailUrl}
+          title={title}
+        />
+      </div>
 
-      <div className="space-y-2 p-4">
-        <h3 className="line-clamp-2 min-h-[3.5rem] font-semibold text-ink group-hover:text-brand">
+      <div className="pt-4">
+        <p className="truncate text-xs font-semibold tracking-[0.12em] text-brand uppercase">
+          {category?.name ?? 'Course'}
+        </p>
+
+        {/* Two lines tall even for short titles, so cards side by side still line up. */}
+        <h3 className="mt-1.5 line-clamp-2 min-h-[2.5em] font-serif text-title font-semibold text-ink decoration-1 underline-offset-4 group-hover:underline">
           {title}
         </h3>
 
-        <p className="truncate text-sm text-muted">{instructorName}</p>
+        <p className="mt-1 truncate text-sm text-muted">{instructorName}</p>
 
-        {/* The row keeps its height without a rating, so cards side by side still line up. */}
-        <div className="flex min-h-5 items-center gap-1.5 text-sm">
+        {/* The row keeps its height without a rating, for the same reason. */}
+        <div className="mt-2 flex min-h-5 items-center gap-1.5 text-sm">
           {rating?.count > 0 && (
             <>
               <StarRating value={rating.average} />
@@ -50,18 +63,13 @@ function CourseCard({ course }) {
           )}
         </div>
 
-        <p className="text-sm text-muted">
+        <p className="mt-1 text-sm text-muted">
           {lessonCount} {lessonCount === 1 ? 'lesson' : 'lessons'}
-          {levelLabel && ` · ${levelLabel}`}
+          {levelLabel && ` · ${levelLabel}`} · {studentCount}{' '}
+          {studentCount === 1 ? 'student' : 'students'}
         </p>
 
-        <div className="flex items-center justify-between pt-1">
-          <span className="font-semibold text-ink">{formatMoney(price)}</span>
-
-          <span className="text-sm text-muted">
-            {studentCount} {studentCount === 1 ? 'student' : 'students'}
-          </span>
-        </div>
+        <span className="mt-3 block font-semibold text-ink">{formatMoney(price)}</span>
       </div>
     </Link>
   )
