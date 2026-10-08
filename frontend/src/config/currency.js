@@ -66,6 +66,9 @@ export const DISPLAY_UNITS_PER_USD = {
   INR: (108.1165 / 1488.4906) * 1331.2679,
 }
 
+// The date of the rates above. The site shows it next to converted prices, so change both together.
+export const RATES_DATE = '7 October 2026'
+
 export const SUPPORTED_CURRENCIES = Object.values(CURRENCIES)
 
 export function isSupportedCurrency(code) {

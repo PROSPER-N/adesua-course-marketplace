@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
 import { enrollFree, getMyEnrollments } from '../../api/enrollments.js'
 import CourseCover from '../../components/course/CourseCover.jsx'
+import CurrencyNote from '../../components/layout/CurrencyNote.jsx'
 import Button from '../../components/ui/Button.jsx'
 import EmptyState from '../../components/ui/EmptyState.jsx'
 import ErrorMessage from '../../components/ui/ErrorMessage.jsx'
@@ -229,6 +230,7 @@ function CartPage() {
                 {formatAmount(total)}
               </dd>
             </dl>
+            <CurrencyNote className="mt-3 text-sm" />
             <p className="mt-3 flex items-start gap-2 text-sm text-muted">
               <BookOpen aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-brand" />
               Each course has its own enrollment or checkout.

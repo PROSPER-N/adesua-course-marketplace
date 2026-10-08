@@ -6,6 +6,7 @@ import { getMyEnrollments } from '../../api/enrollments.js'
 import AddToCartButton from '../../components/course/AddToCartButton.jsx'
 import CourseCover from '../../components/course/CourseCover.jsx'
 import EnrollButton from '../../components/course/EnrollButton.jsx'
+import CurrencyNote from '../../components/layout/CurrencyNote.jsx'
 import CourseReviews from '../../components/reviews/CourseReviews.jsx'
 import Badge from '../../components/ui/Badge.jsx'
 import ErrorMessage from '../../components/ui/ErrorMessage.jsx'
@@ -330,6 +331,7 @@ function CourseDetailPage() {
           <p className="hidden text-sm text-muted lg:mt-4 lg:block">
             {course.lessonCount ?? lessons.length} lessons · {duration}
           </p>
+          <CurrencyNote className="mx-auto mt-2 max-w-7xl text-xs lg:mt-3 lg:text-sm" />
         </aside>
       </div>
     </div>
