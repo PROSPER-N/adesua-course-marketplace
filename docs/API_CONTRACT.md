@@ -32,6 +32,7 @@ Base URL: `/api` (locally `http://localhost:5000/api`). Private routes need the 
 |---|---|---|---|---|---|
 | GET | `/api/health` | Public | API is running | A | `health.routes.js` |
 | GET | `/api/stats` | Public | Published courses, eligible instructors, learners and categories | A | `stats.routes.js` |
+| GET | `/api/instructors` | Public | Active instructors with published courses, with their ratings | A | `instructors.routes.js` |
 | POST | `/api/auth/register` | Public | Create a student or instructor account | A | `auth.routes.js` |
 | POST | `/api/auth/login` | Public | Log in | A | `auth.routes.js` |
 | GET | `/api/auth/me` | Logged in | Current user | A | `auth.routes.js` |
@@ -83,6 +84,7 @@ Base URL: `/api` (locally `http://localhost:5000/api`). Private routes need the 
   - `sort`: `newest`, `popular`, `price_asc` or `price_desc` (default `newest`)
   - `page`: default 1
   - `limit`: default 9, max 50
+- `GET /api/instructors`: `limit` (default 4, max 50). There are no pages.
 - `GET /api/admin/users`: `search` (name or email), `role`, `page`, `limit` (default 10)
 - `GET /api/admin/courses`: `search` (title), `status`, `page`, `limit` (default 10)
 - `GET /api/courses/:id/reviews` and `GET /api/reviews`: `page`, `limit` (default 10), newest first
@@ -106,6 +108,10 @@ Fields for the other role are ignored.
 - A user is `{ _id, name, email, role, bio, isActive, createdAt, updatedAt }`. Instructors also have `headline` and `teachingArea` (a category `_id`), and students have `interests` (category `_id`s). Accounts made before these fields existed may not have them.
 - `GET /api/auth/me`: `{ user }`
 - `GET /api/stats`: `{ courses, instructors, learners, categories }`, where courses counts published courses, instructors counts instructors with at least one published course, learners counts student accounts, and categories counts all categories
+- `GET /api/instructors`: `[ { _id, name, headline, teachingArea: { _id, name, slug }, rating: { average, count }, courseCount } ]`, for active instructors with at least one published course.
+  - `rating` is the average `instructorRating` of the visible reviews on all their published courses, the same as `instructor.rating` on a course, and `courseCount` counts their published courses.
+  - `headline` is `""` and `teachingArea` is `null` for accounts made before those fields existed.
+  - Sorted by review count, then average rating, then course count (all highest first), then name.
 - `GET /api/categories`: `[ { _id, name, slug, courseCount } ]`, where `courseCount` counts published courses
 - `GET /api/courses`, each item: `{ _id, title, shortDescription, price, level, thumbnailUrl, lessonCount, totalMinutes, studentCount, rating: { average, count }, createdAt, category: { _id, name, slug }, instructor: { _id, name } }`
 - `GET /api/courses/:id`: every course field, plus:
@@ -143,6 +149,7 @@ The `message` of each successful response. The frontend shows some of them word 
 |---|---|---|
 | GET | `/api/health` | API is running |
 | GET | `/api/stats` | Stats fetched successfully |
+| GET | `/api/instructors` | Instructors fetched successfully |
 | POST | `/api/auth/register` | Account created successfully |
 | POST | `/api/auth/login` | Logged in successfully |
 | GET | `/api/auth/me` | Current user |
