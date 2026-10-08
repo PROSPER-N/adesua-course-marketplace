@@ -27,3 +27,9 @@ The course photos are loaded from each site's image CDN, cropped to 800×500. Th
 | Files | What it shows | Creator | Source | Licence |
 |---|---|---|---|---|
 | `frontend/public/media/hero.mp4`, `hero.webm`, `hero-poster.jpg` | A woman writing in a notebook beside a laptop. We use the first 11.5 seconds, cropped to 1280×720; the poster is the first frame. | Tima Miroshnichenko | [Pexels](https://www.pexels.com/video/woman-writing-while-using-a-laptop-6860756/) | Pexels License |
+
+## Home page photo
+
+| Used for | What it shows | Creator | Source | Licence |
+|---|---|---|---|---|
+| The "Teach what you know" band | A fashion designer filming a tutorial | Vitaly Gariev | [Pexels](https://www.pexels.com/photo/creative-fashion-designer-filming-tutorial-36731347/) | Pexels License |
