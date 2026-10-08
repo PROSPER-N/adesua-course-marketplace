@@ -7,10 +7,7 @@ function CurrencySelector({ mobile = false }) {
 
   return (
     <div className={mobile ? 'grid w-full gap-1.5' : 'shrink-0'}>
-      <label
-        className={mobile ? 'text-sm font-semibold text-ink' : 'sr-only'}
-        htmlFor={id}
-      >
+      <label className={mobile ? 'text-sm font-semibold text-ink' : 'sr-only'} htmlFor={id}>
         Display currency
       </label>
       <select

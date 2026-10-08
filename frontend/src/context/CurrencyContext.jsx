@@ -1,5 +1,10 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react'
-import { BASE_CURRENCY, CURRENCIES, SUPPORTED_CURRENCIES, isSupportedCurrency } from '../config/currency.js'
+import {
+  BASE_CURRENCY,
+  CURRENCIES,
+  SUPPORTED_CURRENCIES,
+  isSupportedCurrency,
+} from '../config/currency.js'
 import { readCurrencyPreference, writeCurrencyPreference } from '../utils/currencyPreference.js'
 import { convertFromBase } from '../utils/currencyPricing.js'
 import { formatMoney } from '../utils/formatMoney.js'
@@ -16,10 +21,7 @@ export function CurrencyProvider({ children }) {
     return true
   }, [])
 
-  const convertAmount = useCallback(
-    (amount) => convertFromBase(amount, currency),
-    [currency],
-  )
+  const convertAmount = useCallback((amount) => convertFromBase(amount, currency), [currency])
   const formatPrice = useCallback(
     (amount) => formatMoney(convertFromBase(amount, currency), { currency }),
     [currency],

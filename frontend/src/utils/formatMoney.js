@@ -17,6 +17,5 @@ export function formatMoney(
     currency,
     minimumFractionDigits: decimals ? fractionDigits : 0,
     maximumFractionDigits: fractionDigits,
-  })
-    .format(value)
+  }).format(value)
 }
