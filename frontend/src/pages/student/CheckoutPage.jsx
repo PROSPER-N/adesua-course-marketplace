@@ -62,9 +62,7 @@ function CheckoutPage() {
 
     Promise.all([getCourse(courseId), getMyEnrollments()])
       .then(([course, enrollments]) => {
-        const enrolled = enrollments.some(
-          (enrollment) => enrollment.course?._id === course._id,
-        )
+        const enrolled = enrollments.some((enrollment) => enrollment.course?._id === course._id)
 
         if (!ignore) {
           setResult({
@@ -215,9 +213,7 @@ function CheckoutPage() {
                 return (
                   <label
                     className={`flex min-h-14 cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 transition-colors ${
-                      selected
-                        ? 'border-brand bg-brand-soft'
-                        : 'border-line hover:bg-surface'
+                      selected ? 'border-brand bg-brand-soft' : 'border-line hover:bg-surface'
                     }`}
                     key={value}
                   >
@@ -284,9 +280,7 @@ function CheckoutPage() {
           )}
 
           <dl className="mt-4 flex items-baseline justify-between border-t border-line pt-4">
-            <dt className="font-semibold text-ink">
-              Total ({currencyInfo.code}, display only)
-            </dt>
+            <dt className="font-semibold text-ink">Total ({currencyInfo.code}, display only)</dt>
 
             <dd className="font-display text-2xl font-extrabold text-ink">
               {formatPrice(course.price)}

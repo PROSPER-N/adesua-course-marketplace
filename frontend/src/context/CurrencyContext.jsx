@@ -21,10 +21,7 @@ export function CurrencyProvider({ children }) {
     return true
   }, [])
 
-  const convertAmount = useCallback(
-    (amount) => convertFromBase(amount, currency),
-    [currency],
-  )
+  const convertAmount = useCallback((amount) => convertFromBase(amount, currency), [currency])
 
   const formatPrice = useCallback(
     (amount) => formatMoney(convertFromBase(amount, currency), { currency }),

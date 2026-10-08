@@ -59,10 +59,7 @@ function CourseCard({ course }) {
               <StarRating value={rating.average} />
               <span className="text-muted">
                 ({rating.count})
-                <span className="sr-only">
-                  {' '}
-                  {rating.count === 1 ? 'review' : 'reviews'}
-                </span>
+                <span className="sr-only"> {rating.count === 1 ? 'review' : 'reviews'}</span>
               </span>
             </>
           )}

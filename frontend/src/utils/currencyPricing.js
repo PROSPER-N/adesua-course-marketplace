@@ -16,9 +16,7 @@ export function convertFromBase(amount, targetCurrency, baseCurrency = BASE_CURR
     return Number.NaN
   }
 
-  const raw =
-    (value / DISPLAY_UNITS_PER_USD[baseCurrency]) *
-    DISPLAY_UNITS_PER_USD[targetCurrency]
+  const raw = (value / DISPLAY_UNITS_PER_USD[baseCurrency]) * DISPLAY_UNITS_PER_USD[targetCurrency]
 
   const scale = 10 ** CURRENCIES[targetCurrency].fractionDigits
 
@@ -33,10 +31,7 @@ export function convertTotal(amounts, targetCurrency) {
   }
 
   const scale = 10 ** CURRENCIES[targetCurrency].fractionDigits
-  const total = amounts.reduce(
-    (sum, amount) => sum + convertFromBase(amount, targetCurrency),
-    0,
-  )
+  const total = amounts.reduce((sum, amount) => sum + convertFromBase(amount, targetCurrency), 0)
 
   return Math.round(total * scale) / scale
 }
