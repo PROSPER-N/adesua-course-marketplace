@@ -213,6 +213,30 @@ body {
   animation-play-state: paused;
 }
 
+/* AutoScroller: two copies of the items move left by one copy's width, then start again. */
+.auto-scroller-track {
+  animation: auto-scroll var(--auto-scroll-duration) linear infinite;
+}
+
+/* Touch screens keep :hover after a tap, which would leave the row stopped there. */
+@media (hover: hover) {
+  .auto-scroller:hover .auto-scroller-track {
+    animation-play-state: paused;
+  }
+}
+
+/* data-paused is set by the Pause button, a touch, or a hidden tab. */
+.auto-scroller:has(:focus-visible) .auto-scroller-track,
+.auto-scroller[data-paused] .auto-scroller-track {
+  animation-play-state: paused;
+}
+
+@keyframes auto-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 @keyframes drawer-enter {
   from {
     transform: translateX(100%);
