@@ -16,6 +16,7 @@ const PAUSE_CLASS =
 // has keyboard focus, while the tab is hidden, and after a touch until Play is pressed.
 // When everything fits, or with reduced motion, it's a still row that can be swiped instead.
 // header sits on the left above the row; actions and the Pause button sit on the right.
+// While the items load, placeholder shows in the row's place.
 function AutoScroller({
   items,
   getKey,
@@ -26,6 +27,7 @@ function AutoScroller({
   header,
   actions,
   rowClassName = 'mt-6',
+  placeholder,
 }) {
   const reducedMotion = useReducedMotion()
   const pageVisible = usePageVisible()
@@ -33,7 +35,7 @@ function AutoScroller({
   const [size, setSize] = useState({ fits: false, width: 0 })
   const boxRef = useRef(null)
   const listRef = useRef(null)
-  const moving = !reducedMotion && !size.fits
+  const moving = !placeholder && !reducedMotion && !size.fits
   const { gap: gapClass, seam } = GAPS[gap] ?? GAPS.md
 
   // The header's content width is the room the row has. Measured before the first paint, so
@@ -77,6 +79,43 @@ function AutoScroller({
     </ul>
   )
 
+  let row
+  if (placeholder) {
+    row = (
+      <div
+        aria-hidden="true"
+        className={`mx-auto max-w-7xl overflow-hidden px-4 py-2 sm:px-6 lg:px-8 ${rowClassName}`}
+      >
+        {placeholder}
+      </div>
+    )
+  } else if (moving) {
+    // The edges fade out, so items slide in and out of view instead of being cut off.
+    row = (
+      <div
+        className={`auto-scroller relative overflow-hidden py-2 [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)] ${rowClassName}`}
+        data-paused={paused || !pageVisible || undefined}
+        onPointerDown={(event) => {
+          if (event.pointerType === 'touch') setPaused(true)
+        }}
+        style={{ '--auto-scroll-duration': `${Math.max(size.width / speed, 1)}s` }}
+      >
+        <div className="auto-scroller-track flex w-max">
+          {itemList(false)}
+          {itemList(true)}
+        </div>
+      </div>
+    )
+  } else {
+    row = (
+      <div
+        className={`relative mx-auto max-w-7xl snap-x snap-mandatory scroll-px-4 overflow-x-auto px-4 py-2 sm:scroll-px-6 sm:px-6 lg:scroll-px-8 lg:px-8 ${rowClassName}`}
+      >
+        {itemList(false)}
+      </div>
+    )
+  }
+
   return (
     <div>
       <div
@@ -103,28 +142,7 @@ function AutoScroller({
         </div>
       </div>
 
-      {moving ? (
-        // The edges fade out, so items slide in and out of view instead of being cut off.
-        <div
-          className={`auto-scroller relative overflow-hidden py-2 [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)] ${rowClassName}`}
-          data-paused={paused || !pageVisible || undefined}
-          onPointerDown={(event) => {
-            if (event.pointerType === 'touch') setPaused(true)
-          }}
-          style={{ '--auto-scroll-duration': `${Math.max(size.width / speed, 1)}s` }}
-        >
-          <div className="auto-scroller-track flex w-max">
-            {itemList(false)}
-            {itemList(true)}
-          </div>
-        </div>
-      ) : (
-        <div
-          className={`relative mx-auto max-w-7xl snap-x snap-mandatory scroll-px-4 overflow-x-auto px-4 py-2 sm:scroll-px-6 sm:px-6 lg:scroll-px-8 lg:px-8 ${rowClassName}`}
-        >
-          {itemList(false)}
-        </div>
-      )}
+      {row}
     </div>
   )
 }
