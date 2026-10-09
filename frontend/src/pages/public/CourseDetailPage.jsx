@@ -1,5 +1,5 @@
 import { BookOpen, Clock3, GraduationCap, LockKeyhole, PlayCircle } from 'lucide-react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { getCourse } from '../../api/courses.js'
 import { getMyEnrollments } from '../../api/enrollments.js'
@@ -93,6 +93,23 @@ function CourseDetailPage() {
   } else if (enrollmentKey && enrollmentCheck.key === enrollmentKey) {
     reviewer = enrollmentCheck.enrolled ? 'enrolled' : 'student'
   }
+
+  // Below 1024px the buy bar is fixed over the bottom of the screen. Its height is shared with
+  // the footer (see index.css), which ends with that much space so the bar never covers it.
+  const barRef = useRef(null)
+  useEffect(() => {
+    const bar = barRef.current
+    if (!bar) return undefined
+    const root = document.documentElement
+    const observer = new ResizeObserver(() => {
+      root.style.setProperty('--buy-bar-height', `${bar.offsetHeight}px`)
+    })
+    observer.observe(bar)
+    return () => {
+      observer.disconnect()
+      root.style.removeProperty('--buy-bar-height')
+    }
+  }, [loading, result.error])
 
   if (loading) {
     return (
@@ -318,7 +335,10 @@ function CourseDetailPage() {
           </section>
           <CourseReviews courseId={id} key={id} onChange={refreshRatings} reviewer={reviewer} />
         </div>
-        <aside className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-card p-3 shadow-[0_-4px_16px_var(--color-shadow)] lg:sticky lg:top-24 lg:inset-x-auto lg:bottom-auto lg:z-auto lg:h-fit lg:rounded-2xl lg:border lg:border-line lg:p-5 lg:shadow-sm">
+        <aside
+          className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-card p-3 shadow-[0_-4px_16px_var(--color-shadow)] lg:sticky lg:top-24 lg:inset-x-auto lg:bottom-auto lg:z-auto lg:h-fit lg:rounded-2xl lg:border lg:border-line lg:p-5 lg:shadow-sm"
+          ref={barRef}
+        >
           {/* Phones: the price, the buy button and a square cart button in one row. From 1024px:
               the price on its own line, then the two buttons side by side at equal width. A
               note for accounts that can't enroll takes the whole width instead of half. */}

@@ -193,6 +193,14 @@ body {
   animation: drawer-enter 180ms ease-out both;
 }
 
+/* The course page sets --buy-bar-height while its buy bar is fixed to the bottom of the screen,
+   so the footer's last links can still scroll clear of it. Other pages leave it unset. */
+@media (width < 64rem) {
+  footer {
+    padding-bottom: var(--buy-bar-height, 0px);
+  }
+}
+
 /* Each line of the hero headline while it rises in. The lines are tight, so the mask reaches a
    little above and below each one, or the tops and tails of letters would be cut off. The
    negative margins cancel the padding, which only works in a flex column: there, unlike in
