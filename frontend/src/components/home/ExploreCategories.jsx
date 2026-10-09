@@ -20,7 +20,13 @@ function ExploreCategories() {
     let ignore = false
     getCategories()
       .then((categories) => {
-        if (!ignore) setResult({ attempt, categories, error: null })
+        if (!ignore) {
+          setResult({
+            attempt,
+            categories: Array.isArray(categories) ? categories : [],
+            error: null,
+          })
+        }
       })
       .catch((error) => {
         if (!ignore) setResult({ attempt, categories: [], error })
