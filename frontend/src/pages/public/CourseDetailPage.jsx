@@ -6,20 +6,22 @@ import { getMyEnrollments } from '../../api/enrollments.js'
 import AddToCartButton from '../../components/course/AddToCartButton.jsx'
 import CourseCover from '../../components/course/CourseCover.jsx'
 import EnrollButton from '../../components/course/EnrollButton.jsx'
+import CurrencyNote from '../../components/layout/CurrencyNote.jsx'
 import CourseReviews from '../../components/reviews/CourseReviews.jsx'
 import Badge from '../../components/ui/Badge.jsx'
 import ErrorMessage from '../../components/ui/ErrorMessage.jsx'
 import Spinner from '../../components/ui/Spinner.jsx'
 import StarRating from '../../components/ui/StarRating.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
+import { useCurrency } from '../../context/CurrencyContext.jsx'
 import { summaryRepeatsDescription } from '../../utils/courseSummary.js'
-import { formatMoney } from '../../utils/formatMoney.js'
 import { getErrorMessage } from '../../utils/getErrorMessage.js'
 import { getInitials } from '../../utils/getInitials.js'
 
 function CourseDetailPage() {
   const { id } = useParams()
   const { user, loading: authLoading } = useAuth()
+  const { formatPrice } = useCurrency()
   const [attempt, setAttempt] = useState(0)
   const [result, setResult] = useState({ key: '', course: null, error: null })
   const key = `${id}:${attempt}`
@@ -319,7 +321,7 @@ function CourseDetailPage() {
         <aside className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-card p-3 shadow-[0_-4px_16px_var(--color-shadow)] lg:sticky lg:top-24 lg:inset-x-auto lg:bottom-auto lg:z-auto lg:h-fit lg:rounded-2xl lg:border lg:border-line lg:p-5 lg:shadow-sm">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 lg:block">
             <p className="shrink-0 font-display text-xl font-bold text-ink lg:text-3xl">
-              {formatMoney(course.price)}
+              {formatPrice(course.price)}
             </p>
             <div className="lg:mt-4">
               <EnrollButton course={course} />
@@ -329,6 +331,7 @@ function CourseDetailPage() {
           <p className="hidden text-sm text-muted lg:mt-4 lg:block">
             {course.lessonCount ?? lessons.length} lessons · {duration}
           </p>
+          <CurrencyNote className="mx-auto mt-2 max-w-7xl text-xs lg:mt-3 lg:text-sm" />
         </aside>
       </div>
     </div>

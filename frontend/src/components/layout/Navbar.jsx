@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext.jsx'
 import { useCart } from '../../hooks/useCart.js'
 import { getInitials } from '../../utils/getInitials.js'
 import Button from '../ui/Button.jsx'
+import CurrencySelector from './CurrencySelector.jsx'
 import ThemeToggle from './ThemeToggle.jsx'
 
 function getLinks(user) {
@@ -76,7 +77,12 @@ function AccountActions({ user, logout, mobile = false, onNavigate }) {
         >
           {getInitials(user.name) || 'A'}
         </span>
-        <span className="text-sm font-semibold text-ink">{firstName}</span>
+        {/* Below 1024px the bar has no room for the name, so only screen readers get it there. */}
+        <span
+          className={`text-sm font-semibold text-ink ${mobile ? '' : 'sr-only lg:not-sr-only'}`}
+        >
+          {firstName}
+        </span>
       </div>
       <Button
         onClick={async () => {
@@ -135,7 +141,7 @@ function Navbar() {
 
       if (event.key !== 'Tab' || !drawerRef.current) return
       const focusableItems = drawerRef.current.querySelectorAll(
-        'a[href]:not([tabindex="-1"]), button:not([disabled]):not([tabindex="-1"])',
+        'a[href]:not([tabindex="-1"]), button:not([disabled]):not([tabindex="-1"]), select:not([disabled]):not([tabindex="-1"])',
       )
       const firstItem = focusableItems[0]
       const lastItem = focusableItems[focusableItems.length - 1]
@@ -174,8 +180,13 @@ function Navbar() {
           </span>
         </Link>
 
-        <nav aria-label="Main navigation" className="hidden items-center gap-5 md:flex">
+        {/* Tighter gaps below 1024px keep the links and the currency selector on one line at 768px. */}
+        <nav
+          aria-label="Main navigation"
+          className="hidden items-center gap-2 whitespace-nowrap md:flex lg:gap-5"
+        >
           <NavigationLinks links={links} pathname={pathname} />
+          <CurrencySelector />
           <ThemeToggle />
           <CartLink count={items.length} />
           <AccountActions logout={logout} user={user} />
@@ -242,6 +253,7 @@ function Navbar() {
             </nav>
 
             <div className="mt-auto grid gap-5 border-t border-line pt-5">
+              <CurrencySelector mobile />
               <ThemeToggle mobile />
               <AccountActions logout={logout} mobile onNavigate={handleNavigate} user={user} />
             </div>

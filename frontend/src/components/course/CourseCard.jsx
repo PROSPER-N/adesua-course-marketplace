@@ -1,10 +1,11 @@
 import { Link } from 'react-router'
-import { formatMoney } from '../../utils/formatMoney.js'
+import { useCurrency } from '../../context/CurrencyContext.jsx'
 import StarRating from '../ui/StarRating.jsx'
 import CourseCover from './CourseCover.jsx'
 
 // course is one item from GET /api/courses.
 function CourseCard({ course }) {
+  const { formatPrice } = useCurrency()
   const {
     _id,
     title,
@@ -69,7 +70,7 @@ function CourseCard({ course }) {
           {studentCount === 1 ? 'student' : 'students'}
         </p>
 
-        <span className="mt-3 block font-semibold text-ink">{formatMoney(price)}</span>
+        <span className="mt-3 block font-semibold text-ink">{formatPrice(price)}</span>
       </div>
     </Link>
   )

@@ -5,10 +5,11 @@ import { getCourse } from '../../api/courses.js'
 import { getMyEnrollments } from '../../api/enrollments.js'
 import { createOrder, payOrder } from '../../api/orders.js'
 import CourseCover from '../../components/course/CourseCover.jsx'
+import CurrencyNote from '../../components/layout/CurrencyNote.jsx'
 import Button from '../../components/ui/Button.jsx'
 import EmptyState from '../../components/ui/EmptyState.jsx'
 import ErrorMessage from '../../components/ui/ErrorMessage.jsx'
-import { formatMoney } from '../../utils/formatMoney.js'
+import { useCurrency } from '../../context/CurrencyContext.jsx'
 import { getErrorMessage } from '../../utils/getErrorMessage.js'
 import { PAYMENT_METHODS } from '../../utils/paymentMethods.js'
 import { removeCartItem } from '../../utils/cart.js'
@@ -37,6 +38,7 @@ function CheckoutSkeleton() {
 
 function CheckoutPage() {
   const { courseId } = useParams()
+  const { formatBaseAmount, formatPrice } = useCurrency()
   const [searchParams] = useSearchParams()
 
   // A result remembers the request it answers, so the page loads until the latest one has one.
@@ -212,7 +214,7 @@ function CheckoutPage() {
             loadingText="Processing payment…"
             onClick={handlePay}
           >
-            Pay {formatMoney(course.price)}
+            Pay {formatBaseAmount(course.price)}
           </Button>
         </section>
 
@@ -235,9 +237,10 @@ function CheckoutPage() {
           <dl className="mt-4 flex items-baseline justify-between border-t border-line pt-4">
             <dt className="font-semibold text-ink">Total</dt>
             <dd className="font-display text-2xl font-extrabold text-ink">
-              {formatMoney(course.price)}
+              {formatPrice(course.price)}
             </dd>
           </dl>
+          <CurrencyNote className="mt-3 text-sm" />
         </aside>
       </div>
     )

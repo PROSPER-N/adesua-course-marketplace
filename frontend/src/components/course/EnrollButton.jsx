@@ -3,13 +3,14 @@ import toast from 'react-hot-toast'
 import { useLocation, useNavigate } from 'react-router'
 import { enrollFree, getMyEnrollments } from '../../api/enrollments.js'
 import { useAuth } from '../../context/AuthContext.jsx'
-import { formatMoney } from '../../utils/formatMoney.js'
+import { useCurrency } from '../../context/CurrencyContext.jsx'
 import { getErrorMessage } from '../../utils/getErrorMessage.js'
 import Button from '../ui/Button.jsx'
 
 // course is the course from GET /api/courses/:id, with its lessons in order.
 function EnrollButton({ course }) {
   const { user, loading: authLoading } = useAuth()
+  const { formatPrice } = useCurrency()
   const navigate = useNavigate()
   const location = useLocation()
   const [enrolling, setEnrolling] = useState(false)
@@ -46,7 +47,7 @@ function EnrollButton({ course }) {
   const firstLesson = course.lessons?.[0]
   const firstLessonPath = firstLesson ? `/learn/${course._id}/${firstLesson._id}` : '/my-learning'
   const isFree = course.price === 0
-  const label = isFree ? 'Enroll for free' : `Buy for ${formatMoney(course.price)}`
+  const label = isFree ? 'Enroll for free' : `Buy for ${formatPrice(course.price)}`
 
   async function handleEnroll() {
     setEnrolling(true)
