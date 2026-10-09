@@ -1,6 +1,6 @@
 import { useGSAP } from '@gsap/react'
 import { Pause, Play, Search } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { gsap, MOTION_OK, SplitText } from '../../utils/gsap.js'
 import Button from '../ui/Button.jsx'
@@ -16,13 +16,12 @@ const POSTER = '/media/hero-poster.jpg'
 const MEDIA_CLASS =
   'relative -z-20 block h-80 w-full object-cover object-right md:absolute md:inset-0 md:h-full md:object-[30%_center] lg:object-center'
 
-// Checked once. The clip plays only on screens 768px and wider, and never with reduced motion or
-// Data Saver. Otherwise the poster shows and no video is downloaded.
+// Checked once. The clip plays on every screen size, but never with reduced motion or Data
+// Saver: then the poster shows and no video is downloaded.
 function videoAllowed() {
-  const wide = window.matchMedia('(min-width: 768px)').matches
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   const saveData = navigator.connection?.saveData === true
-  return wide && !reducedMotion && !saveData
+  return !reducedMotion && !saveData
 }
 
 // The headline intro plays once per page load: the first time Home shows, not on coming back.
@@ -42,6 +41,17 @@ function HomeHero() {
   const [playing, setPlaying] = useState(false)
   const videoRef = useRef(null)
   const textRef = useRef(null)
+
+  // Phones only autoplay muted, inline video. React sets muted as a property but not as an
+  // attribute, which some phone browsers check, so set both here and start playback.
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+    video.muted = true
+    video.defaultMuted = true
+    video.setAttribute('muted', '')
+    video.play().catch(() => {})
+  }, [])
 
   // The headline rises line by line, then the text, search and links under it fade up.
   useGSAP(
@@ -155,7 +165,8 @@ function HomeHero() {
         className="absolute inset-0 -z-10 hidden bg-night/70 md:block lg:bg-transparent lg:bg-linear-to-r lg:from-night/85 lg:via-night/70 lg:via-60% lg:to-night/30"
       />
 
-      <div className="mx-auto -mt-8 flex max-w-7xl flex-col justify-end px-4 pb-12 sm:px-6 md:mt-0 md:min-h-[40rem] md:pt-20 lg:min-h-[min(88svh,46rem)] lg:px-8 lg:pb-20">
+      {/* On phones the Pause button sits below the text, so the text ends higher up there. */}
+      <div className="mx-auto -mt-8 flex max-w-7xl flex-col justify-end px-4 pb-20 sm:px-6 md:mt-0 md:min-h-[40rem] md:pt-20 md:pb-12 lg:min-h-[min(88svh,46rem)] lg:px-8 lg:pb-20">
         <div className="max-w-xl md:max-w-md lg:max-w-xl" ref={textRef}>
           <h1 className="font-serif text-hero font-semibold text-white" id="hero-heading">
             Learn something useful on your lunch break.
