@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="frontend/public/adesua-logo-dark.svg" />
+    <img src="frontend/public/adesua-logo.svg" alt="Adesua" width="320" />
+  </picture>
+</p>
+
 # Adesua
 
 Adesua is a video course marketplace, built as our TS Academy full-stack capstone project (topic 56). Instructors publish video courses. Students enroll in free courses or buy paid ones through a demo checkout, then watch the lessons and track their progress. Admins manage users, categories and courses.
