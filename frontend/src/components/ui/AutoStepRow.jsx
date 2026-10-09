@@ -161,7 +161,7 @@ function AutoStepRow({
       </div>
 
       <ul
-        className={`hide-scrollbar relative -mx-4 mt-8 flex snap-x snap-mandatory scroll-px-4 gap-5 overflow-x-auto scroll-smooth px-4 pb-4 motion-reduce:scroll-auto sm:-mx-6 sm:scroll-px-6 sm:px-6 lg:-mx-8 lg:scroll-px-8 lg:px-8 ${rowClassName}`}
+        className={`hide-scrollbar relative mx-auto mt-8 flex max-w-7xl snap-x snap-mandatory scroll-px-4 gap-5 overflow-x-auto scroll-smooth px-4 pb-4 motion-reduce:scroll-auto sm:scroll-px-6 sm:px-6 lg:scroll-px-8 lg:px-8 ${rowClassName}`}
         onBlur={(event) => {
           if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false)
         }}
