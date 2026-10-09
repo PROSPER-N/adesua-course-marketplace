@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+﻿import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router'
 import { Menu, ShoppingCart, X } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext.jsx'
@@ -186,7 +186,7 @@ function Navbar() {
           to="/"
         >
           {' '}
-          <span aria-hidden="true" className="brand-mark size-9 rounded-lg" />{' '}
+          <span aria-hidden="true" className="brand-mark size-9 rounded-full" />{' '}
           <span className="font-display text-2xl font-extrabold tracking-tight text-brand-dark">
             adesua{' '}
           </span>{' '}
@@ -296,3 +296,4 @@ function CartLink({ count, className = '' }) {
 }
 
 export default Navbar
+
