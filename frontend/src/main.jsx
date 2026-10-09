@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router'
 import { Toaster } from 'react-hot-toast'
 import './index.css'
+import ErrorBoundary from './components/layout/ErrorBoundary.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 import { CurrencyProvider } from './context/CurrencyContext.jsx'
 import { startTheme } from './utils/theme.js'
@@ -15,7 +16,9 @@ createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <CurrencyProvider>
         <AuthProvider>
-          <App />
+          <ErrorBoundary>
+            <App />
+          </ErrorBoundary>
           <Toaster
             position="top-right"
             toastOptions={{
