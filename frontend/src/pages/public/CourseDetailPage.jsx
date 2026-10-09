@@ -280,7 +280,7 @@ function CourseDetailPage() {
                       showLocks && (
                         <>
                           <LockKeyhole aria-hidden="true" className="size-4" />
-                          Enroll to unlock
+                          Enroll to watch
                         </>
                       )
                     )}
@@ -319,11 +319,14 @@ function CourseDetailPage() {
           <CourseReviews courseId={id} key={id} onChange={refreshRatings} reviewer={reviewer} />
         </div>
         <aside className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-card p-3 shadow-[0_-4px_16px_var(--color-shadow)] lg:sticky lg:top-24 lg:inset-x-auto lg:bottom-auto lg:z-auto lg:h-fit lg:rounded-2xl lg:border lg:border-line lg:p-5 lg:shadow-sm">
-          <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 lg:block">
+          {/* Phones: the price, the buy button and a square cart button in one row. From 1024px:
+              the price on its own line, then the two buttons side by side at equal width. A
+              note for accounts that can't enroll takes the whole width instead of half. */}
+          <div className="mx-auto flex max-w-7xl items-center gap-3 lg:block">
             <p className="shrink-0 font-display text-xl font-bold text-ink lg:text-3xl">
               {formatPrice(course.price)}
             </p>
-            <div className="lg:mt-4">
+            <div className="flex min-w-0 flex-1 items-center gap-2 [&>:first-child]:flex-1 lg:mt-4 lg:grid lg:grid-cols-2 lg:*:w-full lg:[&>p]:col-span-2 lg:[&>p~*]:col-span-2">
               <EnrollButton course={course} />
               <AddToCartButton course={course} />
             </div>
