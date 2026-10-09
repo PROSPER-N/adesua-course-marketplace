@@ -85,6 +85,24 @@ body {
   font-family: var(--font-sans);
 }
 
+.hide-scrollbar {
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (width >= 48rem) {
+  .hide-scrollbar {
+    scrollbar-width: none;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 .course-cover-pattern {
   position: absolute;
   inset-block: 0;
@@ -193,24 +211,50 @@ body {
   animation: drawer-enter 180ms ease-out both;
 }
 
-.skills-marquee-track {
-  animation: skills-scroll 40s linear infinite;
+/* The course page sets --buy-bar-height while its buy bar is fixed to the bottom of the screen,
+   so the footer's last links can still scroll clear of it. Other pages leave it unset. */
+@media (width < 64rem) {
+  footer {
+    padding-bottom: var(--buy-bar-height, 0px);
+  }
 }
 
-/* Touch screens keep :hover after a tap, which would leave the strip stopped there. */
+/* Each line of the hero headline while it rises in. The lines are tight, so the mask reaches a
+   little above and below each one, or the tops and tails of letters would be cut off. The
+   negative margins cancel the padding, which only works in a flex column: there, unlike in
+   normal flow, the margins of neighbouring lines don't merge. */
+:where(:has(> .hero-line-mask)) {
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-line-mask {
+  padding-block: 0.12em;
+  margin-block: -0.12em;
+}
+
+/* AutoScroller: two copies of the items move left by one copy's width, then start again. */
+.auto-scroller-track {
+  animation: auto-scroll var(--auto-scroll-duration) linear infinite;
+}
+
+/* Touch screens keep :hover after a tap, which would leave the row stopped there. */
 @media (hover: hover) {
-  .skills-marquee:hover .skills-marquee-track {
+  .auto-scroller:hover .auto-scroller-track {
     animation-play-state: paused;
   }
 }
 
-.skills-marquee:has(:focus-visible) .skills-marquee-track {
+/* data-paused is set by the Pause button, a touch, or a hidden tab. */
+.auto-scroller:has(:focus-visible) .auto-scroller-track,
+.auto-scroller[data-paused] .auto-scroller-track {
   animation-play-state: paused;
 }
 
-/* Set by the strip's Pause button. */
-.skills-marquee[data-paused] .skills-marquee-track {
-  animation-play-state: paused;
+@keyframes auto-scroll {
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 @keyframes drawer-enter {
@@ -219,12 +263,6 @@ body {
   }
   to {
     transform: translateX(0);
-  }
-}
-
-@keyframes skills-scroll {
-  to {
-    transform: translateX(-50%);
   }
 }
 
@@ -240,29 +278,6 @@ body {
   }
   .drawer-enter {
     animation: none;
-  }
-  .skills-marquee {
-    overflow: visible;
-  }
-  .skills-marquee-track {
-    animation: none;
-    display: block;
-    width: auto;
-  }
-  .skills-marquee-row {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    row-gap: 0.75rem;
-    width: auto;
-    padding-inline: 1rem;
-  }
-  .skills-marquee-row[aria-hidden='true'] {
-    display: none;
-  }
-  /* The dots only separate names, so the wrapped list doesn't end with one. */
-  .skills-marquee-row li:last-child .skills-dot {
-    display: none;
   }
 }
 

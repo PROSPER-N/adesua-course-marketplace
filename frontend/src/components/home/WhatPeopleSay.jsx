@@ -1,12 +1,17 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { getSiteReviews } from '../../api/reviews.js'
+import { getInitials } from '../../utils/getInitials.js'
+import AutoScroller from '../ui/AutoScroller.jsx'
+import Reveal from '../ui/Reveal.jsx'
 import StarRating from '../ui/StarRating.jsx'
 
-const REVIEW_LIMIT = 3
+const REVIEW_LIMIT = 10
 
-// The newest reviews of Adesua. The section hides itself when there are none, or when they
-// can't be loaded, like the popular courses above it.
+const CARD_CLASS = 'w-[85vw] rounded-2xl border border-line bg-card p-6 md:w-[22rem]'
+
+// The newest reviews of Adesua, moving slowly past. The section hides itself when there are
+// none, or when they can't be loaded, like the popular courses above it.
 function WhatPeopleSay() {
   const [result, setResult] = useState({ loading: true, reviews: [] })
 
@@ -28,89 +33,78 @@ function WhatPeopleSay() {
 
   if (!result.loading && result.reviews.length === 0) return null
 
-  const [featured, ...others] = result.reviews
-
   return (
-    <section
-      aria-labelledby="what-people-say-heading"
-      className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16"
-    >
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="text-xs font-semibold tracking-[0.12em] text-brand uppercase">Reviews</p>
-          <h2
-            className="mt-2 font-serif text-display font-medium text-ink"
-            id="what-people-say-heading"
+    <section aria-labelledby="what-people-say-heading" className="py-12 lg:py-16">
+      <AutoScroller
+        actions={
+          <Link
+            className="font-semibold text-brand-dark underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+            to="/reviews"
           >
-            What people say
-          </h2>
-        </div>
-        <Link
-          className="font-semibold text-brand-dark underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
-          to="/reviews"
-        >
-          Read all reviews
-        </Link>
-      </div>
-
-      {result.loading ? (
-        <div aria-hidden="true" className="mt-10 grid gap-4">
-          <div className="skeleton-shimmer h-8 w-11/12 rounded" />
-          <div className="skeleton-shimmer h-8 w-4/5 rounded" />
-          <div className="skeleton-shimmer h-8 w-2/3 rounded" />
-          <div className="skeleton-shimmer mt-2 h-4 w-48 rounded" />
-        </div>
-      ) : (
-        <>
-          {/* The newest review as a large quote, the next ones smaller underneath. */}
-          <figure className="mt-10 max-w-4xl">
-            <blockquote className="font-serif text-quote text-ink">
-              <p className="line-clamp-6">
-                <span aria-hidden="true" className="text-brand">
-                  “
-                </span>
-                {featured.comment}
-                <span aria-hidden="true" className="text-brand">
-                  ”
-                </span>
-              </p>
-            </blockquote>
-            <Byline review={featured} />
-          </figure>
-
-          {others.length > 0 && (
-            <ul className="mt-12 grid gap-10 border-t border-line pt-8 md:grid-cols-2">
-              {others.map((review) => (
-                <li key={review._id}>
-                  <figure>
-                    {/* Long reviews are cut short here; the Reviews page shows them in full. */}
-                    <blockquote className="font-serif text-xl leading-snug text-ink">
-                      <p className="line-clamp-4">{review.comment}</p>
-                    </blockquote>
-                    <Byline review={review} />
-                  </figure>
-                </li>
+            Read all reviews
+          </Link>
+        }
+        getKey={(review) => review._id}
+        header={
+          <Reveal>
+            <p className="text-xs font-semibold tracking-[0.12em] text-brand uppercase">Reviews</p>
+            <h2
+              className="mt-2 font-serif text-display font-medium text-ink"
+              id="what-people-say-heading"
+            >
+              What people say
+            </h2>
+          </Reveal>
+        }
+        items={result.reviews}
+        placeholder={
+          result.loading && (
+            <div className="flex gap-5">
+              {Array.from({ length: 3 }, (_, index) => (
+                <div className={`grid min-h-48 shrink-0 gap-3 ${CARD_CLASS}`} key={index}>
+                  <div className="skeleton-shimmer h-5 w-11/12 rounded" />
+                  <div className="skeleton-shimmer h-5 w-4/5 rounded" />
+                  <div className="skeleton-shimmer h-5 w-2/3 rounded" />
+                  <div className="mt-4 flex items-center gap-3">
+                    <div className="skeleton-shimmer size-10 rounded-full" />
+                    <div className="skeleton-shimmer h-4 w-32 rounded" />
+                  </div>
+                </div>
               ))}
-            </ul>
-          )}
-        </>
-      )}
+            </div>
+          )
+        }
+        renderItem={(review) => <ReviewCard review={review} />}
+        rowClassName="mt-10"
+      />
     </section>
   )
 }
 
-function Byline({ review }) {
+function ReviewCard({ review }) {
+  const name = review.user?.name ?? 'Adesua member'
+
   return (
-    <figcaption className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
-      <span>
-        <span className="font-semibold text-ink">{review.user?.name ?? 'Adesua member'}</span>
-        <span className="text-muted">
-          {' '}
-          · {review.user?.role === 'instructor' ? 'Instructor' : 'Learner'}
+    <figure className={`flex min-h-48 flex-col ${CARD_CLASS}`}>
+      <blockquote className="flex-1 font-serif text-lg leading-relaxed font-normal text-ink">
+        <p>{review.comment}</p>
+      </blockquote>
+      <figcaption className="mt-6 flex items-center gap-3">
+        <span
+          aria-hidden="true"
+          className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-soft text-sm font-semibold text-brand-dark"
+        >
+          {getInitials(name) || 'A'}
         </span>
-      </span>
-      <StarRating value={review.rating} />
-    </figcaption>
+        <span className="min-w-0 flex-1 text-sm">
+          <span className="block truncate font-semibold text-ink">{name}</span>
+          <span className="block text-muted">
+            {review.user?.role === 'instructor' ? 'Instructor' : 'Learner'}
+          </span>
+        </span>
+        <StarRating value={review.rating} />
+      </figcaption>
+    </figure>
   )
 }
 

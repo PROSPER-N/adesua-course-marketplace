@@ -1,5 +1,9 @@
+import { useGSAP } from '@gsap/react'
 import { Check } from 'lucide-react'
+import { useRef } from 'react'
 import { useAuth } from '../../context/AuthContext.jsx'
+import { useReveal } from '../../hooks/useReveal.js'
+import { gsap, MOTION_OK } from '../../utils/gsap.js'
 import Button from '../ui/Button.jsx'
 
 const TEACHING_BENEFITS = [
@@ -14,21 +18,56 @@ const photoUrl = (width) => `${PHOTO}?auto=compress&cs=tinysrgb&w=${width}`
 
 function TeachBand() {
   const { user, loading } = useAuth()
-
+  const sectionRef = useRef(null)
+  const photoRef = useRef(null)
   // Wait until a saved login is checked, so a student never sees the guest version flash.
-  if (loading) return null
-  if (user && user.role !== 'instructor') return null
+  const shown = !loading && (!user || user.role === 'instructor')
+
+  useReveal(sectionRef, { dependencies: [shown] })
+
+  // The photo drifts a little slower than the page as it scrolls past. It's 8% taller than the
+  // band and moves 3.7% of its height each way (about 4% of the band), so an edge never shows.
+  // Only from 768px: on phones the band is short and the effect would barely show.
+  useGSAP(
+    () => {
+      if (!shown) return
+      gsap.matchMedia().add(`(min-width: 768px) and ${MOTION_OK}`, () => {
+        gsap.fromTo(
+          photoRef.current,
+          { yPercent: -3.7 },
+          {
+            yPercent: 3.7,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: true,
+            },
+          },
+        )
+      })
+    },
+    { scope: sectionRef, dependencies: [shown], revertOnUpdate: true },
+  )
+
+  if (!shown) return null
 
   const isInstructor = user?.role === 'instructor'
 
   return (
-    <section aria-labelledby="teach-heading" className="relative isolate overflow-hidden bg-night">
+    <section
+      aria-labelledby="teach-heading"
+      className="relative isolate overflow-hidden bg-night"
+      ref={sectionRef}
+    >
       {/* Decorative. object-position keeps the designer in view on the right. */}
       <img
         alt=""
-        className="absolute inset-0 -z-20 size-full object-cover object-[70%_center]"
+        className="absolute inset-x-0 -top-[4%] -z-20 h-[108%] w-full object-cover object-[70%_center]"
         decoding="async"
         loading="lazy"
+        ref={photoRef}
         sizes="100vw"
         src={photoUrl(1600)}
         srcSet={`${photoUrl(800)} 800w, ${photoUrl(1600)} 1600w`}
@@ -40,7 +79,7 @@ function TeachBand() {
       />
 
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
-        <div className="max-w-xl">
+        <div className="max-w-xl" data-reveal="">
           <h2 className="font-serif text-headline font-semibold text-white" id="teach-heading">
             Teach what you know
           </h2>

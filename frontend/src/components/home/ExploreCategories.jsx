@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { getCategories } from '../../api/categories.js'
 import ErrorMessage from '../ui/ErrorMessage.jsx'
+import Reveal from '../ui/Reveal.jsx'
 import { getErrorMessage } from '../../utils/getErrorMessage.js'
 
 // Different widths make the loading rows look like real names.
@@ -37,8 +38,8 @@ function ExploreCategories() {
     content = (
       <div aria-hidden="true" className="grid gap-x-12 lg:grid-cols-2">
         {SKELETON_WIDTHS.map((width, index) => (
-          <div className="border-b border-line py-6" key={index}>
-            <div className={`skeleton-shimmer h-8 rounded ${width}`} />
+          <div className="border-b border-line py-3.5" key={index}>
+            <div className={`skeleton-shimmer h-7 rounded sm:h-8 ${width}`} />
           </div>
         ))}
       </div>
@@ -57,10 +58,10 @@ function ExploreCategories() {
         {result.categories.map((category) => (
           <li className="border-b border-line" key={category._id}>
             <Link
-              className="group flex items-baseline justify-between gap-4 py-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+              className="group flex items-baseline justify-between gap-4 py-3.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
               to={`/courses?category=${category.slug}`}
             >
-              <span className="font-serif text-3xl font-medium text-ink group-hover:text-brand sm:text-4xl">
+              <span className="font-serif text-xl font-normal text-ink group-hover:text-brand sm:text-2xl">
                 {category.name}
               </span>
               <span className="flex shrink-0 items-center gap-3 text-sm text-muted">
@@ -81,12 +82,13 @@ function ExploreCategories() {
   return (
     <section aria-labelledby="categories-heading" className="bg-surface">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
-        <h2
+        <Reveal
+          as="h2"
           className="border-b border-line pb-6 font-serif text-display font-medium text-ink"
           id="categories-heading"
         >
           Explore by category
-        </h2>
+        </Reveal>
         {content}
       </div>
     </section>

@@ -1,5 +1,5 @@
 import { SearchX } from 'lucide-react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router'
 import { getCategories } from '../../api/categories.js'
 import { getCourses } from '../../api/courses.js'
@@ -11,6 +11,7 @@ import Input from '../../components/ui/Input.jsx'
 import Pagination from '../../components/ui/Pagination.jsx'
 import Select from '../../components/ui/Select.jsx'
 import SkeletonCard from '../../components/ui/SkeletonCard.jsx'
+import { useReveal } from '../../hooks/useReveal.js'
 import { getErrorMessage } from '../../utils/getErrorMessage.js'
 
 const PAGE_SIZE = 9
@@ -54,6 +55,10 @@ function CoursesPage() {
   // A result remembers the request it answers, so the list loads until the latest request has one.
   const requestKey = `${search}|${category}|${level}|${price}|${sort}|${page}|${attempt}`
   const loading = result.key !== requestKey
+
+  // Each new set of results fades in as it scrolls into view.
+  const listRef = useRef(null)
+  useReveal(listRef, { dependencies: [result] })
 
   // Each change adds a history entry, so Back undoes it. Changing anything but the page
   // starts again from page 1.
@@ -130,7 +135,7 @@ function CoursesPage() {
     content = (
       <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
         {Array.from({ length: 6 }, (_, index) => (
-          <SkeletonCard framed={false} key={index} />
+          <SkeletonCard course key={index} />
         ))}
       </div>
     )
@@ -168,9 +173,9 @@ function CoursesPage() {
         <p className="text-sm text-muted">
           {pagination.total} {pagination.total === 1 ? 'course' : 'courses'}
         </p>
-        <ul className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+        <ul className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3" ref={listRef}>
           {items.map((course) => (
-            <li key={course._id}>
+            <li data-reveal="" key={course._id}>
               <CourseCard course={course} />
             </li>
           ))}

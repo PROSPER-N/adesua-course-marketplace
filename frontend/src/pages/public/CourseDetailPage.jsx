@@ -1,5 +1,5 @@
 import { BookOpen, Clock3, GraduationCap, LockKeyhole, PlayCircle } from 'lucide-react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { getCourse } from '../../api/courses.js'
 import { getMyEnrollments } from '../../api/enrollments.js'
@@ -93,6 +93,23 @@ function CourseDetailPage() {
   } else if (enrollmentKey && enrollmentCheck.key === enrollmentKey) {
     reviewer = enrollmentCheck.enrolled ? 'enrolled' : 'student'
   }
+
+  // Below 1024px the buy bar is fixed over the bottom of the screen. Its height is shared with
+  // the footer (see index.css), which ends with that much space so the bar never covers it.
+  const barRef = useRef(null)
+  useEffect(() => {
+    const bar = barRef.current
+    if (!bar) return undefined
+    const root = document.documentElement
+    const observer = new ResizeObserver(() => {
+      root.style.setProperty('--buy-bar-height', `${bar.offsetHeight}px`)
+    })
+    observer.observe(bar)
+    return () => {
+      observer.disconnect()
+      root.style.removeProperty('--buy-bar-height')
+    }
+  }, [loading, result.error])
 
   if (loading) {
     return (
@@ -220,7 +237,7 @@ function CourseDetailPage() {
         </div>
       </header>
 
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-9 sm:px-6 lg:grid-cols-[minmax(0,1fr)_19rem] lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-9 sm:px-6 lg:grid-cols-[minmax(0,1fr)_22rem] lg:px-8">
         <div className="min-w-0 space-y-10">
           {course.whatYouWillLearn?.length > 0 && (
             <section>
@@ -280,7 +297,7 @@ function CourseDetailPage() {
                       showLocks && (
                         <>
                           <LockKeyhole aria-hidden="true" className="size-4" />
-                          Enroll to unlock
+                          Enroll to watch
                         </>
                       )
                     )}
@@ -318,12 +335,19 @@ function CourseDetailPage() {
           </section>
           <CourseReviews courseId={id} key={id} onChange={refreshRatings} reviewer={reviewer} />
         </div>
-        <aside className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-card p-3 shadow-[0_-4px_16px_var(--color-shadow)] lg:sticky lg:top-24 lg:inset-x-auto lg:bottom-auto lg:z-auto lg:h-fit lg:rounded-2xl lg:border lg:border-line lg:p-5 lg:shadow-sm">
-          <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 lg:block">
+        <aside
+          className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-card p-3 shadow-[0_-4px_16px_var(--color-shadow)] lg:sticky lg:top-24 lg:inset-x-auto lg:bottom-auto lg:z-auto lg:h-fit lg:rounded-2xl lg:border lg:border-line lg:p-5 lg:shadow-sm"
+          ref={barRef}
+        >
+          {/* Phones: the price, the buy button and a square cart button in one row. From 1024px:
+              the price on its own line, then the two buttons side by side at equal width. A
+              label too long for half the card ("Remove from cart") puts each button on its own
+              row instead of wrapping, and the note for accounts that can't enroll takes a row. */}
+          <div className="mx-auto flex max-w-7xl items-center gap-3 lg:block">
             <p className="shrink-0 font-display text-xl font-bold text-ink lg:text-3xl">
               {formatPrice(course.price)}
             </p>
-            <div className="lg:mt-4">
+            <div className="flex min-w-0 flex-1 items-center gap-2 max-lg:[&>:first-child]:flex-1 lg:mt-4 lg:flex-wrap lg:*:flex-[1_1_8.5rem] lg:*:whitespace-nowrap lg:[&>p]:basis-full lg:[&>p]:whitespace-normal">
               <EnrollButton course={course} />
               <AddToCartButton course={course} />
             </div>

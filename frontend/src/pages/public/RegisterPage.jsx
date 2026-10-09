@@ -1,30 +1,30 @@
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router'
+import AuthPhoto from '../../components/auth/AuthPhoto.jsx'
 import { getCategories } from '../../api/categories.js'
 import InterestPicker from '../../components/auth/InterestPicker.jsx'
 import Button from '../../components/ui/Button.jsx'
 import ErrorMessage from '../../components/ui/ErrorMessage.jsx'
 import FormField from '../../components/ui/FormField.jsx'
 import Input from '../../components/ui/Input.jsx'
+import PasswordField from '../../components/ui/PasswordField.jsx'
 import Select from '../../components/ui/Select.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { getErrorMessage, getFieldErrors } from '../../utils/getErrorMessage.js'
 import { homePathForRole } from '../../utils/homePathForRole.js'
 
 const ROLE_OPTIONS = [
-  { value: 'student', title: 'Learn', description: 'Browse and enroll in courses' },
-  { value: 'instructor', title: 'Teach', description: 'Create and publish courses' },
+  { value: 'student', title: 'I want to learn', description: 'Browse and enroll in courses' },
+  { value: 'instructor', title: 'I want to teach', description: 'Create and publish courses' },
 ]
 
 const PANEL_TEXT = {
   student: {
-    title: 'Learn practical skills.',
-    text: 'Short courses from people who use these skills every day.',
+    photoLine: 'Free courses open as soon as you enroll.',
   },
   instructor: {
-    title: 'Teach what you know.',
-    text: 'Create courses, add lessons and reach learners around the world.',
+    photoLine: "Publish your course when it's ready.",
   },
 }
 
@@ -121,23 +121,11 @@ function RegisterPage() {
   }
 
   return (
-    <div className="grid min-h-[calc(100vh-4rem)] lg:grid-cols-2">
-      <aside className="relative hidden overflow-hidden bg-band lg:flex lg:flex-col lg:justify-center lg:px-14 xl:px-20">
-        <div
-          aria-hidden="true"
-          className="absolute inset-0"
-          style={{
-            backgroundImage:
-              'repeating-linear-gradient(135deg, transparent 0 14px, color-mix(in srgb, var(--color-gold) 14%, transparent) 14px 16px)',
-          }}
-        />
-        <div className="relative max-w-md">
-          <p className="font-display text-4xl font-extrabold leading-tight text-white xl:text-5xl">
-            {panel.title}
-          </p>
-          <p className="mt-4 text-lg text-white/80">{panel.text}</p>
-        </div>
-      </aside>
+    <div className="grid min-h-[calc(100vh-4rem)] md:grid-cols-2">
+      <AuthPhoto
+        line={panel.photoLine}
+        photo={form.role === 'student' ? 'learner' : 'instructor'}
+      />
 
       <section className="flex items-center justify-center px-4 py-10 sm:px-6">
         <div className="w-full max-w-[420px]">
@@ -179,6 +167,7 @@ function RegisterPage() {
               label="Full name"
               name="name"
               onChange={handleChange}
+              size="lg"
               value={form.name}
             />
 
@@ -188,18 +177,20 @@ function RegisterPage() {
               label="Email"
               name="email"
               onChange={handleChange}
+              size="lg"
               type="email"
               value={form.email}
             />
 
-            <FormField
+            <PasswordField
               autoComplete="new-password"
               error={fieldErrors.password}
+              id="register-password"
               hint="At least 8 characters, with a letter and a number."
               label="Password"
               name="password"
               onChange={handleChange}
-              type="password"
+              size="lg"
               value={form.password}
             />
 
