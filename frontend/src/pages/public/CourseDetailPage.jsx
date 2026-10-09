@@ -237,7 +237,7 @@ function CourseDetailPage() {
         </div>
       </header>
 
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-9 sm:px-6 lg:grid-cols-[minmax(0,1fr)_19rem] lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-9 sm:px-6 lg:grid-cols-[minmax(0,1fr)_22rem] lg:px-8">
         <div className="min-w-0 space-y-10">
           {course.whatYouWillLearn?.length > 0 && (
             <section>
@@ -341,12 +341,13 @@ function CourseDetailPage() {
         >
           {/* Phones: the price, the buy button and a square cart button in one row. From 1024px:
               the price on its own line, then the two buttons side by side at equal width. A
-              note for accounts that can't enroll takes the whole width instead of half. */}
+              label too long for half the card ("Remove from cart") puts each button on its own
+              row instead of wrapping, and the note for accounts that can't enroll takes a row. */}
           <div className="mx-auto flex max-w-7xl items-center gap-3 lg:block">
             <p className="shrink-0 font-display text-xl font-bold text-ink lg:text-3xl">
               {formatPrice(course.price)}
             </p>
-            <div className="flex min-w-0 flex-1 items-center gap-2 [&>:first-child]:flex-1 lg:mt-4 lg:grid lg:grid-cols-2 lg:*:w-full lg:[&>p]:col-span-2 lg:[&>p~*]:col-span-2">
+            <div className="flex min-w-0 flex-1 items-center gap-2 max-lg:[&>:first-child]:flex-1 lg:mt-4 lg:flex-wrap lg:*:flex-[1_1_8.5rem] lg:*:whitespace-nowrap lg:[&>p]:basis-full lg:[&>p]:whitespace-normal">
               <EnrollButton course={course} />
               <AddToCartButton course={course} />
             </div>
