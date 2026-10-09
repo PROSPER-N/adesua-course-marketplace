@@ -37,7 +37,7 @@ Adesua is a video course marketplace, built as our TS Academy full-stack capston
 ## Tech stack
 
 - React with Vite for the frontend (in `frontend/`)
-- Tailwind CSS 4, React Router, Axios, lucide-react icons and react-hot-toast in the frontend, checked with oxlint
+- Tailwind CSS 4, React Router, Axios, GSAP for the scroll and entrance animations, lucide-react icons and react-hot-toast in the frontend, checked with oxlint
 - Node.js, Express 5 and MongoDB Atlas with Mongoose 9 for the backend
 - JSON Web Tokens (jsonwebtoken) for login, and bcryptjs for password hashing
 - helmet, cors, express-rate-limit and express-validator for security and validation
