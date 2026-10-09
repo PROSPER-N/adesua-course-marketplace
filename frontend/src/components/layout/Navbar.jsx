@@ -169,12 +169,41 @@ function Navbar() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-1 px-4 sm:px-6 md:gap-4 lg:px-8">
         <Link
           aria-label="Adesua home"
-          className="flex shrink-0 items-center gap-2 rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand"
+          className="flex shrink-0 items-center rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand"
           to="/"
         >
-          <span aria-hidden="true" className="brand-mark size-9 rounded-lg" />
-          <span className="max-[359px]:hidden font-display text-2xl font-extrabold tracking-tight text-brand-dark">
-            adesua
+          {/* The full logo from 360px, the mark alone below that. Each has a light and a dark version. */}
+          <span className="flex max-[359px]:hidden">
+            <img
+              alt=""
+              className="h-7 w-auto md:h-8 dark:hidden"
+              height="28"
+              src="/adesua-logo.svg"
+              width="117"
+            />
+            <img
+              alt=""
+              className="hidden h-7 w-auto md:h-8 dark:block"
+              height="28"
+              src="/adesua-logo-dark.svg"
+              width="117"
+            />
+          </span>
+          <span className="flex min-[360px]:hidden">
+            <img
+              alt=""
+              className="h-7 w-auto dark:hidden"
+              height="28"
+              src="/adesua-mark.svg"
+              width="33"
+            />
+            <img
+              alt=""
+              className="hidden h-7 w-auto dark:block"
+              height="28"
+              src="/adesua-mark-dark.svg"
+              width="33"
+            />
           </span>
         </Link>
 

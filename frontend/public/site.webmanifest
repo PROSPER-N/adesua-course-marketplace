@@ -1,0 +1,13 @@
+{
+  "name": "Adesua",
+  "short_name": "Adesua",
+  "description": "Video courses in coding, design, business, marketing and photography.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FBFAF8",
+  "theme_color": "#1E6B4A",
+  "icons": [
+    { "src": "/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/android-chrome-512x512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
