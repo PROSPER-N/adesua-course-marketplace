@@ -196,17 +196,6 @@ body {
   animation: skeleton-shimmer 1.6s ease-in-out infinite;
 }
 
-.brand-mark {
-  display: inline-block;
-  background-color: var(--color-brand-fill);
-  background-image: repeating-linear-gradient(
-    135deg,
-    transparent 0 5px,
-    var(--color-gold) 5px 6px,
-    transparent 6px 10px
-  );
-}
-
 .drawer-enter {
   animation: drawer-enter 180ms ease-out both;
 }
