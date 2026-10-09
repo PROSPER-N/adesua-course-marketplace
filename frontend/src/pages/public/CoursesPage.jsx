@@ -135,7 +135,7 @@ function CoursesPage() {
     content = (
       <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
         {Array.from({ length: 6 }, (_, index) => (
-          <SkeletonCard framed={false} key={index} />
+          <SkeletonCard course key={index} />
         ))}
       </div>
     )

@@ -11,7 +11,8 @@ const categoryStyles = {
 }
 
 // Photos load lazily. A cover at the top of a page passes loading="eager" and
-// fetchPriority="high", so it starts loading straight away.
+// fetchPriority="high", so it starts loading straight away. A course card turns off the
+// rounded corners (the card has its own) and the category label (it shows a pill instead).
 function CourseCover({
   title = '',
   category,
@@ -19,7 +20,10 @@ function CourseCover({
   className = '',
   loading = 'lazy',
   fetchPriority,
+  rounded = true,
+  showCategory = true,
 }) {
+  const corners = rounded ? 'rounded-xl' : ''
   // The photo that failed to load, so a broken link shows the pattern and a new link is tried again.
   const [failedUrl, setFailedUrl] = useState('')
 
@@ -29,7 +33,7 @@ function CourseCover({
     return (
       <img
         alt=""
-        className={`aspect-[16/10] w-full rounded-xl object-cover ${className}`}
+        className={`aspect-[16/10] w-full object-cover ${corners} ${className}`}
         decoding="async"
         fetchPriority={fetchPriority}
         height={500}
@@ -50,7 +54,7 @@ function CourseCover({
   return (
     <div
       aria-label={title ? `${title} course cover` : 'Course cover'}
-      className={`relative isolate aspect-[16/10] w-full overflow-hidden rounded-xl [container-type:inline-size] ${className}`}
+      className={`relative isolate aspect-[16/10] w-full overflow-hidden [container-type:inline-size] ${corners} ${className}`}
       role="img"
       style={{
         '--cover-background': style.background,
@@ -64,9 +68,11 @@ function CourseCover({
       />
       {/* The category in small capitals, kept to the plain side of the cover and sized to it:
           1cqi is 1% of the cover's width. */}
-      <span className="course-cover-category absolute bottom-3 left-4 z-10 max-w-[45%] text-[length:clamp(0.75rem,4cqi,1rem)] leading-tight font-semibold tracking-[0.12em] text-white uppercase">
-        {category?.name ?? 'Course'}
-      </span>
+      {showCategory && (
+        <span className="course-cover-category absolute bottom-3 left-4 z-10 max-w-[45%] text-[length:clamp(0.75rem,4cqi,1rem)] leading-tight font-semibold tracking-[0.12em] text-white uppercase">
+          {category?.name ?? 'Course'}
+        </span>
+      )}
     </div>
   )
 }

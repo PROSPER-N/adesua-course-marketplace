@@ -204,7 +204,7 @@ function PopularCourses() {
           {result.loading
             ? Array.from({ length: 4 }, (_, index) => (
                 <li className={ITEM_CLASS} key={index}>
-                  <SkeletonCard framed={false} />
+                  <SkeletonCard course />
                 </li>
               ))
             : result.courses.map((course) => (
