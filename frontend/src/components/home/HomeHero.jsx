@@ -1,6 +1,8 @@
+import { useGSAP } from '@gsap/react'
 import { Pause, Play, Search } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
+import { gsap, MOTION_OK, SplitText } from '../../utils/gsap.js'
 import Button from '../ui/Button.jsx'
 import Input from '../ui/Input.jsx'
 
@@ -23,6 +25,15 @@ function videoAllowed() {
   return wide && !reducedMotion && !saveData
 }
 
+// The headline intro plays once per page load: the first time Home shows, not on coming back.
+let introPlayed = false
+
+// Waits for the serif to load, so the lines are split where they will really break. A slow
+// font doesn't hold the page up: after half a second it splits anyway, and autoSplit splits
+// again once the font arrives.
+const fontsOrTimeout = () =>
+  Promise.race([document.fonts.ready, new Promise((resolve) => setTimeout(resolve, 500))])
+
 function HomeHero() {
   const navigate = useNavigate()
   const [search, setSearch] = useState('')
@@ -30,6 +41,70 @@ function HomeHero() {
   // Follows the video's own play and pause events, so the button is right even if autoplay is blocked.
   const [playing, setPlaying] = useState(false)
   const videoRef = useRef(null)
+  const textRef = useRef(null)
+
+  // The headline rises line by line, then the text, search and links under it fade up.
+  useGSAP(
+    () => {
+      gsap.matchMedia().add(MOTION_OK, (context) => {
+        if (introPlayed) return undefined
+        const [heading, ...rest] = textRef.current.children
+        let cancelled = false
+
+        // Hidden before the first paint. visibility keeps each box, so nothing below moves.
+        gsap.set([heading, ...rest], { autoAlpha: 0 })
+
+        fontsOrTimeout().then(() => {
+          if (cancelled) return
+          // Added to the context, so leaving the page or turning on reduced motion undoes it.
+          context.add(() => {
+            // aria: auto reads the whole sentence to screen readers while the lines are split.
+            const split = SplitText.create(heading, {
+              type: 'lines',
+              mask: 'lines',
+              linesClass: 'hero-line',
+              aria: 'auto',
+              autoSplit: true,
+              // A new split (after a late font or a resize) keeps the animation's place.
+              onSplit: (self) => {
+                gsap.set(heading, { autoAlpha: 1 })
+                return gsap.from(self.lines, {
+                  yPercent: 115,
+                  duration: 0.9,
+                  stagger: 0.12,
+                  ease: 'power3.out',
+                })
+              },
+            })
+
+            gsap.fromTo(
+              rest,
+              { autoAlpha: 0, y: 16 },
+              {
+                autoAlpha: 1,
+                y: 0,
+                duration: 0.5,
+                stagger: 0.08,
+                ease: 'power2.out',
+                delay: 0.6 + 0.12 * (split.lines.length - 1),
+                // Back to plain text and no inline styles once it has played.
+                onComplete: () => {
+                  introPlayed = true
+                  split.revert()
+                  gsap.set([heading, ...rest], { clearProps: 'opacity,visibility,transform' })
+                },
+              },
+            )
+          })
+        })
+
+        return () => {
+          cancelled = true
+        }
+      })
+    },
+    { scope: textRef },
+  )
 
   function handleSubmit(event) {
     event.preventDefault()
@@ -81,7 +156,7 @@ function HomeHero() {
       />
 
       <div className="mx-auto -mt-8 flex max-w-7xl flex-col justify-end px-4 pb-12 sm:px-6 md:mt-0 md:min-h-[40rem] md:pt-20 lg:min-h-[min(88svh,46rem)] lg:px-8 lg:pb-20">
-        <div className="max-w-xl md:max-w-md lg:max-w-xl">
+        <div className="max-w-xl md:max-w-md lg:max-w-xl" ref={textRef}>
           <h1 className="font-serif text-hero font-semibold text-white" id="hero-heading">
             Learn something useful on your lunch break.
           </h1>

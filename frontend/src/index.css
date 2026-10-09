@@ -193,6 +193,20 @@ body {
   animation: drawer-enter 180ms ease-out both;
 }
 
+/* Each line of the hero headline while it rises in. The lines are tight, so the mask reaches a
+   little above and below each one, or the tops and tails of letters would be cut off. The
+   negative margins cancel the padding, which only works in a flex column: there, unlike in
+   normal flow, the margins of neighbouring lines don't merge. */
+:where(:has(> .hero-line-mask)) {
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-line-mask {
+  padding-block: 0.12em;
+  margin-block: -0.12em;
+}
+
 /* AutoScroller: two copies of the items move left by one copy's width, then start again. */
 .auto-scroller-track {
   animation: auto-scroll var(--auto-scroll-duration) linear infinite;
