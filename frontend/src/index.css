@@ -193,26 +193,6 @@ body {
   animation: drawer-enter 180ms ease-out both;
 }
 
-.skills-marquee-track {
-  animation: skills-scroll 40s linear infinite;
-}
-
-/* Touch screens keep :hover after a tap, which would leave the strip stopped there. */
-@media (hover: hover) {
-  .skills-marquee:hover .skills-marquee-track {
-    animation-play-state: paused;
-  }
-}
-
-.skills-marquee:has(:focus-visible) .skills-marquee-track {
-  animation-play-state: paused;
-}
-
-/* Set by the strip's Pause button. */
-.skills-marquee[data-paused] .skills-marquee-track {
-  animation-play-state: paused;
-}
-
 /* AutoScroller: two copies of the items move left by one copy's width, then start again. */
 .auto-scroller-track {
   animation: auto-scroll var(--auto-scroll-duration) linear infinite;
@@ -246,12 +226,6 @@ body {
   }
 }
 
-@keyframes skills-scroll {
-  to {
-    transform: translateX(-50%);
-  }
-}
-
 @keyframes skeleton-shimmer {
   to {
     background-position-x: -200%;
@@ -264,29 +238,6 @@ body {
   }
   .drawer-enter {
     animation: none;
-  }
-  .skills-marquee {
-    overflow: visible;
-  }
-  .skills-marquee-track {
-    animation: none;
-    display: block;
-    width: auto;
-  }
-  .skills-marquee-row {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    row-gap: 0.75rem;
-    width: auto;
-    padding-inline: 1rem;
-  }
-  .skills-marquee-row[aria-hidden='true'] {
-    display: none;
-  }
-  /* The dots only separate names, so the wrapped list doesn't end with one. */
-  .skills-marquee-row li:last-child .skills-dot {
-    display: none;
   }
 }
 
