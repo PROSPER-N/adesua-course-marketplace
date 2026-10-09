@@ -85,6 +85,24 @@ body {
   font-family: var(--font-sans);
 }
 
+.hide-scrollbar {
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (width >= 48rem) {
+  .hide-scrollbar {
+    scrollbar-width: none;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 .course-cover-pattern {
   position: absolute;
   inset-block: 0;

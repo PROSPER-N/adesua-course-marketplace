@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router'
 import CourseDetailPage from './pages/public/CourseDetailPage.jsx'
 import CoursesPage from './pages/public/CoursesPage.jsx'
 import AboutPage from './pages/public/AboutPage.jsx'
+import HelpPage from './pages/public/HelpPage.jsx'
 import HomePage from './pages/public/HomePage.jsx'
 import CartPage from './pages/public/CartPage.jsx'
 import LoginPage from './pages/public/LoginPage.jsx'
@@ -30,6 +31,7 @@ function App() {
         <Route element={<CourseDetailPage />} path="courses/:id" />
         <Route element={<CartPage />} path="cart" />
         <Route element={<AboutPage />} path="about" />
+        <Route element={<HelpPage />} path="help" />
         <Route element={<ReviewsPage />} path="reviews" />
 
         <Route element={<GuestRoute />}>

@@ -1,153 +1,258 @@
-import { BookOpen, ChevronDown, Lightbulb, ListChecks, Users } from 'lucide-react'
+import { useGSAP } from '@gsap/react'
+import { ArrowRight, Check } from 'lucide-react'
+import { useRef } from 'react'
+import { Link } from 'react-router'
+import FeaturedInstructors from '../../components/about/FeaturedInstructors.jsx'
+import PlatformStats from '../../components/home/PlatformStats.jsx'
+import Button from '../../components/ui/Button.jsx'
+import Reveal from '../../components/ui/Reveal.jsx'
+import { useAuth } from '../../context/AuthContext.jsx'
+import { useReveal } from '../../hooks/useReveal.js'
+import { gsap, MOTION_OK } from '../../utils/gsap.js'
 
-const QUESTIONS = [
+const HERO_PHOTO = 'https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg'
+
+const AUDIENCES = [
   {
-    icon: BookOpen,
-    question: 'What is Adesua?',
-    answer:
-      'A course marketplace where instructors anywhere publish practical video courses, and learners everywhere buy or enroll in them and track their progress.',
+    title: 'For learners',
+    items: [
+      'Preview the lessons before you enroll or buy.',
+      'Learn from short courses at your own pace.',
+      'Keep your courses and progress together in My learning.',
+    ],
   },
   {
-    icon: Users,
-    question: 'Who is it for?',
-    answer:
-      'Learners who want job-ready skills they can study on a phone, and instructors who want to earn from what they know.',
+    title: 'For instructors',
+    items: [
+      'Build courses from video lessons and notes.',
+      'Keep a course as a draft until it is ready to publish.',
+      'See your students and earnings in the instructor dashboard.',
+    ],
   },
-  {
-    icon: Lightbulb,
-    question: 'What problem does it solve?',
-    answer:
-      'Good teachers have no simple place to sell their courses, and learners struggle to find practical courses taught by people who understand their language and context. On Adesua, anyone can teach, and learners can find instructors from their own country or from anywhere in the world.',
-  },
-  {
-    icon: ListChecks,
-    question: 'How do I use it?',
-    answer:
-      "Sign up and find a course. Enroll if it's free, or buy it if it's paid. Then work through the lessons and mark each one complete. Instructors sign up to teach and publish from their dashboard. The checkout is a demo and takes no real payments.",
-  },
+]
+
+const PRINCIPLES = [
+  { number: '01', title: 'See the whole course first.' },
+  { number: '02', title: 'Progress that follows you.' },
+  { number: '03', title: 'Instructors run their own courses.' },
 ]
 
 const TEAM = [
-  {
-    name: 'Prosper Ngwoke',
-    initials: 'PN',
-    title: 'Full-stack developer, project lead',
-    summary:
-      'Designed the backend and API, built sign-in, categories and the admin tools, and set up automated testing and deployment.',
-  },
-  {
-    name: 'Folakemi Elizabeth Okeowo',
-    initials: 'FO',
-    title: 'Full-stack developer',
-    summary:
-      "Built the design system and the app's foundation, and leads the course catalogue: courses, lessons, search and the instructor dashboard.",
-  },
-  {
-    name: 'Victor C.U Benneth',
-    initials: 'VB',
-    title: 'Full-stack developer',
-    summary:
-      'Built sign-in and sign-up, and the learning experience: checkout, enrollment, lesson progress and instructor earnings.',
-  },
-]
-
-const FAQS = [
-  {
-    question: 'Do I need an account to browse courses?',
-    answer:
-      'No. You can browse every course and watch free preview lessons without an account. You only need to sign up to enroll.',
-  },
-  {
-    question: 'Are there free courses?',
-    answer:
-      'Yes. Some courses are free and open straight away. Paid courses show their price before you buy.',
-  },
-  {
-    question: 'How does payment work?',
-    answer:
-      'Paid courses go through a short checkout where you choose mobile money or card. Checkout currently runs in demo mode, so no real money is charged.',
-  },
-  {
-    question: 'Can I learn on my phone?',
-    answer:
-      'Yes. Adesua works on phones, tablets and laptops, and your progress is saved on every lesson, so you can switch devices and carry on.',
-  },
-  {
-    question: 'How long can I access a course?',
-    answer:
-      "For as long as you like. Once you're enrolled, the course stays in My learning, and you can go at your own pace.",
-  },
-  {
-    question: 'How do I become an instructor?',
-    answer:
-      "Sign up and choose “Teach”. Create your course, add your lessons, and publish it when you're ready.",
-  },
-  {
-    question: 'How do instructors see how their courses are doing?',
-    answer:
-      'Your instructor dashboard shows how many students each course has and what it has earned.',
-  },
+  { name: 'Prosper Ngwoke', role: 'Full-stack developer · Project lead' },
+  { name: 'Folakemi Elizabeth Okeowo', role: 'Full-stack developer · Courses' },
+  { name: 'Victor C.U Benneth', role: 'Full-stack developer · Learning' },
 ]
 
 function AboutPage() {
-  return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
-      <header className="max-w-2xl">
-        <h1 className="font-display text-3xl font-extrabold text-ink sm:text-4xl">About Adesua</h1>
-        <p className="mt-3 text-lg text-muted">Adesua means “learning” in Twi.</p>
-      </header>
+  const { user, loading } = useAuth()
+  const pageRef = useRef(null)
+  const heroRef = useRef(null)
+  const heroPhotoRef = useRef(null)
 
-      <div className="mt-8 grid gap-4 md:grid-cols-2">
-        {QUESTIONS.map(({ icon: Icon, question, answer }) => (
-          <section className="rounded-xl border border-line bg-card p-6" key={question}>
-            <span className="flex size-10 items-center justify-center rounded-lg bg-brand-soft text-brand">
-              <Icon aria-hidden="true" className="size-5" />
-            </span>
-            <h2 className="mt-4 font-display text-xl font-bold text-ink">{question}</h2>
-            <p className="mt-2 text-muted">{answer}</p>
-          </section>
+  useReveal(pageRef)
+
+  useGSAP(
+    () => {
+      gsap.matchMedia().add(`(min-width: 768px) and ${MOTION_OK}`, () => {
+        gsap.fromTo(
+          heroPhotoRef.current,
+          { yPercent: -3.7 },
+          {
+            yPercent: 3.7,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: heroRef.current,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: true,
+            },
+          },
+        )
+      })
+    },
+    { scope: heroRef, revertOnUpdate: true },
+  )
+
+  const isGuest = !loading && !user
+  const isInstructor = !loading && user?.role === 'instructor'
+
+  return (
+    <div ref={pageRef}>
+      <section
+        aria-labelledby="about-heading"
+        className="relative isolate flex min-h-[28rem] items-end overflow-hidden bg-night md:min-h-[34rem]"
+        ref={heroRef}
+      >
+        <img
+          alt=""
+          className="absolute inset-x-0 -top-[4%] -z-20 h-[108%] w-full object-cover object-center"
+          decoding="async"
+          fetchPriority="high"
+          ref={heroPhotoRef}
+          sizes="100vw"
+          src={`${HERO_PHOTO}?auto=compress&cs=tinysrgb&w=1600`}
+          srcSet={`${HERO_PHOTO}?auto=compress&cs=tinysrgb&w=800 800w, ${HERO_PHOTO}?auto=compress&cs=tinysrgb&w=1600 1600w`}
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 bg-night/75 lg:bg-linear-to-r lg:from-night/90 lg:via-night/75 lg:via-60% lg:to-night/30"
+        />
+        <div className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+          <div className="max-w-3xl text-white">
+            <p
+              className="text-xs font-semibold tracking-[0.14em] text-gold uppercase"
+              data-reveal=""
+            >
+              About Adesua
+            </p>
+            <Reveal
+              as="h1"
+              className="mt-4 font-serif text-headline font-semibold sm:text-display"
+              id="about-heading"
+            >
+              Adesua means learning.
+            </Reveal>
+            <p className="mt-4 max-w-2xl text-lg text-white/85" data-reveal="">
+              It’s a video course marketplace: instructors publish courses, and learners enroll,
+              watch the lessons and track their progress.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 sm:px-6 md:grid-cols-2 lg:px-8 lg:py-20">
+        <div data-reveal="">
+          <p className="text-xs font-semibold tracking-[0.12em] text-brand uppercase">
+            What Adesua is
+          </p>
+          <h2 className="mt-3 font-serif text-display font-medium text-ink">
+            Practical learning, built around real courses.
+          </h2>
+          <p className="mt-5 text-muted">
+            Instructors create courses from video lessons and notes. Learners can explore the full
+            outline before enrolling, work through lessons at their own pace and keep track of what
+            they’ve completed.
+          </p>
+          <p className="mt-3 text-muted">
+            Checkout is a demo. It doesn’t take real payments, and prices are shown before you
+            choose to buy.
+          </p>
+          <Link
+            className="mt-5 inline-flex items-center gap-2 font-semibold text-brand-dark hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand"
+            to="/help"
+          >
+            Learn how Adesua works
+            <ArrowRight aria-hidden="true" className="size-4" />
+          </Link>
+        </div>
+        <div className="relative min-h-72 overflow-hidden rounded-2xl bg-surface md:min-h-96">
+          <img
+            alt=""
+            className="absolute inset-0 size-full object-cover"
+            decoding="async"
+            loading="lazy"
+            sizes="(min-width: 768px) 50vw, 100vw"
+            src="/media/hero-poster.jpg"
+          />
+        </div>
+      </section>
+
+      <PlatformStats />
+
+      <section className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-2 lg:px-8 lg:py-20">
+        {AUDIENCES.map(({ title, items }) => (
+          <div key={title}>
+            <Reveal
+              as="h2"
+              className="font-serif text-title font-semibold text-ink sm:text-display"
+            >
+              {title}
+            </Reveal>
+            <ul className="mt-5 grid gap-4">
+              {items.map((item) => (
+                <li className="flex items-start gap-3 text-muted" key={item}>
+                  <Check aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-brand" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         ))}
+      </section>
+
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <FeaturedInstructors />
       </div>
 
-      <section aria-labelledby="team-heading" className="mt-14">
-        <h2 className="font-display text-2xl font-extrabold text-ink" id="team-heading">
+      <section
+        aria-labelledby="values-heading"
+        className="bg-surface px-4 py-14 sm:px-6 lg:px-8 lg:py-20"
+      >
+        <div className="mx-auto max-w-7xl">
+          <Reveal
+            as="h2"
+            className="font-serif text-display font-medium text-ink"
+            id="values-heading"
+          >
+            What we care about
+          </Reveal>
+          <ol className="mt-8 grid gap-5 md:grid-cols-3">
+            {PRINCIPLES.map(({ number, title }) => (
+              <li className="border-t border-line pt-5" key={number} data-reveal="">
+                <span aria-hidden="true" className="font-serif text-numeral text-brand">
+                  {number}
+                </span>
+                <h3 className="mt-3 font-serif text-title font-semibold text-ink">{title}</h3>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <section
+        aria-labelledby="team-heading"
+        className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20"
+      >
+        <Reveal as="h2" className="font-serif text-display font-medium text-ink" id="team-heading">
           The team
-        </h2>
-        <ul className="mt-5 grid gap-4 md:grid-cols-3">
-          {TEAM.map(({ name, initials, title, summary }) => (
-            <li className="rounded-xl border border-line bg-surface p-5" key={name}>
-              <span
-                aria-hidden="true"
-                className="flex size-11 items-center justify-center rounded-full bg-gold font-bold text-on-gold"
-              >
-                {initials}
-              </span>
-              <p className="mt-3 font-semibold text-ink">{name}</p>
-              <p className="text-sm font-semibold text-brand">{title}</p>
-              <p className="mt-2 text-sm text-muted">{summary}</p>
+        </Reveal>
+        <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {TEAM.map(({ name, role }) => (
+            <li className="rounded-xl border border-line bg-card p-5" key={name} data-reveal="">
+              <p className="font-serif text-title font-semibold text-ink">{name}</p>
+              <p className="mt-1 text-sm text-muted">{role}</p>
             </li>
           ))}
         </ul>
       </section>
 
-      <section aria-labelledby="faq-heading" className="mt-14 max-w-3xl">
-        <h2 className="font-display text-2xl font-extrabold text-ink" id="faq-heading">
-          Frequently asked questions
-        </h2>
-        <div className="mt-5 divide-y divide-line overflow-hidden rounded-xl border border-line bg-card">
-          {FAQS.map(({ question, answer }) => (
-            <details className="group" key={question}>
-              {/* Hide the browser's own triangle, since the chevron replaces it. */}
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 font-semibold text-ink hover:bg-surface focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand [&::-webkit-details-marker]:hidden">
-                {question}
-                <ChevronDown
-                  aria-hidden="true"
-                  className="size-5 shrink-0 text-muted transition-transform group-open:rotate-180 motion-reduce:transition-none"
-                />
-              </summary>
-              <p className="px-5 pb-5 text-muted">{answer}</p>
-            </details>
-          ))}
+      <section className="bg-night px-4 py-12 text-white sm:px-6 lg:px-8 lg:py-16">
+        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
+          <div>
+            <h2 className="font-serif text-title font-semibold sm:text-display">
+              Find your next course.
+            </h2>
+            <p className="mt-2 text-white/75">Learn something useful or share what you know.</p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <Button to="/courses" variant="gold">
+              Browse courses
+            </Button>
+            {isGuest && (
+              <Button
+                className="focus-visible:outline-gold!"
+                to="/register?role=instructor"
+                variant="outline"
+              >
+                Start teaching
+              </Button>
+            )}
+            {isInstructor && (
+              <Button className="focus-visible:outline-gold!" to="/instructor" variant="outline">
+                Go to your dashboard
+              </Button>
+            )}
+          </div>
         </div>
       </section>
     </div>

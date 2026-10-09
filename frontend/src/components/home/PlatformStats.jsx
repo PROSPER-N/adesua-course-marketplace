@@ -74,6 +74,9 @@ function PlatformStats() {
   useEffect(() => {
     if (!hasStats || !countUp) return undefined
 
+    const section = sectionRef.current
+    if (!section) return undefined
+
     let frame = 0
     let start = null
 
@@ -93,7 +96,7 @@ function PlatformStats() {
       },
       { threshold: 0.5 },
     )
-    observer.observe(sectionRef.current)
+    observer.observe(section)
 
     return () => {
       observer.disconnect()
@@ -106,12 +109,12 @@ function PlatformStats() {
   return (
     <section aria-label="Live platform statistics" className="bg-band text-white" ref={sectionRef}>
       <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-5 sm:flex-row sm:items-center sm:gap-8 sm:px-6 lg:px-8">
-        <p className="text-xs font-semibold tracking-[0.12em] text-gold uppercase sm:w-24 sm:shrink-0">
+        <p className="text-center text-xs font-semibold tracking-[0.12em] text-gold uppercase sm:w-24 sm:shrink-0 sm:text-left">
           Live on Adesua
         </p>
         <div
           aria-busy={result.loading}
-          className="grid flex-1 grid-cols-2 gap-y-4 sm:grid-cols-4 sm:divide-x sm:divide-white/15"
+          className="grid flex-1 grid-cols-2 sm:grid-cols-4 sm:divide-x sm:divide-white/15"
         >
           {result.loading
             ? STAT_ITEMS.map(({ label }) => (
@@ -126,7 +129,10 @@ function PlatformStats() {
                 const shown = Math.round(value * easeOutCubic(progress))
 
                 return (
-                  <div className="sm:px-6 sm:first:pl-0" key={key}>
+                  <div
+                    className="flex min-h-16 flex-col items-center justify-center px-2 py-3 text-center sm:min-h-0 sm:px-6 sm:first:pl-0"
+                    key={key}
+                  >
                     <p className="font-serif text-4xl leading-none font-semibold tabular-nums">
                       {/* Screen readers get the real number, not every step of the count. */}
                       <span aria-hidden="true">{shown.toLocaleString('en-US')}</span>

@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router'
+import AuthPhoto from '../../components/auth/AuthPhoto.jsx'
 import Button from '../../components/ui/Button.jsx'
 import ErrorMessage from '../../components/ui/ErrorMessage.jsx'
 import FormField from '../../components/ui/FormField.jsx'
+import PasswordField from '../../components/ui/PasswordField.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { getErrorMessage, getFieldErrors } from '../../utils/getErrorMessage.js'
 import { homePathForRole } from '../../utils/homePathForRole.js'
@@ -13,8 +15,7 @@ const TABS = [
     label: 'Learner',
     to: '/login',
     heading: 'Log in to keep learning',
-    panelTitle: 'Pick up where you left off.',
-    panelText: 'Your courses and your progress are waiting for you.',
+    photoLine: 'Pick up where you left off.',
     registerPath: '/register',
   },
   {
@@ -22,10 +23,14 @@ const TABS = [
     label: 'Instructor',
     to: '/login?as=instructor',
     heading: 'Log in to teach',
-    panelTitle: 'Your courses, your students.',
-    panelText: 'Add lessons, publish courses and see how your students are doing.',
+    photoLine: 'Your courses and students, in one place.',
     registerPath: '/register?role=instructor',
   },
+]
+
+const DEMO_ACCOUNTS = [
+  { label: 'Student', email: 'akosua@example.com' },
+  { label: 'Instructor', email: 'kwame@example.com' },
 ]
 
 function LoginPage() {
@@ -38,7 +43,6 @@ function LoginPage() {
   const tab = TABS.find(({ id }) => id === searchParams.get('as')) ?? TABS[0]
 
   const [form, setForm] = useState({ email: '', password: '' })
-  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [bannerError, setBannerError] = useState('')
   const [fieldErrors, setFieldErrors] = useState({})
@@ -74,23 +78,8 @@ function LoginPage() {
   }
 
   return (
-    <div className="grid min-h-[calc(100vh-4rem)] lg:grid-cols-2">
-      <aside className="relative hidden overflow-hidden bg-band lg:flex lg:flex-col lg:justify-center lg:px-14 xl:px-20">
-        <div
-          aria-hidden="true"
-          className="absolute inset-0"
-          style={{
-            backgroundImage:
-              'repeating-linear-gradient(135deg, transparent 0 14px, color-mix(in srgb, var(--color-gold) 14%, transparent) 14px 16px)',
-          }}
-        />
-        <div className="relative max-w-md">
-          <p className="font-display text-4xl font-extrabold leading-tight text-white xl:text-5xl">
-            {tab.panelTitle}
-          </p>
-          <p className="mt-4 text-lg text-white/80">{tab.panelText}</p>
-        </div>
-      </aside>
+    <div className="grid min-h-[calc(100vh-4rem)] md:grid-cols-2">
+      <AuthPhoto line={tab.photoLine} photo={tab.id === 'student' ? 'learner' : 'instructor'} />
 
       <section className="flex items-center justify-center px-4 py-10 sm:px-6">
         <div className="w-full max-w-[420px]">
@@ -125,36 +114,47 @@ function LoginPage() {
               label="Email"
               name="email"
               onChange={handleChange}
+              size="lg"
               type="email"
               value={form.email}
             />
 
-            <div className="relative">
-              <FormField
-                autoComplete="current-password"
-                error={fieldErrors.password}
-                id="login-password"
-                label="Password"
-                name="password"
-                onChange={handleChange}
-                type={showPassword ? 'text' : 'password'}
-                value={form.password}
-              />
-              <button
-                aria-controls="login-password"
-                aria-pressed={showPassword}
-                className="absolute right-0 top-0 rounded-md text-sm font-semibold text-brand hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
-                onClick={() => setShowPassword((current) => !current)}
-                type="button"
-              >
-                {showPassword ? 'Hide' : 'Show'}
-              </button>
-            </div>
+            <PasswordField
+              autoComplete="current-password"
+              error={fieldErrors.password}
+              id="login-password"
+              label="Password"
+              name="password"
+              onChange={handleChange}
+              size="lg"
+              value={form.password}
+            />
 
             <Button fullWidth loading={loading} loadingText="Logging in…" type="submit">
               Log in
             </Button>
           </form>
+
+          <div className="mt-8 border-t border-line pt-5">
+            <p className="text-sm font-semibold text-ink">Try a demo account</p>
+            <p className="mt-1 text-sm text-muted">Choose an account, then press Log in.</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {DEMO_ACCOUNTS.map(({ label, email }) => (
+                <Button
+                  key={label}
+                  onClick={() => {
+                    setForm({ email, password: 'Demo1234' })
+                    setBannerError('')
+                    setFieldErrors({})
+                  }}
+                  size="sm"
+                  variant="outline"
+                >
+                  {label}
+                </Button>
+              ))}
+            </div>
+          </div>
 
           <p className="mt-6 text-center text-sm text-muted">
             New to Adesua?{' '}

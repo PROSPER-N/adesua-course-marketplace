@@ -9,13 +9,6 @@ import CurrencySelector from './CurrencySelector.jsx'
 import ThemeToggle from './ThemeToggle.jsx'
 
 function getLinks(user) {
-  if (!user) {
-    return [
-      { label: 'Browse courses', to: '/courses' },
-      { label: 'About', to: '/about' },
-    ]
-  }
-
   const linksByRole = {
     student: [
       { label: 'Browse courses', to: '/courses' },
@@ -31,7 +24,11 @@ function getLinks(user) {
     ],
   }
 
-  return linksByRole[user.role] ?? [{ label: 'Browse courses', to: '/courses' }]
+  const roleLinks = user
+    ? (linksByRole[user.role] ?? [{ label: 'Browse courses', to: '/courses' }])
+    : [{ label: 'Browse courses', to: '/courses' }]
+
+  return [...roleLinks, { label: 'About', to: '/about' }, { label: 'Help', to: '/help' }]
 }
 
 function NavigationLinks({ links, pathname, onNavigate, mobile = false }) {
@@ -168,8 +165,7 @@ function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-page">
-      {/* Phones get the logo, the theme button, the cart and the menu. The gaps are tight below
-          768px so all four fit on a 320px screen. */}
+      {/* Phones get the logo, currency, theme, cart and menu. Tight gaps keep them on a 320px screen. */}
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-1 px-4 sm:px-6 md:gap-4 lg:px-8">
         <Link
           aria-label="Adesua home"
@@ -177,10 +173,34 @@ function Navbar() {
           to="/"
         >
           <span aria-hidden="true" className="brand-mark size-9 rounded-lg" />
-          <span className="font-display text-2xl font-extrabold tracking-tight text-brand-dark">
+          <span className="max-[359px]:hidden font-display text-2xl font-extrabold tracking-tight text-brand-dark">
             adesua
           </span>
         </Link>
+
+        <div className="ml-auto flex items-center gap-2 md:hidden">
+          <CurrencySelector compact />
+          <ThemeToggle />
+          <CartLink count={items.length} />
+          <button
+            aria-controls="mobile-navigation"
+            aria-expanded={menuOpen}
+            aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            className="inline-flex size-11 items-center justify-center rounded-lg text-ink hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+            onClick={() => {
+              if (menuOpen) closeMenu()
+              else setMenuState({ open: true, pathname })
+            }}
+            ref={menuButtonRef}
+            type="button"
+          >
+            {menuOpen ? (
+              <X aria-hidden="true" className="size-5" />
+            ) : (
+              <Menu aria-hidden="true" className="size-5" />
+            )}
+          </button>
+        </div>
 
         {/* Tighter gaps below 1024px keep the links and the currency selector on one line at 768px. */}
         <nav
@@ -193,28 +213,6 @@ function Navbar() {
           <CartLink count={items.length} />
           <AccountActions logout={logout} user={user} />
         </nav>
-
-        <ThemeToggle className="ml-auto md:hidden" />
-        <CartLink className="md:hidden" count={items.length} />
-
-        <button
-          aria-controls="mobile-navigation"
-          aria-expanded={menuOpen}
-          aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-          className="inline-flex size-11 items-center justify-center rounded-lg text-ink hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand md:hidden"
-          onClick={() => {
-            if (menuOpen) closeMenu()
-            else setMenuState({ open: true, pathname })
-          }}
-          ref={menuButtonRef}
-          type="button"
-        >
-          {menuOpen ? (
-            <X aria-hidden="true" className="size-5" />
-          ) : (
-            <Menu aria-hidden="true" className="size-5" />
-          )}
-        </button>
       </div>
 
       {menuOpen && (
@@ -256,7 +254,6 @@ function Navbar() {
             </nav>
 
             <div className="mt-auto grid gap-5 border-t border-line pt-5">
-              <CurrencySelector mobile />
               <AccountActions logout={logout} mobile onNavigate={handleNavigate} user={user} />
             </div>
           </aside>

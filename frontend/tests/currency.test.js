@@ -5,6 +5,7 @@ import { convertFromBase, convertTotal } from '../src/utils/currencyPricing.js'
 import { formatMoney } from '../src/utils/formatMoney.js'
 import {
   CURRENCY_PREFERENCE_KEY,
+  detectCurrencyFromTimeZone,
   readCurrencyPreference,
   writeCurrencyPreference,
 } from '../src/utils/currencyPreference.js'
@@ -40,6 +41,15 @@ test('uses a saved manual currency and safely falls back for invalid values', ()
   assert.equal(readCurrencyPreference(storage), 'USD')
   storage.setItem(CURRENCY_PREFERENCE_KEY, 'not-a-currency')
   assert.equal(readCurrencyPreference(storage), BASE_CURRENCY)
+})
+
+test('detects the display currency from the device timezone and regional hints', () => {
+  assert.equal(detectCurrencyFromTimeZone('Africa/Lagos', ['en-NG']), 'NGN')
+  assert.equal(detectCurrencyFromTimeZone('Africa/Accra', ['en-US']), 'GHS')
+  assert.equal(detectCurrencyFromTimeZone('Europe/London', ['en-GB']), 'GBP')
+  assert.equal(detectCurrencyFromTimeZone('Asia/Kolkata', ['en-IN']), 'INR')
+  assert.equal(detectCurrencyFromTimeZone('Europe/Paris', ['en-US']), 'EUR')
+  assert.equal(detectCurrencyFromTimeZone('Asia/Tokyo', ['ja-JP']), BASE_CURRENCY)
 })
 
 test('persists only supported manual currencies', () => {

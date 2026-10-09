@@ -9,6 +9,8 @@ function FormField({
   id,
   className = '',
   children,
+  size = 'md',
+  action,
   ...props
 }) {
   const generatedId = useId()
@@ -16,7 +18,7 @@ function FormField({
   const hintId = hint ? `${fieldId}-hint` : undefined
   const errorId = error ? `${fieldId}-error` : undefined
   const describedBy = [hintId, errorId].filter(Boolean).join(' ') || undefined
-  const baseClassName = `w-full rounded-lg border bg-card px-3 py-2.5 text-ink placeholder:text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${error ? 'border-danger' : 'border-field'} ${className}`
+  const baseClassName = `w-full rounded-lg border bg-card text-ink placeholder:text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${size === 'lg' ? 'px-4 py-3' : 'px-3 py-2.5'} ${action ? 'pr-12' : ''} ${error ? 'border-danger' : 'border-field'} ${className}`
 
   return (
     <div className="grid gap-1.5">
@@ -25,15 +27,18 @@ function FormField({
           {label}
         </label>
       )}
-      <Element
-        aria-describedby={describedBy}
-        aria-invalid={Boolean(error)}
-        className={baseClassName}
-        id={fieldId}
-        {...props}
-      >
-        {children}
-      </Element>
+      <div className={action ? 'relative' : undefined}>
+        <Element
+          aria-describedby={describedBy}
+          aria-invalid={Boolean(error)}
+          className={baseClassName}
+          id={fieldId}
+          {...props}
+        >
+          {children}
+        </Element>
+        {action && <div className="absolute inset-y-0 right-3 flex items-center">{action}</div>}
+      </div>
       {hint && (
         <p className="text-sm text-muted" id={hintId}>
           {hint}

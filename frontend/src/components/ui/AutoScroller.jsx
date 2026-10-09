@@ -1,5 +1,4 @@
-import { Pause, Play } from 'lucide-react'
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { usePageVisible } from '../../hooks/usePageVisible.js'
 import { useReducedMotion } from '../../hooks/useReducedMotion.js'
 
@@ -9,19 +8,15 @@ const GAPS = {
   md: { gap: 'gap-5', seam: 'pr-5' },
 }
 
-const PAUSE_CLASS =
-  'inline-flex size-11 items-center justify-center rounded-full text-muted hover:bg-surface hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand'
-
 // A row that moves slowly to the left on a loop. It pauses on hover, while something in it
-// has keyboard focus, while the tab is hidden, and after a touch until Play is pressed.
-// When everything fits, or with reduced motion, it's a still row that can be swiped instead.
-// header sits on the left above the row; actions and the Pause button sit on the right.
+// has keyboard focus, while the tab is hidden, and after a touch until the movement resumes.
+// When everything fits, or with reduced motion, it wraps the pills onto several lines instead.
+// header sits on the left above the row; actions sit on the right.
 // While the items load, placeholder shows in the row's place.
 function AutoScroller({
   items,
   getKey,
   renderItem,
-  label,
   speed = 30,
   gap = 'md',
   header,
@@ -35,6 +30,7 @@ function AutoScroller({
   const [size, setSize] = useState({ fits: false, width: 0 })
   const boxRef = useRef(null)
   const listRef = useRef(null)
+  const pauseTimerRef = useRef(null)
   const moving = !placeholder && !reducedMotion && !size.fits
   const { gap: gapClass, seam } = GAPS[gap] ?? GAPS.md
 
@@ -62,10 +58,16 @@ function AutoScroller({
     return () => observer.disconnect()
   }, [items, moving])
 
+  useEffect(() => {
+    return () => {
+      if (pauseTimerRef.current) clearTimeout(pauseTimerRef.current)
+    }
+  }, [])
+
   const itemList = (copy) => (
     <ul
       aria-hidden={copy || undefined}
-      className={`flex w-max shrink-0 ${gapClass} ${moving ? seam : ''}`}
+      className={`flex ${moving ? 'w-max shrink-0' : 'w-full flex-wrap'} ${gapClass} ${moving ? seam : ''}`}
       // The copy only makes the loop seamless, so screen readers and Tab skip it.
       inert={copy || undefined}
       key={copy ? 'copy' : 'items'}
@@ -93,10 +95,14 @@ function AutoScroller({
     // The edges fade out, so items slide in and out of view instead of being cut off.
     row = (
       <div
-        className={`auto-scroller relative overflow-hidden py-2 [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)] ${rowClassName}`}
+        className={`auto-scroller hide-scrollbar relative overflow-hidden py-2 [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)] ${rowClassName}`}
         data-paused={paused || !pageVisible || undefined}
         onPointerDown={(event) => {
-          if (event.pointerType === 'touch') setPaused(true)
+          if (event.pointerType === 'touch') {
+            setPaused(true)
+            if (pauseTimerRef.current) clearTimeout(pauseTimerRef.current)
+            pauseTimerRef.current = setTimeout(() => setPaused(false), 8000)
+          }
         }}
         style={{ '--auto-scroll-duration': `${Math.max(size.width / speed, 1)}s` }}
       >
@@ -109,7 +115,7 @@ function AutoScroller({
   } else {
     row = (
       <div
-        className={`relative mx-auto max-w-7xl snap-x snap-mandatory scroll-px-4 overflow-x-auto px-4 py-2 sm:scroll-px-6 sm:px-6 lg:scroll-px-8 lg:px-8 ${rowClassName}`}
+        className={`hide-scrollbar relative mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8 ${rowClassName}`}
       >
         {itemList(false)}
       </div>
@@ -123,23 +129,7 @@ function AutoScroller({
         ref={boxRef}
       >
         {header}
-        <div className="flex items-center gap-3">
-          {actions}
-          {moving && (
-            <button
-              aria-label={paused ? `Play the ${label}` : `Pause the ${label}`}
-              className={PAUSE_CLASS}
-              onClick={() => setPaused((current) => !current)}
-              type="button"
-            >
-              {paused ? (
-                <Play aria-hidden="true" className="size-5" />
-              ) : (
-                <Pause aria-hidden="true" className="size-5" />
-              )}
-            </button>
-          )}
-        </div>
+        {actions && <div className="flex items-center gap-3">{actions}</div>}
       </div>
 
       {row}

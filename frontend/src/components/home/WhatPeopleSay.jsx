@@ -8,7 +8,7 @@ import StarRating from '../ui/StarRating.jsx'
 
 const REVIEW_LIMIT = 10
 
-const CARD_CLASS = 'w-[85vw] rounded-2xl border border-line bg-card p-6 sm:w-[340px]'
+const CARD_CLASS = 'w-[85vw] rounded-2xl border border-line bg-card p-6 md:w-[22rem]'
 
 // The newest reviews of Adesua, moving slowly past. The section hides itself when there are
 // none, or when they can't be loaded, like the popular courses above it.
@@ -57,12 +57,11 @@ function WhatPeopleSay() {
           </Reveal>
         }
         items={result.reviews}
-        label="reviews"
         placeholder={
           result.loading && (
             <div className="flex gap-5">
               {Array.from({ length: 3 }, (_, index) => (
-                <div className={`grid shrink-0 gap-3 ${CARD_CLASS}`} key={index}>
+                <div className={`grid min-h-48 shrink-0 gap-3 ${CARD_CLASS}`} key={index}>
                   <div className="skeleton-shimmer h-5 w-11/12 rounded" />
                   <div className="skeleton-shimmer h-5 w-4/5 rounded" />
                   <div className="skeleton-shimmer h-5 w-2/3 rounded" />
@@ -77,7 +76,6 @@ function WhatPeopleSay() {
         }
         renderItem={(review) => <ReviewCard review={review} />}
         rowClassName="mt-10"
-        speed={20}
       />
     </section>
   )
@@ -87,7 +85,7 @@ function ReviewCard({ review }) {
   const name = review.user?.name ?? 'Adesua member'
 
   return (
-    <figure className={`flex h-full flex-col ${CARD_CLASS}`}>
+    <figure className={`flex min-h-48 flex-col ${CARD_CLASS}`}>
       <blockquote className="flex-1 font-serif text-lg leading-relaxed font-normal text-ink">
         <p>{review.comment}</p>
       </blockquote>
