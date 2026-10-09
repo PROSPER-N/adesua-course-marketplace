@@ -168,7 +168,9 @@ function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-page">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+      {/* Phones get the logo, the theme button, the cart and the menu. The gaps are tight below
+          768px so all four fit on a 320px screen. */}
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-1 px-4 sm:px-6 md:gap-4 lg:px-8">
         <Link
           aria-label="Adesua home"
           className="flex shrink-0 items-center gap-2 rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand"
@@ -192,7 +194,8 @@ function Navbar() {
           <AccountActions logout={logout} user={user} />
         </nav>
 
-        <CartLink className="ml-auto md:hidden" count={items.length} />
+        <ThemeToggle className="ml-auto md:hidden" />
+        <CartLink className="md:hidden" count={items.length} />
 
         <button
           aria-controls="mobile-navigation"
@@ -254,7 +257,6 @@ function Navbar() {
 
             <div className="mt-auto grid gap-5 border-t border-line pt-5">
               <CurrencySelector mobile />
-              <ThemeToggle mobile />
               <AccountActions logout={logout} mobile onNavigate={handleNavigate} user={user} />
             </div>
           </aside>
