@@ -24,10 +24,10 @@ function HowItWorks() {
         <h2 className="font-serif text-display font-medium" id="how-it-works-heading">
           How it works
         </h2>
-        <ol className="mt-10 grid gap-10 md:grid-cols-3 md:gap-0">
+        <ol className="mt-10 grid gap-10 lg:grid-cols-3 lg:gap-0">
           {STEPS.map(({ title, text }, index) => (
             <li
-              className="md:border-l md:border-white/15 md:px-8 md:first:border-l-0 md:first:pl-0"
+              className="lg:border-l lg:border-white/15 lg:px-8 lg:first:border-l-0 lg:first:pl-0"
               key={title}
             >
               {/* The list already tells screen readers the step number. */}
