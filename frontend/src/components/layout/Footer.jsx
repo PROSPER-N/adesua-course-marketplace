@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router'
 const columns = [
   {
@@ -62,8 +61,7 @@ function Footer() {
             </p>
 
             <p className="mt-2 max-w-xs text-sm leading-6 text-white/60">
-              A place to develop your skills, explore new ideas and move
-              your ambitions forward.
+              A place to develop your skills, explore new ideas and move your ambitions forward.
             </p>
           </div>
 
