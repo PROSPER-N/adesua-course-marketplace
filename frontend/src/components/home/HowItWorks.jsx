@@ -36,34 +36,22 @@ function HowItWorks() {
         >
           How it works
         </h2>
-        {/* The steps zigzag: the middle one sits on the right and slides in from that side. From
-            768px each step rises beside the one before, so they read as a staircase. */}
-        <ol className="mt-10 flex flex-col gap-12 md:gap-16">
-          {STEPS.map(({ title, text }, index) => {
-            const right = index % 2 === 1
-            const position = right
-              ? 'ml-auto w-[88%] text-right md:ml-[58%] md:w-[36%] md:text-left'
-              : 'w-[88%] md:ml-[6%] md:w-[36%]'
-
-            return (
-              <li className={`${index > 0 ? 'md:-mt-32' : ''} ${position}`} key={title}>
-                {/* The list already tells screen readers the step number. */}
-                <span
-                  aria-hidden="true"
-                  className="block font-serif text-numeral text-gold"
-                  data-reveal={right ? 'right' : 'left'}
-                >
-                  {String(index + 1).padStart(2, '0')}
-                </span>
-                <div data-reveal="">
-                  <h3 className="mt-4 font-serif text-title font-semibold">{title}</h3>
-                  <p className={`mt-2 max-w-xs text-white/75 ${right ? 'ml-auto md:ml-0' : ''}`}>
-                    {text}
-                  </p>
-                </div>
-              </li>
-            )
-          })}
+        <ol className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-3 lg:gap-10">
+          {STEPS.map(({ title, text }, index) => (
+            <li className="min-w-0" key={title}>
+              <span
+                aria-hidden="true"
+                className="block font-serif text-numeral text-gold"
+                data-reveal={index === 1 ? 'right' : 'left'}
+              >
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <div data-reveal="">
+                <h3 className="mt-4 font-serif text-title font-semibold">{title}</h3>
+                <p className="mt-2 max-w-xs text-white/75">{text}</p>
+              </div>
+            </li>
+          ))}
         </ol>
       </div>
     </section>
